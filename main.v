@@ -18,8 +18,15 @@ fn log(data string) {
 
 // 主函数
 fn main() {
+    mut workers := 7
+    if os.args.len < 2 {
+        new_workers := os.args[1]
+        if typeof(new_workers).name == 'int' {
+            workers = new_workers
+        }
+    }
     vweb.run_at(new_app(), vweb.RunParams{
-        port: 8080
+        port: 8080 , nr_workers: workers
     }) or { panic(err) }
 }
 
