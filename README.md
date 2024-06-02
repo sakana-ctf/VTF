@@ -32,6 +32,9 @@ v main.v
 ## 二进制文件
 
 ```bash
-wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[版本号]
-./vtf-[版本号]
+wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型].zip
+unzip vtf-[对应版本类型].zip
+cd vtf-[对应版本类型]
+./vtf-[对应版本类型]
 ```
+

@@ -19,14 +19,6 @@
   <link rel="shortcut icon" href="../image/sakana.png" type="image/svg+xml">
 
   <!-- 
-    - 引入google字体
-  -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-  <!-- 
     - 引入css文件
   -->
   <link rel="stylesheet" href="../css/style.css">
@@ -104,34 +96,30 @@
   </header>
 
   <main>
-    <div class="default"></div>
-    <box>
       <div class="form">
         <h2>注册账号</h2>
         <form>
-          <div class="inputBox"><input type="text" placeholder="ID"></div>
-          <div class="inputBox"><input type="text" placeholder="邮箱"></div>
-          <div class="inputBox"><input type="password" placeholder="密码"></div>
-          <div class="inputBox"><input type="password" placeholder="确认密码"></div>
-          
-          <div class="inputBox"><input type="submit" value="注册"></div>
+          <div class="inputBox"><input id="id" type="text" placeholder="ID"></div>
+          <div class="inputBox"><input id="email" type="text" placeholder="邮箱"></div>
+          <div class="inputBox"><input id="passwd" type="password" placeholder="密码"></div>
+          <div class="inputBox"><input id="passwdagain" type="password" placeholder="确认密码"></div>
+          <div class="inputBox"><input onclick="refusrer()" type="submit" value="注册"></div>
           <a href="login.html" class="forget">已有账号</a>
         </form>
       </div>
-    </box>
   </main>
 
   <style>
-box{
-      background: rgba(74, 94, 119);
-      width: 400px;
-      padding: 5px;
-      position:absolute;
-      top: 25%;
-      left: 0;
-      right:0;
-      margin: auto;
-      border-radius: 10px;
+main{
+  background: rgba(74, 94, 119);
+  width: 400px;
+  padding: 5px;
+  position:absolute;
+  top: 25%;
+  left: 0;
+  right:0;
+  margin: auto;
+  border-radius: 10px;
 }
 
 .form {

@@ -5,10 +5,14 @@ module main
 
 import vweb
 import os
+// db 现在还未进行测试, 可以自己搞
+import db.sqlite
 
 // 基础结构体
 struct App {
     vweb.Context
+mut:
+    db sqlite.DB
 }
 
 // 输出日志
@@ -18,21 +22,33 @@ fn log(data string) {
 
 // 主函数
 fn main() {
-    mut workers := 7
-    if os.args.len < 2 {
-        new_workers := os.args[1]
-        if typeof(new_workers).name == 'int' {
-            workers = new_workers
-        }
+    // 线程设置
+    mut workers := 3
+        /*
+    if os.args.len >= 2 {
+        workers = os.args[1]
     }
-    vweb.run_at(new_app(), vweb.RunParams{
-        port: 8080 , nr_workers: workers
-    }) or { panic(err) }
+    */
+    // 数据库设置
+
+    log('当前线程数为: ${workers}')
+    vweb.run_at(
+        new_app(),
+        vweb.RunParams{
+            port: 8080
+            nr_workers: workers
+        }) or { panic(err) }
 }
 
 // 使所有静态文件可用
 fn new_app() &App {
-    mut app := &App{}
+        mut db := sqlite.connect('db')  or {
+        log('sqlite调用错误')
+        panic(err)
+    }
+    mut app := &App{
+        db:db 
+    }
     app.mount_static_folder_at(os.resource_abs_path('.'), '/')
     return app
 }
@@ -76,6 +92,18 @@ fn (mut app App) login() vweb.Result {
 ***************/ 
 @['/refusrer.html'; post; get]
 fn (mut app App) refusrer() vweb.Result {
+    //println(app.form['data']
+    return $vweb.html()
+}
+
+/**************
+ * 注册文件页
+***************/ 
+@['/refusrer.html'; post; get]
+fn (mut app App) refusrer() vweb.Result {
+    log(app.form['id'])
+    log(app.form['email'])
+    log(app.form['passwd'])
     return $vweb.html()
 }
 

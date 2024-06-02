@@ -83,7 +83,7 @@ html {
 }
 
 body {
-  background-color: var(--bg-oxford-blue-2);
+  background-color: var(--bg-background-color);
   color: var(--text-shadow-blue);
   font-family: var(--fontFamily-noto_sans);
   font-size: 1.6rem;
@@ -105,11 +105,6 @@ body.nav-active { overflow: hidden; }
 /*-----------------------------------*\
   #REUSED STYLE 重复使用的部分
 \*-----------------------------------*/
-
-main .default{
-  background-color: var(--bg-background-color);
-  height:1000px;
-}
 
 .container { padding-inline: 16px; }
 
@@ -350,6 +345,4 @@ main .default{
   }
 
 }
-
-
 
