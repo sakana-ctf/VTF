@@ -18,7 +18,37 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 我们提供了源码与编译好的二进制文件以供使用:
 
-## 自行编译
+## 前置条件
+
+使用之前需自行配置好sqlite环境, 不会太过麻烦:
+
+**Archlinux用户**
+
+```bash
+sudo pacman -S sqlite
+```
+
+**debian系linux用户**
+
+```bash
+sudo apt install sqlite3
+```
+
+**Fedora linux用户**
+
+```bash
+sudo dnf -y install sqlite-devel
+```
+
+**windows用户**
+
+* 从[sqlite](https://sqlite.org/download.html)下载源zip文件
+* 在里面创建一个新的子文件夹`sqlite``v/thirdparty`
+* 将 zip 解压缩到该文件夹中
+
+### 配置
+
+### 自行编译
 
 ```bash
 git clone https://gitee.com/sakana_ctf/vtf.git
@@ -29,12 +59,11 @@ v main.v
 
 我们可以在编译时设置参数`-os [linux/windows]`使程序交叉编译到其他平台.
 
-## 二进制文件
+### 二进制文件
 
 ```bash
-wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型].zip
-unzip vtf-[对应版本类型].zip
-cd vtf-[对应版本类型]
+git clone https://gitee.com/sakana_ctf/vtf.git
+wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
 ./vtf-[对应版本类型]
 ```
 

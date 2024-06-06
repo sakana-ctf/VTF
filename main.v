@@ -15,6 +15,20 @@ mut:
     db sqlite.DB
 }
 
+
+/*************
+ * 数据库类型
+*************/
+
+@[table: 'personal']
+struct Personal {
+    id         string
+    email      string
+    passwd     string
+    whoami     string
+    score      int
+}
+
 // 输出日志
 fn log(data string) {
     println(data)
@@ -42,12 +56,19 @@ fn main() {
 
 // 使所有静态文件可用
 fn new_app() &App {
-        mut db := sqlite.connect('db')  or {
+        mut db := sqlite.connect('./data.db')  or {
         log('sqlite调用错误')
         panic(err)
     }
+    db.synchronization_mode(sqlite.SyncMode.off) or {
+        log('Error: data.db控制同步设置失败')
+    }
+    db.journal_mode(sqlite.JournalMode.memory) or {
+        log('Error: data.db日志模式设置失败')
+    }
+
     mut app := &App{
-        db:db 
+        db:db
     }
     app.mount_static_folder_at(os.resource_abs_path('.'), '/')
     return app
@@ -88,22 +109,64 @@ fn (mut app App) login() vweb.Result {
 }
 
 /**************
- * 注册文件页
+ * 个人文件页
 ***************/ 
-@['/refusrer.html'; post; get]
-fn (mut app App) refusrer() vweb.Result {
-    //println(app.form['data']
+@['/member.html']
+fn (mut app App) member() vweb.Result {
     return $vweb.html()
 }
 
 /**************
  * 注册文件页
 ***************/ 
-@['/refusrer.html'; post; get]
+
+@['/refusrer.html']
 fn (mut app App) refusrer() vweb.Result {
-    log(app.form['id'])
-    log(app.form['email'])
-    log(app.form['passwd'])
-    return $vweb.html()
+    // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
+    cookie_id := app.get_cookie('id') or { '' }
+    if cookie_id == '' {
+        return $vweb.html()
+    } else {
+        return app.redirect('/member.html')
+    }
 }
 
+fn test() []Personal {
+    log('Error: select查询失败')
+    return []
+}
+
+@['/refusrerapi'; post]
+fn (mut app App) refusrerapi() vweb.Result {
+    new_number := Personal{
+        id      :   app.form['id']
+        email   :   app.form['email']
+        passwd  :   app.form['passwd']
+        whoami  :   'member'
+        score   :   0
+    }
+
+    sql app.db {
+        create table Personal
+    } or {
+        log('Error: 创建失败')
+    }
+
+    id_check := sql app.db {
+        select from Personal where id == new_number.id || email == new_number.email
+    } or { test() }
+    if id_check.len != 0 || new_number.id == '' {
+        log('Error: 检测到提交无效数据')
+        return app.redirect('/refusrer.html')
+    }
+    log('存储数据')
+    sql app.db {
+        insert new_number into Personal
+    } or {
+        log("Error: 存储数据出错${new_number}")
+        return app.redirect('/refusrer.html')
+    }
+    app.set_cookie(name:'id', value:new_number.id)
+    app.set_cookie(name:'passwd', value:new_number.passwd)
+    return app.redirect('/member.html')
+}
