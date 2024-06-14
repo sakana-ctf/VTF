@@ -1,5 +1,3 @@
-//const sqlite3 = require('sqlite3').verbose();
-//const db = new sqlite3.Database('./data.db');
 /**
  * 缩小页打开侧页部分函数
  */

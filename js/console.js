@@ -1,40 +1,55 @@
+// post传递数据
+function post_data(data, route) {
+    console.log("发送信息ing...");
+    /*******************************************************
+    *   这里留了一个大坑, 不知道为什么firefox无法返回数值
+    ********************************************************/
+    const XHR = new XMLHttpRequest();  
+    XHR.addEventListener("load", (event) => {
+        console.log("发送成功, 正在校验账号");
+    });
+    
+    // 错误提示
+    XHR.addEventListener("error", (event) => {
+        console.log("Error: 发送失败");
+    });
+
+    // 建立请求
+    XHR.open("POST", route);
+    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    XHR.send(data);
+}
+
 // 注册函数
 function refusrer() {
     var id = document.getElementById('id').value;
     var email = document.getElementById('email').value;
     var passwd = document.getElementById('passwd').value;
     var passwdagain = document.getElementById('passwdagain').value;
-    if (passwd === passwdagain) {
-        /*******************************************************
-        *   这里留了一个大坑, 不知道为什么firefox无法返回数值
-        ********************************************************/
-
-        console.log("发送信息ing...");        
-        // 存储数据
+    if (passwd === passwdagain) {             
         const data = "id=" + id + "&email=" + email + "&passwd=" + passwd;
-
-        // 执行操作
-        const XHR = new XMLHttpRequest();  
-        XHR.addEventListener("load", (event) => {
-            console.log("发送成功, 正在校验账号");
-        });
-        
-        // 错误提示
-        XHR.addEventListener("error", (event) => {
-            console.log("Error: 发送失败");
-        });
-
-        // 建立请求
-        XHR.open("POST", "/refusrerapi");
-        XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        XHR.send(data);
-
+        post_data(data, '/refusrerapi');
     } else {
         alert("Error: 密码不一致");
     }
 }
 
+// 更新密码函数
+function fixpasswd() {
+    var oldpasswd = document.getElementById('old-passwd').value;
+    var newpasswd = document.getElementById('new-passwd').value;
+    var passwdagain = document.getElementById('passwd-again').value;
+    if (newpasswd === passwdagain) {
+        const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + newpasswd;
+        post_data(data, '/memberapi');
+    } else {
+        alert("Error: 密码不一致");
+    }
+}
 
+/*****************
+ * cookie管理函数
+*****************/ 
 
 // 删除cookie
 function delCookie(name){
@@ -47,6 +62,10 @@ function findCookie(name){
     // /(?:(?:^|.*;\s*) name \s*\=\s*([^;]*).*$)|^.*$/
     return document.cookie.replace(re, "$1")
 }
+
+/*****************
+ * 节点管理函数
+*****************/ 
 
 // 对非权限用户去掉console节点
 function KillConsole() {

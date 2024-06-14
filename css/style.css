@@ -2,15 +2,20 @@
   /** 文本颜色 */
   --text-wild-blue-yonder: rgb(93, 135, 191);
   --text-carolina-blue: rgb(201, 117, 189);
+  --text-botton-white: #fffff1fa;
 
   /** 背景颜色 */
   --bg-oxford-blue-2: rgb(6, 6, 15);
   --bg-background-color: rgb(23, 33, 46);
+  --bg-card-color: rgb(74, 94, 119) ;
+
+  /** 按钮底色 */
+  --bg-botton-white: #fffffffa;
 
   /** 字体类型 */
   --fontFamily-noto_sans: 'Noto Sans', sans-serif;
 
-  /** 字体大小 */
+  /** 字体宽度 */
   --text-weight-1: 800;
   --text-weight-2: 500;
   --text-weight-3: 300;
@@ -18,7 +23,8 @@
   /** 字体间距 */
   --letter-spacing-1: 3px;
 
-  /** 许可证字体大小 */
+  /** 字体大小 */
+  --fontSize-1: 2rem;
   --fontSize-3: 3rem;
   --fontSize-4: 2.5rem;
   --fontSize-8: 1.3rem;
@@ -167,6 +173,17 @@ body.nav-active { overflow: hidden; }
   color: var(--text-wild-blue-yonder);
   text-align: center;
   font-weight: var(--text-weight-3);
+}
+
+.mess-text {
+  font-size: var(--fontSize-1);
+  color:var(--text-botton-white);
+}
+
+.con-text {
+  font-size: var(--fontSize-1);
+  font-weight: var(--text-weight-3);
+  color:var(--text-botton-white);
 }
 
 

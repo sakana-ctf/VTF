@@ -20,6 +20,12 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 ## 前置条件
 
+### vlang环境
+
+详情参考[vdoc](https://gitee.com/sakana_ctf/vdoc), sakana战队从vlang的基础部署到使用有进行详细描写, 欢迎star.
+
+### vlang下sqlite环境部署
+
 使用之前需自行配置好sqlite环境, 不会太过麻烦:
 
 **Archlinux用户**
@@ -43,7 +49,7 @@ sudo dnf -y install sqlite-devel
 **windows用户**
 
 * 从[sqlite](https://sqlite.org/download.html)下载源zip文件
-* 在里面创建一个新的子文件夹`sqlite``v/thirdparty`
+* 在`v/thirdparty`里面创建一个新的文件夹`sqlite`
 * 将 zip 解压缩到该文件夹中
 
 ### 配置
@@ -63,6 +69,7 @@ v main.v
 
 ```bash
 git clone https://gitee.com/sakana_ctf/vtf.git
+cd vtf
 wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
 ./vtf-[对应版本类型]
 ```
