@@ -47,6 +47,15 @@ function fixpasswd() {
     }
 }
 
+// 登录函数
+function passwdlogin() {
+    /*****************************
+    *   修改方法参考main.v文件
+    ******************************/
+    var email = '';
+    var passwd  = '';
+}
+
 /*****************
  * cookie管理函数
 *****************/ 
@@ -91,5 +100,6 @@ function NoLog() {
 
 }
 
-//delCookie('id');
+// 这里是测试的时候方便删cookie
+// delCookie('id');
 NoLog();

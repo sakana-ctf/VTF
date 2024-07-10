@@ -36,6 +36,33 @@
   --cubic-in: cubic-bezier(0.51, 0.03, 0.64, 0.28);
   --cubic-out: cubic-bezier(0.05, 0.83, 0.52, 0.97);
 
+  /***************************
+   * 题目的卡片颜色部分代码
+   * 之后慢慢看哪些有问题再改  
+   ***************************/
+  --background-color: rgb(20, 20, 20);
+  --background-line-color: rgb(41, 119, 255);
+  --text-color: rgb(118, 155, 204);
+  --text-have-url-color: rgb(250, 92, 92);
+  --text-title-color: rgb(118, 155, 204);
+  --text-table-color: rgb(164, 213, 235);
+  --table-header-color: rgb(52,67,87);
+  --table-background-color: rgb(83, 107, 138);
+  --box-gear-color: rgb(107, 172, 210);
+  --tools-card-image-color: rgb(255,255,255);
+  --button: rgba(165, 210, 236, 0.2);
+  --button-text: rgb(0, 0, 0);
+  --button-hover: rgba(232, 139, 234, 0.2);
+  --button-hover-text: rgb(0, 0, 0);
+
+  --tools-card-color: linear-gradient(130deg,rgb(18, 21, 26),rgb(31, 59, 107),rgb(18, 21, 26));
+
+  --member-table-padding: 14px;
+  --organizing-table-padding: 12px;
+  --match-table-padding: 40px;
+  --box-text-pposition-x: 12px;
+  --table-height: 700px;
+
 }
 
 /*-----------------------------------*\

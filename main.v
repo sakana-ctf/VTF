@@ -137,6 +137,19 @@ fn (mut app App) login() vweb.Result {
     return $vweb.html()
 }
 
+@['/loginapi'; post]
+fn (mut app App) loginapi() vweb.Result {
+    /***********************************************************************************
+    *   这个函数直接参考refusrerapi去修改就好, 基本都是现成的:
+    *       1. 找refusrer.html的节点看看输入的信息设置的和refusrer.html是否基本一样.
+    *       2. 在console.js可以参考refusrer()函数编写passwdlogin().
+    *       3. 参考refusrerapi()函数修改以下函数.
+    *
+    *   备注: 与注册不同, 当需要先检查sql数据再进行登录
+    ************************************************************************************/
+    return app.redirect('/login.html')
+}
+
 /**************
  * 个人文件页
 ***************/
