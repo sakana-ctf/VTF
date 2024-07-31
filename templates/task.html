@@ -96,57 +96,119 @@
   </header>
 
   <main>
+    <!-- 这是一个总的区域 -->
     <div class="task-type">
+      <!-- 模态框本身 -->
+      <div id="myModal" class="modal">
+        <!-- 模态框内容 -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p>这是一个自定义的模态框！</p>
+       </div>
+    </div>
+
+    @for type in list_of_type:
+    <!--type like Crypto-->
+    <!--
+      struct Object {
+        title       string
+      }
+
+      list_of_type := [
+        Object{
+            title: 'Crypto'
+        },
+        Object{
+            title: 'MISC'
+        },
+        Object{
+            title: 'Iot'
+        },
+    ]
+
+    -->
+    <h1 class="type-text">${type.title}</h1>
+      @for task in list_of_task:
+      <!--your task-->
+      <div class="tools-card">
+        <div class="card">
+          <div class="card-border-top">
+          <span>ez_math</span>
+          <p class="job">baby</p>
+          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
+        </div>
+      </div>
+      @end
+    @end
+
       <h1 class="type-text">Crypto</h1>
       <div class="tools-card">
         <div class="card">
           <div class="card-border-top">
           <span>ez_math</span>
           <p class="job">baby</p>
-          <button><image src="../image/incomplete.png" width="100px"></image></button>
+          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
           </div>
         </div>
         <div class="card">
           <div class="card-border-top">
           <span>pohlig-hellman</span>
           <p class="job">eazy</p>
-          <button><image src="../image/incomplete.png" width="100px"></image></button>
+          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
           </div>
         </div>
         <div class="card">
           <div class="card-border-top">
           <span>franklin</span>
           <p class="job">normal</p>
-          <button><image src="../image/incomplete.png" width="100px"></image></button>
+          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
           </div>
         </div>
         <div class="card">
           <div class="card-border-top">
           <span>ez_LLL</span>
           <p class="job">hard</p>
-          <button><image src="../image/incomplete.png" width="100px"></image></button>
+          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
           </div>
         </div>
       </div>
-    <div class="task-type">
+
       <h1 class="type-text">Iot</h1>  
         <div class="tools-card">
           <div class="card">
             <div class="card-border-top">
             <span>ez_rise-V</span>
             <p class="job">eazy</p>
-            <button><image src="../image/incomplete.png" width="100px"></image></button>
+            <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
             </div>
           </div>
           <div class="card">
             <div class="card-border-top">
             <span>ez_ch</span>
             <p class="job">hard</p>
-            <button><image src="../image/complete.png" width="100px"></image></button>
+            <button onclick="showModal()"><image src="../image/complete.png" width="100px"></image></button>
           </div>
-        </div>
       </div>
   </main>
+
+  <script>
+    // 显示模态框的函数
+    function showModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
+
+    // 关闭模态框的函数
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+
+    // 监听窗口点击事件，如果点击了模态框以外的区域，则关闭模态框
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("myModal")) {
+            closeModal();
+        }
+    }
+</script>
 
   <style>
 
@@ -167,7 +229,46 @@
       padding: 15px;
       color: var(--text-wild-blue-yonder);
     }
+
+    /* 关闭按钮样式 */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
     
+/*
+    ========================模态框=====================
+*/
+.modal {
+        display: none; /* 默认隐藏 */
+        position: fixed; /* 固定在视口 */
+        z-index: 1; /* 置于顶层 */
+        left: 0;
+        top: 0;
+        width: 100%; /* 宽度全屏 */
+        height: 100%; /* 高度全屏 */
+        overflow: auto; /* 允许滚动 */
+        background-color: rgba(0,0,0,0.4); /* 黑色背景，半透明 */
+    }
+
+    /* 模态框内容样式 */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% 垂直位置，水平居中 */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* 或指定宽度 */
+    }
 /*
     ========================程序获取部分=====================
 */

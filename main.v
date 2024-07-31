@@ -147,6 +147,27 @@ fn (mut app App) loginapi() vweb.Result {
     *
     *   备注: 与注册不同, 当需要先检查sql数据再进行登录
     ************************************************************************************/
+    email := app.form['email']
+    passwd := app.form['passwd']
+
+    select_passwd := sql app.db {
+        select from Personal where id == email || email == email
+    } or { select_err() }
+    id := passwd // 详细逻辑不太对, 之后再来解决.
+
+    
+    /***********************************************************************************
+    *   如果存在id==email会出问题.
+    *   应该先进行正则判别
+    *   以上需求还未实现, 当前以实现为主要目的
+    ************************************************************************************/
+    for i in select_passwd {
+        if (i == passwd){
+            log('Setting: ${c_id}将修改密码为:${newpasswd}')
+            app.set_cookie(name:'id', value:id)
+            app.set_cookie(name:'passwd', value:passwd)
+        }
+    }
     return app.redirect('/login.html')
 }
 
@@ -237,3 +258,4 @@ fn (mut app App) refusrerapi() vweb.Result {
     app.set_cookie(name:'passwd', value:new_number.passwd)
     return app.redirect('/member.html')
 }
+

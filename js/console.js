@@ -52,8 +52,10 @@ function passwdlogin() {
     /*****************************
     *   修改方法参考main.v文件
     ******************************/
-    var email = '';
-    var passwd  = '';
+    var email = document.getElementById('email').value;
+    var passwd  = document.getElementById('passwd').value;
+    const data = "email=" + email + "&passwd=" + passwd;
+    post_data(data, '/loginapi');
 }
 
 /*****************
