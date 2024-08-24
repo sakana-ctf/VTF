@@ -10,7 +10,7 @@ import db.sqlite
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
 struct Counter {
-pub mut:
+mut:
     id          string
     passwd      string
 }
@@ -134,7 +134,12 @@ pub fn (mut app App) not_found() vweb.Result {
 ***************/ 
 @['/login.html']
 fn (mut app App) login() vweb.Result {
-    return $vweb.html()
+    cookie_id := app.get_cookie('id') or { '' }
+    if cookie_id == '' {
+        return $vweb.html()
+    } else {
+        return app.redirect('/member.html')
+    }
 }
 
 @['/loginapi'; post]
@@ -153,21 +158,21 @@ fn (mut app App) loginapi() vweb.Result {
     select_passwd := sql app.db {
         select from Personal where id == email || email == email
     } or { select_err() }
-    id := passwd // 详细逻辑不太对, 之后再来解决.
-
-    
+    println(select_passwd)
+    //id := passwd 详细逻辑不太对, 之后再来解决.
     /***********************************************************************************
-    *   如果存在id==email会出问题.
+    *   如果id==email会出问题.
     *   应该先进行正则判别
     *   以上需求还未实现, 当前以实现为主要目的
     ************************************************************************************/
     for i in select_passwd {
-        if (i == passwd){
-            log('Setting: ${c_id}将修改密码为:${newpasswd}')
-            app.set_cookie(name:'id', value:id)
-            app.set_cookie(name:'passwd', value:passwd)
+        if i.passwd == passwd {
+            log('Setting: ${i.id}已登陆')
+            app.set_cookie(name:'id', value:i.id)
+            app.set_cookie(name:'passwd', value:i.passwd)
         }
     }
+    
     return app.redirect('/login.html')
 }
 
