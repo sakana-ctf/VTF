@@ -96,105 +96,43 @@
   </header>
 
   <main>
-    <!-- 这是一个总的区域 -->
-    <div class="task-type">
-      <!-- 模态框本身 -->
-      <div id="myModal" class="modal">
-        <!-- 模态框内容 -->
-        <div class="modal-content">
+    @for list in list_of_type
+    <h1 class="type-text">${list.name}</h1>
+    <div class="tools-card">
+        @for task in list.type_text
+        <!--your task-->    
+        <div class="card">
+          <div class="card-border-top">
+            <span>${task.name}</span>
+            <p class="job">${task.diff}</p>
+            <button onclick="showModal()"><image src="${task.complete}" width="100px"></image></button>
+          </div>
+        </div>
+        <!-- 模态框本身 -->
+        <div id="myModal" class="modal">
+          <!-- 模态框内容 -->
+          <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <p>这是一个自定义的模态框！</p>
-       </div>
+            <p>
+              <h1>${task.name}</h1>
+              <h2>${task.diff}</h2>
+              <h3>${task.intro}</h3>
+              <h4>${task.container}</h4>
+            </p>
+          </div>
+        </div> 
+        @end
     </div>
-
-    @for type in list_of_type:
-    <!--type like Crypto-->
-    <!--
-      struct Object {
-        title       string
-      }
-
-      list_of_type := [
-        Object{
-            title: 'Crypto'
-        },
-        Object{
-            title: 'MISC'
-        },
-        Object{
-            title: 'Iot'
-        },
-    ]
-
-    -->
-    <h1 class="type-text">${type.title}</h1>
-      @for task in list_of_task:
-      <!--your task-->
-      <div class="tools-card">
-        <div class="card">
-          <div class="card-border-top">
-          <span>ez_math</span>
-          <p class="job">baby</p>
-          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-        </div>
-      </div>
-      @end
     @end
-
-      <h1 class="type-text">Crypto</h1>
-      <div class="tools-card">
-        <div class="card">
-          <div class="card-border-top">
-          <span>ez_math</span>
-          <p class="job">baby</p>
-          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-border-top">
-          <span>pohlig-hellman</span>
-          <p class="job">eazy</p>
-          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-border-top">
-          <span>franklin</span>
-          <p class="job">normal</p>
-          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-border-top">
-          <span>ez_LLL</span>
-          <p class="job">hard</p>
-          <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-          </div>
-        </div>
-      </div>
-
-      <h1 class="type-text">Iot</h1>  
-        <div class="tools-card">
-          <div class="card">
-            <div class="card-border-top">
-            <span>ez_rise-V</span>
-            <p class="job">eazy</p>
-            <button onclick="showModal()"><image src="../image/incomplete.png" width="100px"></image></button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-border-top">
-            <span>ez_ch</span>
-            <p class="job">hard</p>
-            <button onclick="showModal()"><image src="../image/complete.png" width="100px"></image></button>
-          </div>
-      </div>
   </main>
 
   <script>
     // 显示模态框的函数
     function showModal() {
-        document.getElementById("myModal").style.display = "block";
+        myModal = document.getElementById("myModal");
+        myModal.style.display = "block";
+        //alert(task);
+        
     }
 
     // 关闭模态框的函数
@@ -263,11 +201,12 @@
 
     /* 模态框内容样式 */
     .modal-content {
-        background-color: #fefefe;
+        background-color: var(--bg-card-color);
         margin: 15% auto; /* 15% 垂直位置，水平居中 */
         padding: 20px;
-        border: 1px solid #888;
+        border: 1px solid var(--bg-background-color);
         width: 80%; /* 或指定宽度 */
+        border-radius: 10px;
     }
 /*
     ========================程序获取部分=====================

@@ -29,6 +29,8 @@ mut:
  * 数据库类型
 *************/
 
+// 登录信息
+
 @[table: 'personal']
 struct Personal {
     id         string
@@ -37,6 +39,26 @@ struct Personal {
     whoami     string
     score      int
 }
+
+// 题目
+// define true '../image/complete.png'
+// define false '../image/incomplete.png'
+
+struct Type{
+    name        string
+    type_text   []Task
+}
+
+@[table: 'task']
+struct  Task{
+    name       string
+    diff       string
+    intro      string
+
+    complete   string
+    container  bool
+}
+
 
 /*************
  *  功能函数
@@ -151,6 +173,7 @@ fn (mut app App) loginapi() vweb.Result {
     *       3. 参考refusrerapi()函数修改以下函数.
     *
     *   备注: 与注册不同, 当需要先检查sql数据再进行登录
+    *   已完成(sudopacman)
     ************************************************************************************/
     email := app.form['email']
     passwd := app.form['passwd']
@@ -158,8 +181,7 @@ fn (mut app App) loginapi() vweb.Result {
     select_passwd := sql app.db {
         select from Personal where id == email || email == email
     } or { select_err() }
-    println(select_passwd)
-    //id := passwd 详细逻辑不太对, 之后再来解决.
+
     /***********************************************************************************
     *   如果id==email会出问题.
     *   应该先进行正则判别
@@ -174,44 +196,6 @@ fn (mut app App) loginapi() vweb.Result {
     }
     
     return app.redirect('/login.html')
-}
-
-/**************
- * 个人文件页
-***************/
-
-@['/member.html']
-fn (mut app App) member() vweb.Result {
-    c_id := cookie_id(app)
-    c_pwd := cookie_passwd(app)
-    id_check := sql app.db {
-        select from Personal where id == c_id && passwd == c_pwd
-    } or { select_err() }
-    if id_check.len != 0 {
-        name := c_id
-        email := id_check[0].email
-        return $vweb.html()
-    } else {
-        return app.redirect('/error.html')
-    }
-}
-
-@['/memberapi'; post]
-fn (mut app App) memberapi() vweb.Result {
-    c_id := cookie_id(app)
-    oldpasswd := app.form['oldpasswd']
-    newpasswd := app.form['newpasswd']
-    id_check := sql app.db {
-        select from Personal where id == c_id && passwd == oldpasswd
-    } or { select_err() }
-    if id_check.len != 0 {
-        log('Setting: ${c_id}将修改密码为:${newpasswd}')
-        sql app.db {
-            update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
-        } or { log('Error: ${c_id}修改密码失败') }
-        app.set_cookie(name:'passwd', value:newpasswd)
-    }
-    return app.redirect('/member.html')
 }
 
 /**************
@@ -259,8 +243,88 @@ fn (mut app App) refusrerapi() vweb.Result {
         log("Error: 存储数据出错${new_number}")
         return app.redirect('/refusrer.html')
     }
+    // 设置cookie并更新页面情况
     app.set_cookie(name:'id', value:new_number.id)
     app.set_cookie(name:'passwd', value:new_number.passwd)
+    app.refusrer()
     return app.redirect('/member.html')
 }
 
+
+/**************
+ * 个人文件页
+***************/
+
+@['/member.html']
+fn (mut app App) member() vweb.Result {
+    c_id := cookie_id(app)
+    c_pwd := cookie_passwd(app)
+    id_check := sql app.db {
+        select from Personal where id == c_id && passwd == c_pwd
+    } or { select_err() }
+    if id_check.len != 0 {
+        name := c_id
+        email := id_check[0].email
+        return $vweb.html()
+    } else {
+        return app.redirect('/error.html')
+    }
+}
+
+@['/memberapi'; post]
+fn (mut app App) memberapi() vweb.Result {
+    c_id := cookie_id(app)
+    oldpasswd := app.form['oldpasswd']
+    newpasswd := app.form['newpasswd']
+    id_check := sql app.db {
+        select from Personal where id == c_id && passwd == oldpasswd
+    } or { select_err() }
+    if id_check.len != 0 {
+        log('Setting: ${c_id}将修改密码为:${newpasswd}')
+        sql app.db {
+            update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
+        } or { log('Error: ${c_id}修改密码失败') }
+        app.set_cookie(name:'passwd', value:newpasswd)
+        // 更新页面情况
+        app.member()
+    }
+    
+    return app.redirect('/member.html')
+}
+
+/**************
+ * 挑战页
+***************/
+
+@['/task.html']
+fn (mut app App) task() vweb.Result {
+
+    list_of_crypto := [
+        Task{
+            name       :    'ez_RSA'
+            diff       :    'baby'
+            intro      :    'test task'
+            complete   :    '../image/complete.png'
+            container  :    true
+        },
+        Task{
+            name       :    'mid_RSA'
+            diff       :    'baby'
+            intro      :    'test task'
+            complete   :    '../image/incomplete.png'
+            container  :    true
+        }
+    ]
+
+    list_of_type := [
+        Type{
+            name         :    'Crypto'
+            type_text    :    list_of_crypto
+        },
+        Type{
+            name         :    'Web'
+            type_text    :    list_of_crypto
+        }
+    ]
+    return $vweb.html()
+}
