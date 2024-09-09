@@ -55,6 +55,10 @@ sudo dnf -y install sqlite-devel
 
 ### 配置
 
+### 依赖
+
+- sqlite3
+
 ### 自行编译
 
 ```bash
@@ -74,6 +78,21 @@ cd vtf
 wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
 ./vtf-[对应版本类型]
 ```
+
+# 支持
+
+| 需求  | 当前情况 |     检验人     |
+|:------------:|:----:|:----------:|
+|  firefox兼容问题 | js部分未支持 |  |
+|   edge兼容问题  |  已适配  |    sudopacman    |   
+|   登录措施   |  普通用户登录与注册  |  sudopacman   |
+|   管理员  |  未支持  |   |
+|  登录状态维持  |   当前页基本解决   |  sudopacman  |
+|  题目  |   已支持显示题目,暂未支持提交flag    | sudopacman |
+|  数据库  |  当前仅支持sqlite3数据库  |  sudopacman  |
+|  数据库安全  | 未处理 |  |
+|  错误显示  |  未设置  |  |
+
 
 
 

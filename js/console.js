@@ -58,6 +58,14 @@ function passwdlogin() {
     post_data(data, '/loginapi');
 }
 
+// 提交flag
+function inputflag(){
+    var flag = document.getElementById('flag').value;
+    var name = document.getElementById('name').textContent.trim();
+    const data = "flag=" + flag + "&name=" + name;
+    post_data(data, '/flagapi')
+}
+
 /*****************
  * cookie管理函数
 *****************/ 

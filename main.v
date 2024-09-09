@@ -56,6 +56,7 @@ struct  Task{
     intro      string
 
     complete   string
+    flag       []string
     container  bool
 }
 
@@ -73,6 +74,11 @@ fn select_err() []Personal {
 // 输出日志
 fn log(data string) {
     println(data)
+}
+
+// 显示输出报错
+fn log_err(data string) {
+    println('错误: ${data}')
 }
 
 // 获取id
@@ -109,7 +115,7 @@ fn main() {
 
 // 使所有静态文件可用
 fn new_app() &App {
-        mut db := sqlite.connect('./data.db')  or {
+    mut db := sqlite.connect('./data.db')  or {
         log('Error: sqlite调用错误')
         panic(err)
     }
@@ -156,8 +162,8 @@ pub fn (mut app App) not_found() vweb.Result {
 ***************/ 
 @['/login.html']
 fn (mut app App) login() vweb.Result {
-    cookie_id := app.get_cookie('id') or { '' }
-    if cookie_id == '' {
+    the_cookie_id := app.get_cookie('id') or { '' }
+    if the_cookie_id == '' {
         return $vweb.html()
     } else {
         return app.redirect('/member.html')
@@ -205,8 +211,8 @@ fn (mut app App) loginapi() vweb.Result {
 @['/refusrer.html']
 fn (mut app App) refusrer() vweb.Result {
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
-    cookie_id := app.get_cookie('id') or { '' }
-    if cookie_id == '' {
+    the_cookie_id := app.get_cookie('id') or { '' }
+    if the_cookie_id == '' {
         return $vweb.html()
     } else {
         return app.redirect('/member.html')
@@ -233,14 +239,14 @@ fn (mut app App) refusrerapi() vweb.Result {
         select from Personal where id == new_number.id || email == new_number.email
     } or { select_err() }
     if id_check.len != 0 || new_number.id == '' {
-        log('Error: 检测到提交无效数据')
+        log_err('Error: 检测到提交无效数据')
         return app.redirect('/refusrer.html')
     }
     log('Setting: 存储数据')
     sql app.db {
         insert new_number into Personal
     } or {
-        log("Error: 存储数据出错${new_number}")
+        log_err("Error: 存储数据出错${new_number}")
         return app.redirect('/refusrer.html')
     }
     // 设置cookie并更新页面情况
@@ -257,17 +263,22 @@ fn (mut app App) refusrerapi() vweb.Result {
 
 @['/member.html']
 fn (mut app App) member() vweb.Result {
-    c_id := cookie_id(app)
-    c_pwd := cookie_passwd(app)
-    id_check := sql app.db {
-        select from Personal where id == c_id && passwd == c_pwd
-    } or { select_err() }
-    if id_check.len != 0 {
-        name := c_id
-        email := id_check[0].email
-        return $vweb.html()
+    the_cookie_id := app.get_cookie('id') or { '' }
+    if the_cookie_id == '' {
+        return app.redirect('/login.html')
     } else {
-        return app.redirect('/error.html')
+        c_id := cookie_id(app)
+        c_pwd := cookie_passwd(app)
+        id_check := sql app.db {
+            select from Personal where id == c_id && passwd == c_pwd
+        } or { select_err() }
+        if id_check.len != 0 {
+            name := c_id
+            email := id_check[0].email
+            return $vweb.html()
+        } else {
+            return app.redirect('/error.html')
+        }
     }
 }
 
@@ -298,33 +309,50 @@ fn (mut app App) memberapi() vweb.Result {
 
 @['/task.html']
 fn (mut app App) task() vweb.Result {
+    the_cookie_id := app.get_cookie('id') or { '' }
+    if the_cookie_id == '' {
+        return app.redirect('/login.html')
+    } else {
+        list_of_crypto := [
+            Task{
+                name       :    'ez_RSA'
+                diff       :    'baby'
+                intro      :    'test task'
+                complete   :    '../image/complete.png'
+                flag       :    ['flag{test_1}']
+                container  :    false
+            },
+            Task{
+                name       :    'mid_RSA'
+                diff       :    'baby'
+                intro      :    'test task'
+                complete   :    '../image/incomplete.png'
+                flag       :    ['flag{test_2}','flag{test_3}']
+                container  :    false
+            }
+        ]
 
-    list_of_crypto := [
-        Task{
-            name       :    'ez_RSA'
-            diff       :    'baby'
-            intro      :    'test task'
-            complete   :    '../image/complete.png'
-            container  :    true
-        },
-        Task{
-            name       :    'mid_RSA'
-            diff       :    'baby'
-            intro      :    'test task'
-            complete   :    '../image/incomplete.png'
-            container  :    true
-        }
-    ]
+        list_of_type := [
+            Type{
+                name         :    'Crypto'
+                type_text    :    list_of_crypto
+            },
+            Type{
+                name         :    'Web'
+                type_text    :    list_of_crypto
+            }
+        ]
+        return $vweb.html()
+    }
+}
 
-    list_of_type := [
-        Type{
-            name         :    'Crypto'
-            type_text    :    list_of_crypto
-        },
-        Type{
-            name         :    'Web'
-            type_text    :    list_of_crypto
-        }
-    ]
-    return $vweb.html()
+@['/flagapi'; post]
+fn (mut app App) flagapi() vweb.Result {
+    the_cookie_id := app.get_cookie('id') or { '' }
+    if the_cookie_id == '' {
+        return app.redirect('/login.html')
+    } else {
+        // 提交部分之后慢慢写
+        return app.redirect('/login.html')
+    }
 }

@@ -113,12 +113,13 @@
           <!-- 模态框内容 -->
           <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <p>
-              <h1>${task.name}</h1>
-              <h2>${task.diff}</h2>
-              <h3>${task.intro}</h3>
-              <h4>${task.container}</h4>
-            </p>
+            <div class="form">
+              <h1 id="name">${task.name}</h1>
+              <h4>${task.diff}</h4>
+              <a>${task.intro}</a>
+              <div class="inputBox"><input id="flag" type="text" placeholder="请输入flag"></div>
+              <div class="inputBox"><input onclick="inputflag()" type="submit" value="提交"></div>
+            </div>
           </div>
         </div> 
         @end
@@ -149,7 +150,6 @@
 </script>
 
   <style>
-
     main{
       /*background: var(--bg-card-color);*/
       padding: 5px;
@@ -204,10 +204,49 @@
         background-color: var(--bg-card-color);
         margin: 15% auto; /* 15% 垂直位置，水平居中 */
         padding: 20px;
-        border: 1px solid var(--bg-background-color);
+        border: 3px solid var(--bg-background-color);
         width: 80%; /* 或指定宽度 */
         border-radius: 10px;
+        color: var(--text-botton-white);
     }
+
+    /* 输入框样式 */
+  .form .inputBox {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .form .inputBox input {
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--text-botton-white);
+  }
+
+  .form .inputBox input::placeholder {
+    color: var(--text-botton-white);
+  }
+
+  /* 登录按钮样式 */
+
+  .form .inputBox input[type="submit"] {
+    position:static;
+    bottom: 80px;
+    background: var(--bg-botton-white);
+    color: var(--text-wild-blue-yonder);
+    max-width: 100px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 /*
     ========================程序获取部分=====================
 */
