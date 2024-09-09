@@ -81,20 +81,20 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 # 支持
 
-| 需求  | 当前情况 |     检验人     |
-|:------------:|:----:|:----------:|
-|  firefox兼容问题 | js部分未支持 |  |
-|   edge兼容问题  |  已适配  |    sudopacman    |   
-|   登录措施   |  普通用户登录与注册  |  sudopacman   |
-|   管理员  |  未支持  |   |
-|  登录状态维持  |   当前页基本解决   |  sudopacman  |
-|  题目  |   已支持显示题目,暂未支持提交flag    | sudopacman |
-|  数据库  |  当前仅支持sqlite3数据库  |  sudopacman  |
-|  数据库安全  | 未处理 |  |
-|  错误显示  |  未设置  |  |
-
-
-
+| 需求          | 当前情况               | 检验人        |
+|:-----------:|:------------------:|:----------:|
+| firefox兼容问题 | js部分未支持            |            |
+| edge兼容问题    | 已适配                | sudopacman |
+| 登录措施        | 普通用户登录与注册          | sudopacman |
+| 管理员         | 未支持                |            |
+| 登录状态维持      | 当前页基本解决            | sudopacman |
+| 题目          | 已支持显示题目,暂未支持提交flag | sudopacman |
+| 数据库         | 当前仅支持sqlite3数据库    | sudopacman |
+| 数据库安全       | 未处理                |            |
+| 错误显示        | 未设置                |            |
+| 提交flag      | 能够提交flag, 未设置题目db  | sudopacman |
+| 函数分离        | 分离多个文件, 还未进行权限管理   | sudopacman |
+| 动态计分        | 动态计算分值(需重改数据库?)    |            |
 
 # VY许可证说明
 

@@ -6,6 +6,8 @@ module main
 import vweb
 import os
 import db.sqlite
+import err_log
+import sql_db { Personal, Task }
 
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
@@ -25,20 +27,7 @@ mut:
 }
 
 
-/*************
- * 数据库类型
-*************/
 
-// 登录信息
-
-@[table: 'personal']
-struct Personal {
-    id         string
-    email      string
-    passwd     string
-    whoami     string
-    score      int
-}
 
 // 题目
 // define true '../image/complete.png'
@@ -49,37 +38,13 @@ struct Type{
     type_text   []Task
 }
 
-@[table: 'task']
-struct  Task{
-    name       string
-    diff       string
-    intro      string
-
-    complete   string
-    flag       []string
-    container  bool
-}
 
 
 /*************
  *  功能函数
 *************/
 
-// 查询报错函数
-fn select_err() []Personal {
-    println('查询错误')
-    return []
-}
 
-// 输出日志
-fn log(data string) {
-    println(data)
-}
-
-// 显示输出报错
-fn log_err(data string) {
-    println('错误: ${data}')
-}
 
 // 获取id
 fn cookie_id(app App) string { 
@@ -104,7 +69,7 @@ fn main() {
     */
     // 数据库设置
 
-    log('当前线程数为: ${workers}')
+    err_log.logs('当前线程数为: ${workers}')
     vweb.run_at(
         new_app(),
         vweb.RunParams{
@@ -116,14 +81,14 @@ fn main() {
 // 使所有静态文件可用
 fn new_app() &App {
     mut db := sqlite.connect('./data.db')  or {
-        log('Error: sqlite调用错误')
+        err_log.logs('Error: sqlite调用错误')
         panic(err)
     }
     db.synchronization_mode(sqlite.SyncMode.off) or {
-        log('Error: data.db控制同步设置失败')
+        err_log.logs('Error: data.db控制同步设置失败')
     }
     db.journal_mode(sqlite.JournalMode.memory) or {
-        log('Error: data.db日志模式设置失败')
+        err_log.logs('Error: data.db日志模式设置失败')
     }
 
     mut app := &App{ db:db }
@@ -186,7 +151,7 @@ fn (mut app App) loginapi() vweb.Result {
 
     select_passwd := sql app.db {
         select from Personal where id == email || email == email
-    } or { select_err() }
+    } or { err_log.personal_err() }
 
     /***********************************************************************************
     *   如果id==email会出问题.
@@ -195,7 +160,7 @@ fn (mut app App) loginapi() vweb.Result {
     ************************************************************************************/
     for i in select_passwd {
         if i.passwd == passwd {
-            log('Setting: ${i.id}已登陆')
+            err_log.logs('Setting: ${i.id}已登陆')
             app.set_cookie(name:'id', value:i.id)
             app.set_cookie(name:'passwd', value:i.passwd)
         }
@@ -232,21 +197,21 @@ fn (mut app App) refusrerapi() vweb.Result {
     sql app.db {
         create table Personal
     } or {
-        log('Error: 创建失败')
+        err_log.logs('Error: 创建失败')
     }
 
     id_check := sql app.db {
         select from Personal where id == new_number.id || email == new_number.email
-    } or { select_err() }
+    } or { err_log.personal_err() }
     if id_check.len != 0 || new_number.id == '' {
-        log_err('Error: 检测到提交无效数据')
+        err_log.logs_err('Error: 检测到提交无效数据')
         return app.redirect('/refusrer.html')
     }
-    log('Setting: 存储数据')
+    err_log.logs('Setting: 存储数据')
     sql app.db {
         insert new_number into Personal
     } or {
-        log_err("Error: 存储数据出错${new_number}")
+        err_log.logs_err("Error: 存储数据出错${new_number}")
         return app.redirect('/refusrer.html')
     }
     // 设置cookie并更新页面情况
@@ -271,7 +236,7 @@ fn (mut app App) member() vweb.Result {
         c_pwd := cookie_passwd(app)
         id_check := sql app.db {
             select from Personal where id == c_id && passwd == c_pwd
-        } or { select_err() }
+        } or { err_log.personal_err() }
         if id_check.len != 0 {
             name := c_id
             email := id_check[0].email
@@ -289,12 +254,12 @@ fn (mut app App) memberapi() vweb.Result {
     newpasswd := app.form['newpasswd']
     id_check := sql app.db {
         select from Personal where id == c_id && passwd == oldpasswd
-    } or { select_err() }
+    } or { err_log.personal_err() }
     if id_check.len != 0 {
-        log('Setting: ${c_id}将修改密码为:${newpasswd}')
+        err_log.logs('Setting: ${c_id}将修改密码为:${newpasswd}')
         sql app.db {
             update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
-        } or { log('Error: ${c_id}修改密码失败') }
+        } or { err_log.logs('Error: ${c_id}修改密码失败') }
         app.set_cookie(name:'passwd', value:newpasswd)
         // 更新页面情况
         app.member()
@@ -352,7 +317,21 @@ fn (mut app App) flagapi() vweb.Result {
     if the_cookie_id == '' {
         return app.redirect('/login.html')
     } else {
+        flag := app.form['flag']
+        task_name := app.form['name']
+        /*
+        task_flag := sql app.db {
+            select from Task where name == task_name
+        } or { err_log.task_err() }
+        print(task_flag)
+        */
+        /*
+        if flag in task_flag {
+            err_log.logs('加分喵.')
+        }
+        */
         // 提交部分之后慢慢写
+        app.task()
         return app.redirect('/login.html')
     }
 }
