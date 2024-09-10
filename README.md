@@ -88,7 +88,8 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 | 登录措施        | 普通用户登录与注册          | sudopacman |
 | 管理员         | 未支持                |            |
 | 登录状态维持      | 当前页基本解决            | sudopacman |
-| 题目          | 已支持显示题目,暂未支持提交flag | sudopacman |
+| 题目          | 已支持显示题目,当前支持提交flag | sudopacman |
+| 多flag设置      |  `[]string`无法通过sqlite传递, 需设置fkey创建子db.               |            |
 | 数据库         | 当前仅支持sqlite3数据库    | sudopacman |
 | 数据库安全       | 未处理                |            |
 | 错误显示        | 未设置                |            |

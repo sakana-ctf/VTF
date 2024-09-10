@@ -7,7 +7,7 @@ import vweb
 import os
 import db.sqlite
 import err_log
-import sql_db { Personal, Task }
+import sql_db { Personal, Task, test_main_function }
 
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
@@ -68,6 +68,9 @@ fn main() {
     }
     */
     // 数据库设置
+
+    // 初始化题目进行测试.
+    //test_main_function()
 
     err_log.logs('当前线程数为: ${workers}')
     vweb.run_at(
@@ -278,24 +281,28 @@ fn (mut app App) task() vweb.Result {
     if the_cookie_id == '' {
         return app.redirect('/login.html')
     } else {
-        list_of_crypto := [
-            Task{
-                name       :    'ez_RSA'
-                diff       :    'baby'
-                intro      :    'test task'
-                complete   :    '../image/complete.png'
-                flag       :    ['flag{test_1}']
-                container  :    false
-            },
-            Task{
-                name       :    'mid_RSA'
-                diff       :    'baby'
-                intro      :    'test task'
-                complete   :    '../image/incomplete.png'
-                flag       :    ['flag{test_2}','flag{test_3}']
-                container  :    false
-            }
-        ]
+        list_of_crypto := sql app.db {
+            select from Task where type_text == "crypto"
+        } or { err_log.task_err() }
+
+        list_of_web := sql app.db {
+            select from Task where type_text == "web"
+        } or { err_log.task_err() }
+
+        list_of_misc := sql app.db {
+            select from Task where type_text == "misc"
+        } or { err_log.task_err() }
+
+        list_of_pwn := sql app.db {
+            select from Task where type_text == "pwn"
+        } or { err_log.task_err() }
+
+        list_of_reverse := sql app.db {
+            select from Task where type_text == "reverse"
+        } or { err_log.task_err() }
+        /*
+
+        */
 
         list_of_type := [
             Type{
@@ -304,7 +311,19 @@ fn (mut app App) task() vweb.Result {
             },
             Type{
                 name         :    'Web'
-                type_text    :    list_of_crypto
+                type_text    :    list_of_web
+            }
+            Type{
+                name         :    'MISC'
+                type_text    :    list_of_misc
+            }
+            Type{
+                name         :    'Pwn'
+                type_text    :    list_of_pwn
+            }
+            Type{
+                name         :    'Reverse'
+                type_text    :    list_of_reverse
             }
         ]
         return $vweb.html()
@@ -319,17 +338,17 @@ fn (mut app App) flagapi() vweb.Result {
     } else {
         flag := app.form['flag']
         task_name := app.form['name']
-        /*
         task_flag := sql app.db {
             select from Task where name == task_name
         } or { err_log.task_err() }
-        print(task_flag)
-        */
-        /*
-        if flag in task_flag {
-            err_log.logs('加分喵.')
+
+        // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
+        if flag == task_flag[0].flag {
+            app.db.exec_one("update task set complete='../image/complete.png' where name=${task_name};") or { err_log.logs_err('错误') }
+        } else {
+            err_log.logs('Flag: ${flag}错误')
         }
-        */
+        
         // 提交部分之后慢慢写
         app.task()
         return app.redirect('/login.html')
