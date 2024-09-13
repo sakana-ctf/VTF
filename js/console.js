@@ -59,9 +59,7 @@ function passwdlogin() {
 }
 
 // 提交flag
-function inputflag(){
-    var flag = document.getElementById('flag').value;
-    var name = document.getElementById('name').textContent.trim();
+function inputflag(flag, name){
     const data = "flag=" + flag + "&name=" + name;
     post_data(data, '/flagapi')
 }

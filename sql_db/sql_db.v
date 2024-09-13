@@ -32,7 +32,6 @@ pub struct Task{
     name       string
     diff       string
     intro      string
-
     complete   string
     container  bool
 }
@@ -51,25 +50,26 @@ pub fn test_main_function() {
         println('Error: 创建Task失败')
     }
 
-    data := [Task{
+    data := [
+        Task{
                 type_text  :    'crypto'
                 flag       :    'flag{test_1}'
-                name       :    'ez_RSA'
+                name       :    'ez_math'
                 diff       :    'baby'
                 intro      :    'test task'
                 complete   :    '../image/complete.png'
                 container  :    false
         },
     
-            Task{
+        Task{
                 type_text  :    'crypto'
-                name       :    'mid_RSA'
-                diff       :    'baby'
-                intro      :    'test task'
-                complete   :    '../image/incomplete.png'
                 flag       :    'flag{test_2}'
+                name       :    'mid_math'
+                diff       :    'baby'
+                intro      :    'new task'
+                complete   :    '../image/incomplete.png'
                 container  :    false
-            }
+        }
     ]
     
     for i in data {

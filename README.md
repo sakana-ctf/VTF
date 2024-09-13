@@ -81,21 +81,23 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 # 支持
 
-| 需求          | 当前情况               | 检验人        |
-|:-----------:|:------------------:|:----------:|
-| firefox兼容问题 | js部分未支持            |            |
-| edge兼容问题    | 已适配                | sudopacman |
-| 登录措施        | 普通用户登录与注册          | sudopacman |
-| 管理员         | 未支持                |            |
-| 登录状态维持      | 当前页基本解决            | sudopacman |
-| 题目          | 已支持显示题目,当前支持提交flag | sudopacman |
-| 多flag设置      |  `[]string`无法通过sqlite传递, 需设置fkey创建子db.               |            |
-| 数据库         | 当前仅支持sqlite3数据库    | sudopacman |
-| 数据库安全       | 未处理                |            |
-| 错误显示        | 未设置                |            |
-| 提交flag      | 能够提交flag, 未设置题目db  | sudopacman |
-| 函数分离        | 分离多个文件, 还未进行权限管理   | sudopacman |
-| 动态计分        | 动态计算分值(需重改数据库?)    |            |
+| 需求          | 当前情况                                  | 检验人        |
+|:-----------:|:-------------------------------------:|:----------:|
+| firefox兼容问题 | js部分未支持                               |            |
+| edge兼容问题    | 已适配                                   | sudopacman |
+| 线程设置        | 当前可以直接设置进程数, 未配置变量执行                  | sudopacman |
+| 登录措施        | 普通用户登录与注册                             | sudopacman |
+| 管理员         | 未支持                                   |            |
+| 登录状态维持      | 当前页基本解决                               | sudopacman |
+| 题目          | 已支持显示题目,当前支持提交flag                    | sudopacman |
+| 多flag设置     | `[]string`无法通过sqlite传递, 需设置fkey创建子db. |            |
+| 数据库         | 当前仅支持sqlite3数据库                       | sudopacman |
+| 数据库安全       | 未处理                                   |            |
+| 错误显示        | 未设置                                   |            |
+| 提交flag      | 提交flag过程已完善, 未设置题目db                  | sudopacman |
+| 提交更新        | 基础更新原理已实现, 未进行详细设置                    | sudopacman |
+| 函数分离        | 分离多个文件, 还未进行权限管理                      | sudopacman |
+| 动态计分        | 动态计算分值(需重改数据库?)                       |            |
 
 # VY许可证说明
 

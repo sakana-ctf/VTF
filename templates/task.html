@@ -105,11 +105,11 @@
           <div class="card-border-top">
             <span>${task.name}</span>
             <p class="job">${task.diff}</p>
-            <button onclick="showModal()"><image src="${task.complete}" width="100px"></image></button>
+            <button onclick="showModal('${task.name}')"><image src="${task.complete}" width="100px"></image></button>
           </div>
         </div>
         <!-- 模态框本身 -->
-        <div id="myModal" class="modal">
+        <div id="${task.name}" class="modal">
           <!-- 模态框内容 -->
           <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -118,7 +118,7 @@
               <h4>${task.diff}</h4>
               <a>${task.intro}</a>
               <div class="inputBox"><input id="flag" type="text" placeholder="请输入flag"></div>
-              <div class="inputBox"><input onclick="inputflag()" type="submit" value="提交"></div>
+              <div class="inputBox"><input onclick="inputflag('${task.flag}', '${task.name}')" type="submit" value="提交"></div>
             </div>
           </div>
         </div> 
@@ -129,21 +129,22 @@
 
   <script>
     // 显示模态框的函数
-    function showModal() {
-        myModal = document.getElementById("myModal");
-        myModal.style.display = "block";
-        //alert(task);
-        
+    var modal;
+
+    function showModal(name) {
+      myModal = document.getElementById(name);
+      myModal.style.display = "block";
+      modal = myModal;
     }
 
     // 关闭模态框的函数
     function closeModal() {
-        document.getElementById("myModal").style.display = "none";
+      modal.style.display = "none";
     }
 
     // 监听窗口点击事件，如果点击了模态框以外的区域，则关闭模态框
     window.onclick = function(event) {
-        if (event.target == document.getElementById("myModal")) {
+      if (event.target == modal) {
             closeModal();
         }
     }

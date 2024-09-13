@@ -62,17 +62,16 @@ fn cookie_passwd(app App) string {
 fn main() {
     // 线程设置
     mut workers := 3
-        /*
+
     if os.args.len >= 2 {
-        workers = os.args[1]
+        workers = os.args[1].int()
     }
-    */
+
     // 数据库设置
 
     // 初始化题目进行测试.
     //test_main_function()
 
-    err_log.logs('当前线程数为: ${workers}')
     vweb.run_at(
         new_app(),
         vweb.RunParams{
@@ -332,6 +331,13 @@ fn (mut app App) task() vweb.Result {
 
 @['/flagapi'; post]
 fn (mut app App) flagapi() vweb.Result {
+        /***********************************************************************************
+    *   这里有个很重要的问题:
+    *   我认为使用name作为判别依据是不现实的,
+    *   应该生成一段id信息进行区分,
+    *   但是现在实现功能要紧,
+    *   之后需要重新修改底层.
+    ************************************************************************************/
     the_cookie_id := app.get_cookie('id') or { '' }
     if the_cookie_id == '' {
         return app.redirect('/login.html')
@@ -343,14 +349,17 @@ fn (mut app App) flagapi() vweb.Result {
         } or { err_log.task_err() }
 
         // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
+
         if flag == task_flag[0].flag {
-            app.db.exec_one("update task set complete='../image/complete.png' where name=${task_name};") or { err_log.logs_err('错误') }
+            sql app.db {
+                update Task set complete = '../image/complete.png' where name == task_name 
+            } or { err_log.logs('Flag: ${flag}错误') }
         } else {
-            err_log.logs('Flag: ${flag}错误')
+            err_log.logs('Flag: 修改出错')
         }
-        
-        // 提交部分之后慢慢写
+
         app.task()
+
         return app.redirect('/login.html')
     }
 }
