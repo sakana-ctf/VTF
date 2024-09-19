@@ -23,9 +23,21 @@ pub struct Personal {
     score      int
 }
 
+// 未启用, 每次出题目时自动添加, 等我想想怎么实现
+@[table: 'personal_flag']
+pub struct PersonalFlag {
+    pub:
+    id         string
+    tid        int
+    complete   string
+}
+
+
+// 题目信息
 
 @[table: 'task']
 pub struct Task{
+    //tid       int
     pub:
     type_text  string
     flag       string
@@ -36,7 +48,15 @@ pub struct Task{
     container  bool
 }
 
+// 未启用, 这里需要对每个表进行查询, 我觉得会不会有点太复杂了?
+@[table: 'task_flag']
+pub struct TaskFlag {
+    pub:
+    tid        string
+    flag       string
+}
 
+// 测试部分初始化函数
 
 pub fn test_main_function() {
     mut db := sqlite.connect('./data.db')  or {

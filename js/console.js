@@ -56,6 +56,14 @@ function passwdlogin() {
     var passwd  = document.getElementById('passwd').value;
     const data = "email=" + email + "&passwd=" + passwd;
     post_data(data, '/loginapi');
+    location.reload();
+}
+
+// 登出函数
+function logout() {
+    delCookie('id');
+    delCookie('passdwd');
+    location.reload();
 }
 
 // 提交flag

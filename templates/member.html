@@ -100,15 +100,16 @@
       <h2>${name}</h2>
       <h3 class="mess-text">邮箱:</h3>
       <h3 class="con-text">${email}</h3><br>
+      <div class="logout"><input onclick="logout()" type="submit" value="退出"></div>
       <h4 class="mess-text">修改密码:</h4>
       <form>
         <div class="inputBox"><input id="old-passwd" type="text" placeholder="初始密码"></div>
         <div class="inputBox"><input id="new-passwd" type="password" placeholder="新的密码"></div>
         <div class="inputBox"><input id="passwd-again" type="password" placeholder="确认密码"></div>
         <div class="inputBox"><input onclick="fixpasswd()" type="submit" value="更新"></div>
-        <div class="forget-font">
-        </div>
       </form>
+      
+      
     </div>
   </main>
 
@@ -171,7 +172,7 @@
     .form .inputBox input::placeholder {
         color: var(--text-botton-white);
     }
-    
+
     /* 登录按钮样式 */
     
     .form .inputBox input[type="submit"] {
@@ -184,6 +185,46 @@
         font-weight: 600;
         cursor: pointer;
     }
+
+    /* 登出按钮样式 */
+
+    .form .logout {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .form .logout input {
+        width: 100%;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 16px;
+        letter-spacing: 1px;
+        color: var(--text-botton-white);
+    }
+
+    .form .logout input::placeholder {
+        color: var(--text-have-url-color);
+    }
+
+    .form .logout input[type="submit"] {
+        position: absolute;
+        right: 13%;
+        top: 100px;
+        background: var(--bg-botton-white);
+        color: var(--text-wild-blue-yonder);
+        max-width: 100px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+
     
       </style>
     

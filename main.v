@@ -219,7 +219,7 @@ fn (mut app App) refusrerapi() vweb.Result {
     // 设置cookie并更新页面情况
     app.set_cookie(name:'id', value:new_number.id)
     app.set_cookie(name:'passwd', value:new_number.passwd)
-    app.refusrer()
+    //app.refusrer()
     return app.redirect('/member.html')
 }
 
