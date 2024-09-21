@@ -8,6 +8,7 @@ import os
 import db.sqlite
 import err_log
 import sql_db { Personal, Task, test_main_function }
+import encoding.base64 { url_encode_str, url_decode_str }
 
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
@@ -22,7 +23,7 @@ mut:
 struct App {
     vweb.Context
 mut:
-    db sqlite.DB
+    db          sqlite.DB
     //counter shared Counter
 }
 
@@ -75,7 +76,7 @@ fn main() {
     vweb.run_at(
         new_app(),
         vweb.RunParams{
-            port: 8080
+            port: 80
             nr_workers: workers
         }) or { panic(err) }
 }
@@ -98,11 +99,19 @@ fn new_app() &App {
     return app
 }
 
+/* 弹窗信息
+ * false: ...
+ * true: ...
+ * warn: ...
+ */
+
 /*************
  * 首页文件页
 *************/ 
 @['/']
 fn (mut app App) index() vweb.Result {
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
     return $vweb.html()
 }
 
@@ -116,6 +125,8 @@ fn (mut app App) find_index() vweb.Result {
 *****************/ 
 @['/error.html']
 fn (mut app App) error() vweb.Result {
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
     return $vweb.html()
 }
 
@@ -129,7 +140,11 @@ pub fn (mut app App) not_found() vweb.Result {
 ***************/ 
 @['/login.html']
 fn (mut app App) login() vweb.Result {
-    the_cookie_id := app.get_cookie('id') or { '' }
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
+
+    the_cookie_id := app.get_cookie('id') or { '' }    
+    
     if the_cookie_id == '' {
         return $vweb.html()
     } else {
@@ -139,15 +154,6 @@ fn (mut app App) login() vweb.Result {
 
 @['/loginapi'; post]
 fn (mut app App) loginapi() vweb.Result {
-    /***********************************************************************************
-    *   这个函数直接参考refusrerapi去修改就好, 基本都是现成的:
-    *       1. 找refusrer.html的节点看看输入的信息设置的和refusrer.html是否基本一样.
-    *       2. 在console.js可以参考refusrer()函数编写passwdlogin().
-    *       3. 参考refusrerapi()函数修改以下函数.
-    *
-    *   备注: 与注册不同, 当需要先检查sql数据再进行登录
-    *   已完成(sudopacman)
-    ************************************************************************************/
     email := app.form['email']
     passwd := app.form['passwd']
 
@@ -155,6 +161,11 @@ fn (mut app App) loginapi() vweb.Result {
         select from Personal where id == email || email == email
     } or { err_log.personal_err() }
 
+    if select_passwd.len == 0 {
+        app.set_cookie(name:'mess', value: url_encode_str('Error: 用户不存在'))
+        return app.redirect('/error.html')
+    }
+    
     /***********************************************************************************
     *   如果id==email会出问题.
     *   应该先进行正则判别
@@ -167,8 +178,8 @@ fn (mut app App) loginapi() vweb.Result {
             app.set_cookie(name:'passwd', value:i.passwd)
         }
     }
-    
-    return app.redirect('/login.html')
+
+    return app.redirect('/error.html')
 }
 
 /**************
@@ -177,6 +188,9 @@ fn (mut app App) loginapi() vweb.Result {
 
 @['/refusrer.html']
 fn (mut app App) refusrer() vweb.Result {
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
+
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
     the_cookie_id := app.get_cookie('id') or { '' }
     if the_cookie_id == '' {
@@ -230,6 +244,9 @@ fn (mut app App) refusrerapi() vweb.Result {
 
 @['/member.html']
 fn (mut app App) member() vweb.Result {
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
+    
     the_cookie_id := app.get_cookie('id') or { '' }
     if the_cookie_id == '' {
         return app.redirect('/login.html')
@@ -276,6 +293,9 @@ fn (mut app App) memberapi() vweb.Result {
 
 @['/task.html']
 fn (mut app App) task() vweb.Result {
+    mess := url_decode_str(app.get_cookie('mess') or { '' })
+    app.set_cookie(name:'mess', value:'')
+    
     the_cookie_id := app.get_cookie('id') or { '' }
     if the_cookie_id == '' {
         return app.redirect('/login.html')

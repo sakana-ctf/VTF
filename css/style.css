@@ -43,7 +43,8 @@
   --background-color: rgb(20, 20, 20);
   --background-line-color: rgb(41, 119, 255);
   --text-color: rgb(118, 155, 204);
-  --text-have-url-color: rgb(250, 92, 92);
+  --text-have-url-color: rgb(252, 114, 114);
+  --red-outline: rgb(139, 24, 24);
   --text-title-color: rgb(118, 155, 204);
   --text-table-color: rgb(164, 213, 235);
   --table-header-color: rgb(52,67,87);
@@ -63,6 +64,34 @@
   --box-text-pposition-x: 12px;
   --table-height: 700px;
 
+}
+
+/*-----------------------------------*\
+  #alert 弹窗
+\*-----------------------------------*/
+
+.notification {
+  text-align: center;
+  margin:auto;
+  top:100;
+  left:0;
+  right:0;
+  position: fixed;
+  width: 250px;
+  height: 50px;
+  padding: 10px;
+  background-color: var(--text-have-url-color);
+  color: var(--text-botton-white);
+  border: 1px solid var(--red-outline);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.notification:hover {
+  opacity: 0.8;
 }
 
 /*-----------------------------------*\
