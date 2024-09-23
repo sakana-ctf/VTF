@@ -7,8 +7,10 @@ import vweb
 import os
 import db.sqlite
 import err_log
+import log
 import sql_db { Personal, Task, test_main_function }
 import encoding.base64 { url_encode_str, url_decode_str }
+
 
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
@@ -50,13 +52,25 @@ struct Type{
 // 获取id
 fn cookie_id(app App) string { 
     c_id := app.get_cookie('id') or { '' }
-    return c_id
+    return url_decode_str(c_id)
+}
+
+// 获取email
+fn cookie_email(app App) string { 
+    c_email := app.get_cookie('email') or { '' }
+    return url_decode_str(c_email)
 }
 
 // 获取passwd
 fn cookie_passwd(app App) string {
     c_pwd := app.get_cookie('passwd') or { '' }
     return c_pwd
+}
+
+fn cookie_mess(mut app App) string {
+    mess := app.get_cookie('mess') or { '' }
+    app.set_cookie(name:'mess', value:'')
+    return url_decode_str(mess)
 }
 
 // 主函数
@@ -110,8 +124,7 @@ fn new_app() &App {
 *************/ 
 @['/']
 fn (mut app App) index() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
+    mess := cookie_mess(mut app)
     return $vweb.html()
 }
 
@@ -125,8 +138,7 @@ fn (mut app App) find_index() vweb.Result {
 *****************/ 
 @['/error.html']
 fn (mut app App) error() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
+    mess := cookie_mess(mut app)
     return $vweb.html()
 }
 
@@ -140,12 +152,11 @@ pub fn (mut app App) not_found() vweb.Result {
 ***************/ 
 @['/login.html']
 fn (mut app App) login() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
+    mess := cookie_mess(mut app)
 
-    the_cookie_id := app.get_cookie('id') or { '' }    
+    c_id := cookie_id(app)
     
-    if the_cookie_id == '' {
+    if c_id == '' {
         return $vweb.html()
     } else {
         return app.redirect('/member.html')
@@ -154,8 +165,8 @@ fn (mut app App) login() vweb.Result {
 
 @['/loginapi'; post]
 fn (mut app App) loginapi() vweb.Result {
-    email := app.form['email']
-    passwd := app.form['passwd']
+    email := url_decode_str(app.form['email'])
+    passwd := url_decode_str(app.form['passwd'])
 
     select_passwd := sql app.db {
         select from Personal where id == email || email == email
@@ -170,13 +181,26 @@ fn (mut app App) loginapi() vweb.Result {
     *   如果id==email会出问题.
     *   应该先进行正则判别
     *   以上需求还未实现, 当前以实现为主要目的
+    *   
+    *   登录密码和cookie我希望能使用不同的方式进行存储
+    *   希望能使密码系统门数足够小
+    *   且就算盗取cookie后具有可恢复性
+    *   数据库中的passwd仅作为验证信息
+    *   无法使用cookie进行登录
     ************************************************************************************/
+    mut not_passwd := true
+    
     for i in select_passwd {
-        if i.passwd == passwd {
-            err_log.logs('Setting: ${i.id}已登陆')
+        if i.passwd == err_log.sha256_str(passwd) {
+            not_passwd = false
+            err_log.logs('${log.set_log}: ${i.id}已登陆')
             app.set_cookie(name:'id', value:i.id)
             app.set_cookie(name:'passwd', value:i.passwd)
         }
+    }
+
+    if not_passwd {
+        app.set_cookie(name:'mess', value: url_encode_str('Error: 密码错误'))
     }
 
     return app.redirect('/error.html')
@@ -188,12 +212,11 @@ fn (mut app App) loginapi() vweb.Result {
 
 @['/refusrer.html']
 fn (mut app App) refusrer() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
+    mess := cookie_mess(mut app)
 
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
-    the_cookie_id := app.get_cookie('id') or { '' }
-    if the_cookie_id == '' {
+    c_id := cookie_id(app)
+    if c_id == '' {
         return $vweb.html()
     } else {
         return app.redirect('/member.html')
@@ -202,10 +225,22 @@ fn (mut app App) refusrer() vweb.Result {
 
 @['/refusrerapi'; post]
 fn (mut app App) refusrerapi() vweb.Result {
+    id := url_decode_str(app.form['id'])
+    email := url_decode_str(app.form['email'])
+    passwd := url_decode_str(app.form['passwd'])
+
+    if id.index('@') != none {
+        err_log.logs_err('${log.false_log}: 检测到名称中包含"@"')
+        app.set_cookie(name:'mess', value: url_encode_str('Error: 名称中禁止包含"@"'))
+        return app.redirect('/error.html')
+    }
+
+    // email 的格式也应该进行正则匹配.
+    
     new_number := Personal{
-        id      :   app.form['id']
-        email   :   app.form['email']
-        passwd  :   app.form['passwd']
+        id      :   url_encode_str(id)
+        email   :   url_encode_str(email)
+        passwd  :   err_log.sha256_str(app.form['passwd'])
         whoami  :   'member'
         score   :   0
     }
@@ -213,28 +248,29 @@ fn (mut app App) refusrerapi() vweb.Result {
     sql app.db {
         create table Personal
     } or {
-        err_log.logs('Error: 创建失败')
+        err_log.logs('${log.false_log}: 检测到数据库创建失败')
     }
 
     id_check := sql app.db {
         select from Personal where id == new_number.id || email == new_number.email
     } or { err_log.personal_err() }
     if id_check.len != 0 || new_number.id == '' {
-        err_log.logs_err('Error: 检测到提交无效数据')
-        return app.redirect('/refusrer.html')
+        err_log.logs_err('${log.false_log}: 检测到提交无效数据')
+        app.set_cookie(name:'mess', value: url_encode_str('Error: 检测到提交无效数据'))
+        return app.redirect('/error.html')
     }
-    err_log.logs('Setting: 存储数据')
     sql app.db {
         insert new_number into Personal
     } or {
-        err_log.logs_err("Error: 存储数据出错${new_number}")
-        return app.redirect('/refusrer.html')
+        err_log.logs_err("${log.false_log}: 存储数据出错${new_number}")
+        app.set_cookie(name:'mess', value: url_encode_str('Error: 存储数据出错'))
+        return app.redirect('/error.html')
     }
     // 设置cookie并更新页面情况
-    app.set_cookie(name:'id', value:new_number.id)
+    app.set_cookie(name:'id', value:url_encode_str(new_number.id))
     app.set_cookie(name:'passwd', value:new_number.passwd)
     //app.refusrer()
-    return app.redirect('/member.html')
+    return app.redirect('/error.html')
 }
 
 
@@ -244,23 +280,22 @@ fn (mut app App) refusrerapi() vweb.Result {
 
 @['/member.html']
 fn (mut app App) member() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
-    
-    the_cookie_id := app.get_cookie('id') or { '' }
-    if the_cookie_id == '' {
+    mess := cookie_mess(mut app)
+    c_id := cookie_id(app)
+
+    if c_id == '' {
         return app.redirect('/login.html')
     } else {
-        c_id := cookie_id(app)
         c_pwd := cookie_passwd(app)
         id_check := sql app.db {
             select from Personal where id == c_id && passwd == c_pwd
         } or { err_log.personal_err() }
         if id_check.len != 0 {
             name := c_id
-            email := id_check[0].email
+            email := url_decode_str(id_check[0].email)
             return $vweb.html()
         } else {
+            println(url_decode_str(c_pwd))
             return app.redirect('/error.html')
         }
     }
@@ -269,8 +304,8 @@ fn (mut app App) member() vweb.Result {
 @['/memberapi'; post]
 fn (mut app App) memberapi() vweb.Result {
     c_id := cookie_id(app)
-    oldpasswd := app.form['oldpasswd']
-    newpasswd := app.form['newpasswd']
+    oldpasswd := url_decode_str(app.form['oldpasswd'])
+    newpasswd := url_decode_str(app.form['newpasswd'])
     id_check := sql app.db {
         select from Personal where id == c_id && passwd == oldpasswd
     } or { err_log.personal_err() }
@@ -278,7 +313,7 @@ fn (mut app App) memberapi() vweb.Result {
         err_log.logs('Setting: ${c_id}将修改密码为:${newpasswd}')
         sql app.db {
             update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
-        } or { err_log.logs('Error: ${c_id}修改密码失败') }
+        } or { err_log.logs('${log.false_log}: ${c_id}修改密码失败') }
         app.set_cookie(name:'passwd', value:newpasswd)
         // 更新页面情况
         app.member()
@@ -383,3 +418,4 @@ fn (mut app App) flagapi() vweb.Result {
         return app.redirect('/login.html')
     }
 }
+

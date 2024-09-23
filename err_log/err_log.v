@@ -2,6 +2,12 @@ module err_log
 
 import sql_db { Personal, Task }
 import log
+import crypto.sha256
+
+// sha256加密
+pub fn sha256_str(data string) string {
+    return sha256.sum(data.bytes()).hex()
+}
 
 // 输出日志
 pub fn logs(data string) {

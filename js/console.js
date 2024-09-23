@@ -1,3 +1,20 @@
+function url_encode_str(input) {
+    // 对输入字符串进行 URI 编码，确保所有字符都是安全的
+    let encoded = encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
+        function(match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }
+    );
+    // 对编码后的字符串进行 Base64 编码
+    let base64 = window.btoa(encoded);
+    // 替换掉 Base64 编码中的 URL 不安全字符
+    base64 = base64.replace(/\+/g, '-'); // 替换 + 为 -
+    base64 = base64.replace(/\//g, '_'); // 替换 / 为 _
+    base64 = base64.replace(/=+$/, '');  // 去除末尾的 =
+
+    return base64;
+}
+
 // post传递数据
 function post_data(data, route) {
     console.log("发送信息ing...");
@@ -22,12 +39,12 @@ function post_data(data, route) {
 
 // 注册函数
 function refusrer() {
-    var id = document.getElementById('id').value;
-    var email = document.getElementById('email').value;
+    var id = url_encode_str(document.getElementById('id').value);
+    var email = url_encode_str(document.getElementById('email').value);
     var passwd = document.getElementById('passwd').value;
     var passwdagain = document.getElementById('passwdagain').value;
     if (passwd === passwdagain) {             
-        const data = "id=" + id + "&email=" + email + "&passwd=" + passwd;
+        const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
         post_data(data, '/refusrerapi');
     } else {
         alert("Error: 密码不一致");
@@ -36,11 +53,11 @@ function refusrer() {
 
 // 更新密码函数
 function fixpasswd() {
-    var oldpasswd = document.getElementById('old-passwd').value;
+    var oldpasswd = url_encode_str(document.getElementById('old-passwd').value);
     var newpasswd = document.getElementById('new-passwd').value;
     var passwdagain = document.getElementById('passwd-again').value;
     if (newpasswd === passwdagain) {
-        const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + newpasswd;
+        const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
         post_data(data, '/memberapi');
     } else {
         alert("Error: 密码不一致");
@@ -52,8 +69,8 @@ function passwdlogin() {
     /*****************************
     *   修改方法参考main.v文件
     ******************************/
-    var email = document.getElementById('email').value;
-    var passwd  = document.getElementById('passwd').value;
+    var email = url_encode_str(document.getElementById('email').value);
+    var passwd  = url_encode_str(document.getElementById('passwd').value);
     const data = "email=" + email + "&passwd=" + passwd;
     post_data(data, '/loginapi');
     location.reload();
