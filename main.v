@@ -11,7 +11,6 @@ import log
 import sql_db { Personal, Task, test_main_function }
 import encoding.base64 { url_encode_str, url_decode_str }
 
-
 /*
 // 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
 struct Counter {
@@ -29,9 +28,6 @@ mut:
     //counter shared Counter
 }
 
-
-
-
 // 题目
 // define true '../image/complete.png'
 // define false '../image/incomplete.png'
@@ -40,14 +36,6 @@ struct Type{
     name        string
     type_text   []Task
 }
-
-
-
-/*************
- *  功能函数
-*************/
-
-
 
 // 获取id
 fn cookie_id(app App) string { 
@@ -72,6 +60,10 @@ fn cookie_mess(mut app App) string {
     app.set_cookie(name:'mess', value:'')
     return url_decode_str(mess)
 }
+
+/*************
+ *  功能函数
+*************/
 
 // 主函数
 fn main() {
@@ -240,7 +232,7 @@ fn (mut app App) refusrerapi() vweb.Result {
     new_number := Personal{
         id      :   url_encode_str(id)
         email   :   url_encode_str(email)
-        passwd  :   err_log.sha256_str(app.form['passwd'])
+        passwd  :   err_log.sha256_str(passwd)
         whoami  :   'member'
         score   :   0
     }
@@ -268,7 +260,7 @@ fn (mut app App) refusrerapi() vweb.Result {
     }
     // 设置cookie并更新页面情况
     app.set_cookie(name:'id', value:url_encode_str(new_number.id))
-    app.set_cookie(name:'passwd', value:new_number.passwd)
+    app.set_cookie(name:'passwd', value:err_log.sha256_str(passwd))
     //app.refusrer()
     return app.redirect('/error.html')
 }
@@ -282,11 +274,11 @@ fn (mut app App) refusrerapi() vweb.Result {
 fn (mut app App) member() vweb.Result {
     mess := cookie_mess(mut app)
     c_id := cookie_id(app)
+    c_pwd := cookie_passwd(app)
 
     if c_id == '' {
         return app.redirect('/login.html')
     } else {
-        c_pwd := cookie_passwd(app)
         id_check := sql app.db {
             select from Personal where id == c_id && passwd == c_pwd
         } or { err_log.personal_err() }
@@ -331,7 +323,7 @@ fn (mut app App) task() vweb.Result {
     mess := url_decode_str(app.get_cookie('mess') or { '' })
     app.set_cookie(name:'mess', value:'')
     
-    the_cookie_id := app.get_cookie('id') or { '' }
+    the_cookie_id := cookie_id(app)
     if the_cookie_id == '' {
         return app.redirect('/login.html')
     } else {
