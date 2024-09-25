@@ -83,7 +83,8 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 | 需求          | 当前情况                                  | 检验人        |
 |:-----------:|:-------------------------------------:|:----------:|
-| wiki版本号 | 当前跟随到v1.1.0 | sudopacman |
+| 版本号 | v1.1.2(解决登录问题)      | sudopacman |
+| wiki版本号 | 当前跟随到v1.1.2 | sudopacman |
 | firefox兼容问题 | js部分未支持, 可能需要重构源码                               |            |
 | edge兼容问题    | 已适配                                   | sudopacman |
 | 线程设置        | 当前可以直接设置进程数, 未配置变量执行                  | sudopacman |
@@ -96,8 +97,8 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 | 题目          | 已支持显示题目,当前支持提交flag                    | sudopacman |
 | 多flag设置     | `[]string`无法通过sqlite传递, 需设置fkey创建子db. |            |
 | 数据库         | 当前仅支持sqlite3数据库                       | sudopacman |
-| 数据库安全       | 使用base64编码数据进行导入取出                                   | sudopacman           |
-| 登录-cookie-数据库密码系统 |  考虑设计一套4k门以下密码系统应对数据库泄露  |  |
+| 数据库安全     | 使用base64编码数据进行导入取出                                   | sudopacman           |
+| 登录-cookie-数据库密码系统 |  统一使用base64/sha512进行管理  | sudopacman |
 | 错误显示        | 已重构, js上统一使用`showinfo(${mess})`显示错误                                   | sudopacman           |
 | 提交flag      | 提交flag过程已完善, 未设置题目db                  | sudopacman |
 | 提交更新        | 基础更新原理已实现, 未进行详细设置                    | sudopacman |

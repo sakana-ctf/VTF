@@ -52,7 +52,7 @@ fn cookie_email(app App) string {
 // 获取passwd
 fn cookie_passwd(app App) string {
     c_pwd := app.get_cookie('passwd') or { '' }
-    return c_pwd
+    return url_decode_str(c_pwd)
 }
 
 fn cookie_mess(mut app App) string {
@@ -161,7 +161,7 @@ fn (mut app App) loginapi() vweb.Result {
     passwd := url_decode_str(app.form['passwd'])
 
     select_passwd := sql app.db {
-        select from Personal where id == email || email == email
+        select from Personal where id == url_encode_str(email) || email == url_encode_str(email)
     } or { err_log.personal_err() }
 
     if select_passwd.len == 0 {
@@ -187,7 +187,7 @@ fn (mut app App) loginapi() vweb.Result {
             not_passwd = false
             err_log.logs('${log.set_log}: ${i.id}已登陆')
             app.set_cookie(name:'id', value:i.id)
-            app.set_cookie(name:'passwd', value:i.passwd)
+            app.set_cookie(name:'passwd', value:url_encode_str(passwd))
         }
     }
 
@@ -259,9 +259,8 @@ fn (mut app App) refusrerapi() vweb.Result {
         return app.redirect('/error.html')
     }
     // 设置cookie并更新页面情况
-    app.set_cookie(name:'id', value:url_encode_str(new_number.id))
-    app.set_cookie(name:'passwd', value:err_log.sha256_str(passwd))
-    //app.refusrer()
+    app.set_cookie(name:'id', value:url_encode_str(id))
+    app.set_cookie(name:'passwd', value:url_encode_str(passwd))
     return app.redirect('/error.html')
 }
 
@@ -280,7 +279,7 @@ fn (mut app App) member() vweb.Result {
         return app.redirect('/login.html')
     } else {
         id_check := sql app.db {
-            select from Personal where id == c_id && passwd == c_pwd
+            select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
         } or { err_log.personal_err() }
         if id_check.len != 0 {
             name := c_id
@@ -299,14 +298,14 @@ fn (mut app App) memberapi() vweb.Result {
     oldpasswd := url_decode_str(app.form['oldpasswd'])
     newpasswd := url_decode_str(app.form['newpasswd'])
     id_check := sql app.db {
-        select from Personal where id == c_id && passwd == oldpasswd
+        select from Personal where id == c_id && passwd == err_log.sha256_str(oldpasswd)
     } or { err_log.personal_err() }
     if id_check.len != 0 {
         err_log.logs('Setting: ${c_id}将修改密码为:${newpasswd}')
         sql app.db {
             update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
         } or { err_log.logs('${log.false_log}: ${c_id}修改密码失败') }
-        app.set_cookie(name:'passwd', value:newpasswd)
+        app.set_cookie(name:'passwd', value: newpasswd)
         // 更新页面情况
         app.member()
     }
