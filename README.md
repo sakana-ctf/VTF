@@ -83,7 +83,7 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 | 需求          | 当前情况                                  | 检验人        |
 |:-----------:|:-------------------------------------:|:----------:|
-| 版本号 | v1.1.2(解决登录问题)      | sudopacman |
+| 版本号 | v1.1.3(解决登录安全问题)      | sudopacman |
 | wiki版本号 | 当前跟随到v1.1.2 | sudopacman |
 | firefox兼容问题 | js部分未支持, 可能需要重构源码                               |            |
 | edge兼容问题    | 已适配                                   | sudopacman |
@@ -93,7 +93,7 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 | 非member视角       |  未支持       |                    |
 | 权限区分       |  未实现, 考虑使用新函数统一区分权限       |                    |
 | 登录状态维持      | 当前页基本解决                               | sudopacman |
-| 登录安全          | 参考`\member.html`路由, 未检查其他页面 | sudopacman |
+| 登录安全          | 实现登录函数`login_status()`, 未扩展到其他路由 | sudopacman |
 | 题目          | 已支持显示题目,当前支持提交flag                    | sudopacman |
 | 多flag设置     | `[]string`无法通过sqlite传递, 需设置fkey创建子db. |            |
 | 数据库         | 当前仅支持sqlite3数据库                       | sudopacman |

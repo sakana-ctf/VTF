@@ -37,6 +37,37 @@ struct Type{
     type_text   []Task
 }
 
+/* 登录验证函数
+fn function() {
+    //mess := cookie_mess(mut app)
+    c_id := cookie_id(app)
+    c_pwd := cookie_passwd(app)
+    login := login_status(app, c_id, c_pwd)
+
+    if c_id == '' {
+        return app.redirect('/login.html')
+    } else if  login.return_bool {
+        [路由主体函数]
+    } else {
+        return app.redirect('/error.html')
+    }
+ */
+struct LoginStatusReturn {
+    return_bool         bool
+    id_check            []Personal
+}
+
+fn login_status(app App, c_id string, c_pwd string) LoginStatusReturn {
+    id_check := sql app.db {
+        select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
+    } or { err_log.personal_err() }
+    if id_check.len != 0 {
+        return LoginStatusReturn{true, id_check}
+    } else {
+        return LoginStatusReturn{false, id_check}
+    }
+}
+
 // 获取id
 fn cookie_id(app App) string { 
     c_id := app.get_cookie('id') or { '' }
@@ -264,7 +295,6 @@ fn (mut app App) refusrerapi() vweb.Result {
     return app.redirect('/error.html')
 }
 
-
 /**************
  * 个人文件页
 ***************/
@@ -274,21 +304,16 @@ fn (mut app App) member() vweb.Result {
     mess := cookie_mess(mut app)
     c_id := cookie_id(app)
     c_pwd := cookie_passwd(app)
+    login := login_status(app, c_id, c_pwd)
 
     if c_id == '' {
         return app.redirect('/login.html')
+    } else if  login.return_bool {
+        name := c_id
+        email := url_decode_str(login.id_check[0].email)
+        return $vweb.html()
     } else {
-        id_check := sql app.db {
-            select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
-        } or { err_log.personal_err() }
-        if id_check.len != 0 {
-            name := c_id
-            email := url_decode_str(id_check[0].email)
-            return $vweb.html()
-        } else {
-            println(url_decode_str(c_pwd))
-            return app.redirect('/error.html')
-        }
+        return app.redirect('/error.html')
     }
 }
 
