@@ -51,6 +51,7 @@ fn function() {
     } else {
         return app.redirect('/error.html')
     }
+}
  */
 struct LoginStatusReturn {
     return_bool         bool
@@ -344,13 +345,14 @@ fn (mut app App) memberapi() vweb.Result {
 
 @['/task.html']
 fn (mut app App) task() vweb.Result {
-    mess := url_decode_str(app.get_cookie('mess') or { '' })
-    app.set_cookie(name:'mess', value:'')
-    
-    the_cookie_id := cookie_id(app)
-    if the_cookie_id == '' {
+    mess := cookie_mess(mut app)
+    c_id := cookie_id(app)
+    c_pwd := cookie_passwd(app)
+    login := login_status(app, c_id, c_pwd)
+
+    if c_id == '' {
         return app.redirect('/login.html')
-    } else {
+    } else if  login.return_bool {
         list_of_crypto := sql app.db {
             select from Task where type_text == "crypto"
         } or { err_log.task_err() }
@@ -397,6 +399,8 @@ fn (mut app App) task() vweb.Result {
             }
         ]
         return $vweb.html()
+    } else {
+        return app.redirect('/error.html')
     }
 }
 
