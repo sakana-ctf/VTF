@@ -38,7 +38,7 @@ sudo pacman -S sqlite
 **debian系linux用户**
 
 ```bash
-sudo apt install sqlite3, libsqlite3-dev
+sudo apt install sqlite3 libsqlite3-dev
 ```
 
 **Fedora linux用户**
