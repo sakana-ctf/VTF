@@ -15,7 +15,7 @@
   <!-- 
     - 头部标签
   -->
-  <link rel="shortcut icon" href="../image/sakana.png" type="image/svg+xml">
+  <link rel="shortcut icon" href="../image/sakana.png" type="/image/svg+xml">
 
   <!-- 
     - 引入css文件
@@ -100,7 +100,7 @@
           <div class="card-border-top">
             <span>${task.name}</span>
             <p class="job">${task.diff}</p>
-            <button onclick="showModal('${task.name}')"><image src="${task.complete}" width="100px"></image></button>
+            <button onclick="showModal('${task.name}')"><image src="${task.task[c_pid - 1].complete}" width="100px"></image></button>
           </div>
         </div>
         <!-- 模态框本身 -->

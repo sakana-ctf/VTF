@@ -83,8 +83,8 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 | 需求                | 当前情况                                              | 检验人        |
 |:-----------------:|:-------------------------------------------------:|:----------:|
-| 版本号               | v1.2.0(解决登录安全问题, 添加网页批量修改功能)                      | sudopacman |
-| wiki版本号           | 当前跟随到v1.2.0                                       | sudopacman |
+| 版本号               | v1.2.1(解决登录安全问题, 添加网页批量修改功能)                      | sudopacman |
+| wiki版本号           | 当前跟随到v1.2.1                                       | sudopacman |
 | firefox兼容问题       | js部分未支持, 可能需要重构源码                                 |            |
 | edge兼容问题          | 已适配                                               | sudopacman |
 | 线程设置              | 当前可以直接设置进程数, 未配置变量执行                              | sudopacman |
@@ -106,6 +106,7 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 | 动态计分              | 动态计算分值(需重改数据库?)                                   |            |
 | 线程数设置             | 支持自定义线程数(默认为3)                                    | sudopacman |
 | html分块编辑          | 待重构                                               |            |
+| 图片格式修改为webp           | 以后再慢慢调                                           |            |
 | 中英文显示问题           | 未考虑实现方式                                           |            |
 | 数据可视化             | 考虑使用godot接管数据                                     |            |
 | html批量修改          | `templates_split`部分修改后批量导入, 暂时需使用python, 不支持动态修改. |    sudopacman        |

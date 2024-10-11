@@ -1,95 +1,108 @@
-// v -d vweb_livereload watch run .
+// v -d veb_livereload watch run .
 // 重新实时加载运行vweb应用程序
 
 module main
 
-import vweb
+import db.sqlite { DB }
+import veb
 import os
-import db.sqlite
-import err_log
-import log
-import sql_db { Personal, Task, test_main_function }
-import encoding.base64 { url_encode_str, url_decode_str }
+import sql_db {
+    connect_db,
+    create_db,
+    
+    login_status,
+    select_passwd_db,
+    register_status,
+    register_db,
+    id_check,
+    find_user,
 
-/*
-// 跨域请求参数, 用后端实现更安全, 但是这部分实现起来好麻烦.
-struct Counter {
-mut:
-    id          string
-    passwd      string
+    build_task,
+    post_flag,
+
+    sha256_str,
+    test_main_function
 }
-*/
+
+import encoding.base64 { 
+    url_encode_str, 
+    url_decode_str 
+}
+
+struct User {
+mut:
+	name string
+	id   int
+}
 
 // 基础结构体
-struct App {
-    vweb.Context
+struct Context {
+    veb.Context
 mut:
-    db          sqlite.DB
+	// In the context struct we store data that could be different
+	// for each request. Like a User struct or a session id
+	user       User
+	session_id string
+//mut:
+    //db    sqlite.DB
     //counter shared Counter
 }
+
+pub struct App {
+    veb.StaticHandler
+	// In the app struct we store data that should be accessible by all endpoints.
+	// For example, a database or configuration values.
+mut:
+    db DB
+}
+
 
 // 题目
 // define true '../image/complete.png'
 // define false '../image/incomplete.png'
 
-struct Type{
-    name        string
-    type_text   []Task
-}
 
-/* 登录验证函数
+
+/* ==================登录验证函数-===================
 fn function() {
     //mess := cookie_mess(mut app)
     c_id := cookie_id(app)
     c_pwd := cookie_passwd(app)
-    login := login_status(app, c_id, c_pwd)
+    login := login_status(app.db, app.db, c_id, c_pwd)
 
     if c_id == '' {
-        return app.redirect('/login.html')
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
     } else if  login.return_bool {
         [路由主体函数]
     } else {
-        return app.redirect('/error.html')
+        return ctx.redirect('/error.html')
     }
 }
- */
-struct LoginStatusReturn {
-    return_bool         bool
-    id_check            []Personal
-}
-
-fn login_status(app App, c_id string, c_pwd string) LoginStatusReturn {
-    id_check := sql app.db {
-        select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
-    } or { err_log.personal_err() }
-    if id_check.len != 0 {
-        return LoginStatusReturn{true, id_check}
-    } else {
-        return LoginStatusReturn{false, id_check}
-    }
-}
+    ================================================
+*/
 
 // 获取id
-fn cookie_id(app App) string { 
-    c_id := app.get_cookie('id') or { '' }
+fn cookie_id(ctx Context) string { 
+    c_id := ctx.get_cookie('id') or { '' }
     return url_decode_str(c_id)
 }
 
 // 获取email
-fn cookie_email(app App) string { 
-    c_email := app.get_cookie('email') or { '' }
+fn cookie_email(ctx Context) string { 
+    c_email := ctx.get_cookie('email') or { '' }
     return url_decode_str(c_email)
 }
 
 // 获取passwd
-fn cookie_passwd(app App) string {
-    c_pwd := app.get_cookie('passwd') or { '' }
+fn cookie_passwd(ctx Context) string {
+    c_pwd := ctx.get_cookie('passwd') or { '' }
     return url_decode_str(c_pwd)
 }
 
-fn cookie_mess(mut app App) string {
-    mess := app.get_cookie('mess') or { '' }
-    app.set_cookie(name:'mess', value:'')
+fn cookie_mess(mut ctx Context) string {
+    mess := ctx.get_cookie('mess') or { '' }
+    ctx.set_cookie(name:'mess', value:'')
     return url_decode_str(mess)
 }
 
@@ -106,128 +119,106 @@ fn main() {
         workers = os.args[1].int()
     }
 
-    // 数据库设置
+    println('暂不支持设置线程数: ${workers}')
 
-    // 初始化题目进行测试.
+
+    // 创建示例题目:
     //test_main_function()
+    mut app := &App{ db : connect_db() }
+    create_db(app.db)
+    
+    app.static_mime_types['.cjs'] = 'txt/javascript'
+    app.static_mime_types['.vbs'] = 'txt/javascript'
+    app.static_mime_types['.md'] = 'txt/plain'
+    app.static_mime_types['.png~'] = 'image/png'
+    app.handle_static('static', true) or {
+        panic(err)
+    }
 
-    vweb.run_at(
-        new_app(),
-        vweb.RunParams{
+    veb.run[App, Context](mut app, 80)
+    /*
+    veb.run_at(
+        mut new_app(),
+        veb.RunParams{
             port: 80
             nr_workers: workers
         }) or { panic(err) }
+    */
 }
 
 // 使所有静态文件可用
+/*
 fn new_app() &App {
-    mut db := sqlite.connect('./data.db')  or {
-        err_log.logs('Error: sqlite调用错误')
-        panic(err)
-    }
-    db.synchronization_mode(sqlite.SyncMode.off) or {
-        err_log.logs('Error: data.db控制同步设置失败')
-    }
-    db.journal_mode(sqlite.JournalMode.memory) or {
-        err_log.logs('Error: data.db日志模式设置失败')
-    }
-
-    mut app := &App{ db:db }
+    //mut db := connect_db()
+    mut app := &App{ }
     app.mount_static_folder_at(os.resource_abs_path('.'), '/')
     return app
 }
-
-/* 弹窗信息
- * false: ...
- * true: ...
- * warn: ...
- */
-
+*/
 /*************
  * 首页文件页
 *************/ 
 @['/']
-fn (mut app App) index() vweb.Result {
-    mess := cookie_mess(mut app)
-    return $vweb.html()
+fn (mut app App) index(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    return $veb.html()
 }
 
+
 @['/index.html']
-fn (mut app App) find_index() vweb.Result {
-    return app.redirect('/')
+fn (mut app App) find_index(mut ctx Context) veb.Result {
+    return ctx.redirect('/')
 }
 
 /*****************
  * 404错误文件页
 *****************/ 
 @['/error.html']
-fn (mut app App) error() vweb.Result {
-    mess := cookie_mess(mut app)
-    return $vweb.html()
+fn (mut app App) error(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    return $veb.html()
 }
 
-pub fn (mut app App) not_found() vweb.Result {
-    app.set_status(404, 'Not Found')
-    return app.redirect('/error.html')
+pub fn (mut ctx Context) not_found() veb.Result {
+    ctx.res.set_status(.not_found)
+    return ctx.redirect('/error.html')
 }
 
 /**************
  * 登录文件页
 ***************/ 
 @['/login.html']
-fn (mut app App) login() vweb.Result {
-    mess := cookie_mess(mut app)
-
-    c_id := cookie_id(app)
+fn (mut app App) login(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    c_id := cookie_id(ctx)
     
     if c_id == '' {
-        return $vweb.html()
+        return $veb.html()
     } else {
-        return app.redirect('/member.html')
+        return ctx.redirect('/member.html')
     }
 }
 
 @['/loginapi'; post]
-fn (mut app App) loginapi() vweb.Result {
-    email := url_decode_str(app.form['email'])
-    passwd := url_decode_str(app.form['passwd'])
+fn (mut app App) loginapi(mut ctx Context) veb.Result {
+    email := url_decode_str(ctx.form['email'])
+    passwd := url_decode_str(ctx.form['passwd'])
 
-    select_passwd := sql app.db {
-        select from Personal where id == url_encode_str(email) || email == url_encode_str(email)
-    } or { err_log.personal_err() }
+    select_passwd := select_passwd_db(app.db, email, passwd)
 
-    if select_passwd.len == 0 {
-        app.set_cookie(name:'mess', value: url_encode_str('Error: 用户不存在'))
-        return app.redirect('/error.html')
+    if select_passwd.return_bool {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 用户不存在'))
+        return ctx.redirect('/error.html')
     }
     
-    /***********************************************************************************
-    *   如果id==email会出问题.
-    *   应该先进行正则判别
-    *   以上需求还未实现, 当前以实现为主要目的
-    *   
-    *   登录密码和cookie我希望能使用不同的方式进行存储
-    *   希望能使密码系统门数足够小
-    *   且就算盗取cookie后具有可恢复性
-    *   数据库中的passwd仅作为验证信息
-    *   无法使用cookie进行登录
-    ************************************************************************************/
-    mut not_passwd := true
-    
-    for i in select_passwd {
-        if i.passwd == err_log.sha256_str(passwd) {
-            not_passwd = false
-            err_log.logs('${log.set_log}: ${i.id}已登陆')
-            app.set_cookie(name:'id', value:i.id)
-            app.set_cookie(name:'passwd', value:url_encode_str(passwd))
-        }
+    if select_passwd.find_passwd {
+        ctx.set_cookie(name:'id', value:select_passwd.id_check[0].id)
+        ctx.set_cookie(name:'passwd', value:url_encode_str(passwd))
+    } else {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 密码错误'))
     }
 
-    if not_passwd {
-        app.set_cookie(name:'mess', value: url_encode_str('Error: 密码错误'))
-    }
-
-    return app.redirect('/error.html')
+    return ctx.redirect('/error.html')
 }
 
 /**************
@@ -235,65 +226,43 @@ fn (mut app App) loginapi() vweb.Result {
 ***************/ 
 
 @['/refusrer.html']
-fn (mut app App) refusrer() vweb.Result {
-    mess := cookie_mess(mut app)
+fn (mut app App) refusrer(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
 
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
-    c_id := cookie_id(app)
+    c_id := cookie_id(ctx)
     if c_id == '' {
-        return $vweb.html()
+        return $veb.html()
     } else {
-        return app.redirect('/member.html')
+        return ctx.redirect('/member.html')
     }
 }
 
 @['/refusrerapi'; post]
-fn (mut app App) refusrerapi() vweb.Result {
-    id := url_decode_str(app.form['id'])
-    email := url_decode_str(app.form['email'])
-    passwd := url_decode_str(app.form['passwd'])
+fn (mut app App) refusrerapi(mut ctx Context) veb.Result {
+    id := url_decode_str(ctx.form['id'])
+    email := url_decode_str(ctx.form['email'])
+    passwd := url_decode_str(ctx.form['passwd'])
 
     if id.index('@') != none {
-        err_log.logs_err('${log.false_log}: 检测到名称中包含"@"')
-        app.set_cookie(name:'mess', value: url_encode_str('Error: 名称中禁止包含"@"'))
-        return app.redirect('/error.html')
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 名称中禁止包含"@"'))
+        return ctx.redirect('/error.html')
     }
 
     // email 的格式也应该进行正则匹配.
-    
-    new_number := Personal{
-        id      :   url_encode_str(id)
-        email   :   url_encode_str(email)
-        passwd  :   err_log.sha256_str(passwd)
-        whoami  :   'member'
-        score   :   0
+    if register_status(app.db, id, email, passwd) {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 检测到提交无效数据'))
+        return ctx.redirect('/error.html')
     }
 
-    sql app.db {
-        create table Personal
-    } or {
-        err_log.logs('${log.false_log}: 检测到数据库创建失败')
-    }
-
-    id_check := sql app.db {
-        select from Personal where id == new_number.id || email == new_number.email
-    } or { err_log.personal_err() }
-    if id_check.len != 0 || new_number.id == '' {
-        err_log.logs_err('${log.false_log}: 检测到提交无效数据')
-        app.set_cookie(name:'mess', value: url_encode_str('Error: 检测到提交无效数据'))
-        return app.redirect('/error.html')
-    }
-    sql app.db {
-        insert new_number into Personal
-    } or {
-        err_log.logs_err("${log.false_log}: 存储数据出错${new_number}")
-        app.set_cookie(name:'mess', value: url_encode_str('Error: 存储数据出错'))
-        return app.redirect('/error.html')
+    if register_db(app.db, id, email, passwd) {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 存储数据出错'))
+        return ctx.redirect('/error.html')
     }
     // 设置cookie并更新页面情况
-    app.set_cookie(name:'id', value:url_encode_str(id))
-    app.set_cookie(name:'passwd', value:url_encode_str(passwd))
-    return app.redirect('/error.html')
+    ctx.set_cookie(name:'id', value:url_encode_str(id))
+    ctx.set_cookie(name:'passwd', value:url_encode_str(passwd))
+    return ctx.redirect('/error.html')
 }
 
 /**************
@@ -301,42 +270,40 @@ fn (mut app App) refusrerapi() vweb.Result {
 ***************/
 
 @['/member.html']
-fn (mut app App) member() vweb.Result {
-    mess := cookie_mess(mut app)
-    c_id := cookie_id(app)
-    c_pwd := cookie_passwd(app)
-    login := login_status(app, c_id, c_pwd)
+fn (mut app App) member(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_status(app.db, c_id, c_pwd)
 
     if c_id == '' {
-        return app.redirect('/login.html')
-    } else if  login.return_bool {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+
         name := c_id
         email := url_decode_str(login.id_check[0].email)
-        return $vweb.html()
+        return $veb.html()
+    
     } else {
-        return app.redirect('/error.html')
+        return ctx.redirect('/error.html')
     }
 }
 
 @['/memberapi'; post]
-fn (mut app App) memberapi() vweb.Result {
-    c_id := cookie_id(app)
-    oldpasswd := url_decode_str(app.form['oldpasswd'])
-    newpasswd := url_decode_str(app.form['newpasswd'])
-    id_check := sql app.db {
-        select from Personal where id == c_id && passwd == err_log.sha256_str(oldpasswd)
-    } or { err_log.personal_err() }
-    if id_check.len != 0 {
-        err_log.logs('Setting: ${c_id}将修改密码为:${newpasswd}')
-        sql app.db {
-            update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
-        } or { err_log.logs('${log.false_log}: ${c_id}修改密码失败') }
-        app.set_cookie(name:'passwd', value: newpasswd)
+fn (mut app App) memberapi(mut ctx Context) veb.Result {
+    c_id := cookie_id(ctx)
+    oldpasswd := url_decode_str(ctx.form['oldpasswd'])
+    newpasswd := url_decode_str(ctx.form['newpasswd'])
+
+    if id_check(app.db, c_id, oldpasswd, newpasswd) {
+        ctx.set_cookie(name:'passwd', value: newpasswd)
         // 更新页面情况
-        app.member()
+    } else {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 修改密码失败'))
     }
     
-    return app.redirect('/member.html')
+    return ctx.redirect('/member.html')
 }
 
 /**************
@@ -344,68 +311,26 @@ fn (mut app App) memberapi() vweb.Result {
 ***************/
 
 @['/task.html']
-fn (mut app App) task() vweb.Result {
-    mess := cookie_mess(mut app)
-    c_id := cookie_id(app)
-    c_pwd := cookie_passwd(app)
-    login := login_status(app, c_id, c_pwd)
+fn (mut app App) task(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_status(app.db, c_id, c_pwd)
 
     if c_id == '' {
-        return app.redirect('/login.html')
-    } else if  login.return_bool {
-        list_of_crypto := sql app.db {
-            select from Task where type_text == "crypto"
-        } or { err_log.task_err() }
-
-        list_of_web := sql app.db {
-            select from Task where type_text == "web"
-        } or { err_log.task_err() }
-
-        list_of_misc := sql app.db {
-            select from Task where type_text == "misc"
-        } or { err_log.task_err() }
-
-        list_of_pwn := sql app.db {
-            select from Task where type_text == "pwn"
-        } or { err_log.task_err() }
-
-        list_of_reverse := sql app.db {
-            select from Task where type_text == "reverse"
-        } or { err_log.task_err() }
-        /*
-
-        */
-
-        list_of_type := [
-            Type{
-                name         :    'Crypto'
-                type_text    :    list_of_crypto
-            },
-            Type{
-                name         :    'Web'
-                type_text    :    list_of_web
-            }
-            Type{
-                name         :    'MISC'
-                type_text    :    list_of_misc
-            }
-            Type{
-                name         :    'Pwn'
-                type_text    :    list_of_pwn
-            }
-            Type{
-                name         :    'Reverse'
-                type_text    :    list_of_reverse
-            }
-        ]
-        return $vweb.html()
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+        c_pid := find_user(app.db, url_encode_str(c_id), sha256_str(c_pwd)).pid
+        list_of_type := build_task(app.db)
+        return $veb.html()
     } else {
-        return app.redirect('/error.html')
+        return ctx.redirect('/error.html')
     }
 }
 
 @['/flagapi'; post]
-fn (mut app App) flagapi() vweb.Result {
+fn (mut app App) flagapi(mut ctx Context) veb.Result {
         /***********************************************************************************
     *   这里有个很重要的问题:
     *   我认为使用name作为判别依据是不现实的,
@@ -413,29 +338,36 @@ fn (mut app App) flagapi() vweb.Result {
     *   但是现在实现功能要紧,
     *   之后需要重新修改底层.
     ************************************************************************************/
-    the_cookie_id := app.get_cookie('id') or { '' }
+    the_cookie_id := ctx.get_cookie('id') or { '' }
+
     if the_cookie_id == '' {
-        return app.redirect('/login.html')
+        return ctx.redirect('/login.html')
     } else {
-        flag := app.form['flag']
-        task_name := app.form['name']
-        task_flag := sql app.db {
-            select from Task where name == task_name
-        } or { err_log.task_err() }
+        flag := ctx.form['flag']
+        task_name := ctx.form['name']
 
-        // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
-
-        if flag == task_flag[0].flag {
-            sql app.db {
-                update Task set complete = '../image/complete.png' where name == task_name 
-            } or { err_log.logs('Flag: ${flag}错误') }
-        } else {
-            err_log.logs('Flag: 修改出错')
+        if post_flag(app.db, task_name, flag) {
+            ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交错误'))
         }
 
-        app.task()
+        app.task(mut ctx)
 
-        return app.redirect('/login.html')
+        return ctx.text('True')
     }
 }
 
+@['/team.html']
+fn (mut app App) team(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    return $veb.html()
+}
+
+@['/ranking.html']
+fn (mut app App) ranking(mut ctx Context) veb.Result {
+    return ctx.redirect('/team.html')
+}
+
+@['/notice.html']
+fn (mut app App) notice(mut ctx Context) veb.Result {
+    return ctx.redirect('/team.html')
+}
