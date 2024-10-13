@@ -78,7 +78,7 @@ pub fn create_db(db sqlite.DB) {
         create table PostFlag
         create table PersonalFlag
     } or {
-        println('${log.warn_log}: 数据库创建失败, 可能已存在数据库')
+        println('${log.warn_log}: 数据库创建失败, 可能已存在数据库: data.db')
     }
 }
 
@@ -86,16 +86,13 @@ pub fn create_db(db sqlite.DB) {
 
 // 测试部分初始化函数
 
-pub fn test_main_function() {
-    mut db := sqlite.connect('./data.db')  or {
-        println('Error: sqlite调用错误')
-        panic(err)
-    }
+pub fn test_main_function(mut db sqlite.DB) {
+    the_data := sql db {
+        select from Task
+    } or { []Task{} }
 
-    sql db {
-        create table Task
-    } or {
-        println('Error: 创建Task失败')
+    if the_data.len != 0 {
+        return
     }
 
     data := [
@@ -104,7 +101,22 @@ pub fn test_main_function() {
                 flag       :    [
                                     PostFlag{flag : 'flag{test_1}'},
                                 ]
+                task       :    []PersonalFlag{}
                 name       :    'ez_math'
+                diff       :    'baby'
+                intro      :    'test task'
+                score      :    10
+                container  :    false
+        },
+
+        Task{
+                type_text  :    'crypto'
+                flag       :    [
+                                    PostFlag{flag : 'flag{test_2}'},
+                                    PostFlag{flag : 'flag{test_3}'},
+                                ]
+                task       :    []PersonalFlag{}
+                name       :    'mid_math'
                 diff       :    'baby'
                 intro      :    'test task'
                 score      :    10
@@ -112,12 +124,13 @@ pub fn test_main_function() {
         },
     
         Task{
-                type_text  :    'crypto'
+                type_text  :    'web'
                 flag       :    [
-                                    PostFlag{flag : 'flag{test_2}'},
-                                    PostFlag{flag : 'flag{test_3}'},
+                                    PostFlag{flag : 'flag{test_4}'},
+                                    PostFlag{flag : 'flag{test_5}'},
                                 ]
-                name       :    'mid_math'
+                task       :    []PersonalFlag{}
+                name       :    'ez_xss'
                 diff       :    'baby'
                 intro      :    'new task'
                 score      :    10

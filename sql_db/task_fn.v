@@ -4,6 +4,9 @@ import db.sqlite { DB }
 import log
 import err_log
 
+const solved = '../image/complete.png'
+const unsolved = '../image/incomplete.png'
+
 // task报错函数
 fn task_err() []Task {
     println('${log.false_log}查询错误')
@@ -45,27 +48,32 @@ pub fn build_task(db DB) []Type {
 }
 
 // 提交flag
-pub fn post_flag(db DB, task_name string, flag string) bool {
+pub fn post_flag(db DB, tid int, flag string, pid int) bool {
+    err_log.logs('${log.set_log}pid:${pid} 提交 tid:${tid} flag:${flag}')
     task_flag := sql db {
-        select from Task where name == task_name
+        select from Task where tid == tid 
     } or { task_err() }
 
-    // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
-
-    if PostFlag{ flag: flag } in task_flag[0].flag {
-        sql db {
-            update Task set complete = '../image/complete.png' where name == task_name 
-        } or { err_log.logs('Flag: ${flag}错误') }
+    // 除了防止tid乱取还有防删除题目, 超出界限的风险.
+    if task_flag.len == 0 {
         return false
+    }
+
+    // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
+    if PostFlag{ parents_task: tid, flag: flag } in task_flag.first().flag {
+        sql db {
+            update PersonalFlag set complete = solved where parents_task == tid  && parents_id == pid
+        } or { err_log.logs('Flag: ${flag}错误') }
+        return true
     } else {
         err_log.logs('Flag: 修改出错')
     }
-    return true
+    return false
 }
 
 pub fn find_user(db DB, id string, pwd string) Personal {
     pid := sql db {
-        select from Personal where id == id && passwd == pwd
+        select from Personal where id == id && passwd == err_log.sha256_str(pwd)
     } or { personal_err() }
     return pid.first()
 }

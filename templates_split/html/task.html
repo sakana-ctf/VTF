@@ -20,8 +20,9 @@
               <h1 id="name">${task.name}</h1>
               <h4>${task.diff}</h4>
               <a>${task.intro}</a>
-              <div class="inputBox"><input id="flag" type="text" placeholder="请输入flag"></div>
-              <div class="inputBox"><input onclick="inputflag('${task.flag}', '${task.name}')" type="submit" value="提交"></div>
+              <div class="inputBox"><input id="${task.tid}" type="text" placeholder="请输入flag"></div>
+              <div class="inputBox"><input onclick="inputflag('${task.tid.str()}')" type="submit" value="提交"></div>
+              
             </div>
           </div>
         </div> 

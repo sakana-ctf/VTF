@@ -84,8 +84,9 @@ function logout() {
 }
 
 // 提交flag
-function inputflag(flag, name){
-    const data = "flag=" + flag + "&name=" + name;
+function inputflag(tid){
+    flag = url_encode_str(document.getElementById(tid).value);
+    const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
     post_data(data, '/flagapi')
 }
 

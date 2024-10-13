@@ -28,7 +28,7 @@ function showinfo(mess){
   }
 }
 
-      //提示信息
+//提示信息
 function showNotification(message, duration) {
   var notification = document.createElement('div');
   notification.className = 'notification';

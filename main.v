@@ -20,7 +20,6 @@ import sql_db {
     build_task,
     post_flag,
 
-    sha256_str,
     test_main_function
 }
 
@@ -56,25 +55,15 @@ mut:
     db DB
 }
 
-
-// 题目
-// define true '../image/complete.png'
-// define false '../image/incomplete.png'
-
-
-
 /* ==================登录验证函数-===================
 fn function() {
-    //mess := cookie_mess(mut app)
-    c_id := cookie_id(app)
-    c_pwd := cookie_passwd(app)
-    login := login_status(app.db, app.db, c_id, c_pwd)
+    //mess := cookie_mess(mut ctx)
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_status(app.db, c_id, c_pwd)
 
-    if c_id == '' {
-        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
-        return ctx.redirect('/login.html')
-    } else if  login.return_bool {
-        [路由主体函数]
+    if login.return_bool {
+        [main]
     } else {
         return ctx.redirect('/error.html')
     }
@@ -120,12 +109,12 @@ fn main() {
     }
 
     println('暂不支持设置线程数: ${workers}')
-
-
-    // 创建示例题目:
-    //test_main_function()
+    
     mut app := &App{ db : connect_db() }
     create_db(app.db)
+
+    // 现在我们不需要反复打开关闭例子了:
+    test_main_function(mut app.db)
     
     app.static_mime_types['.cjs'] = 'txt/javascript'
     app.static_mime_types['.vbs'] = 'txt/javascript'
@@ -208,17 +197,18 @@ fn (mut app App) loginapi(mut ctx Context) veb.Result {
 
     if select_passwd.return_bool {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 用户不存在'))
-        return ctx.redirect('/error.html')
+        return ctx.text('401: User not found.')
     }
     
     if select_passwd.find_passwd {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 密码错误'))   
+        return ctx.text('403: Password is Wrong.')
+    } else {
         ctx.set_cookie(name:'id', value:select_passwd.id_check[0].id)
         ctx.set_cookie(name:'passwd', value:url_encode_str(passwd))
-    } else {
-        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 密码错误'))
+        return ctx.text('200: Seccess.')
     }
-
-    return ctx.redirect('/error.html')
+    return ctx.text('404: Not found.')
 }
 
 /**************
@@ -321,7 +311,7 @@ fn (mut app App) task(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
-        c_pid := find_user(app.db, url_encode_str(c_id), sha256_str(c_pwd)).pid
+        c_pid := find_user(app.db, url_encode_str(c_id), c_pwd).pid
         list_of_type := build_task(app.db)
         return $veb.html()
     } else {
@@ -331,30 +321,41 @@ fn (mut app App) task(mut ctx Context) veb.Result {
 
 @['/flagapi'; post]
 fn (mut app App) flagapi(mut ctx Context) veb.Result {
-        /***********************************************************************************
+    /***********************************************************************************
     *   这里有个很重要的问题:
     *   我认为使用name作为判别依据是不现实的,
     *   应该生成一段id信息进行区分,
     *   但是现在实现功能要紧,
     *   之后需要重新修改底层.
     ************************************************************************************/
-    the_cookie_id := ctx.get_cookie('id') or { '' }
-
+    the_cookie_id := cookie_id(ctx)
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_status(app.db, c_id, c_pwd)
+    
     if the_cookie_id == '' {
-        return ctx.redirect('/login.html')
-    } else {
-        flag := ctx.form['flag']
-        task_name := ctx.form['name']
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后提交flag'))
+        ctx.task(mut ctx)
+        return ctx.text('401: Please login first.')
+    } else if login.return_bool {
+        flag := url_decode_str(ctx.form['flag'])
+        tid := url_decode_str(ctx.form['tid']).int()
 
-        if post_flag(app.db, task_name, flag) {
-            ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交错误'))
+        if post_flag(app.db, tid, flag, login.id_check.first().pid) {
+            ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
+            ctx.task(mut ctx)
+            return ctx.text('200: Seccess.')
         }
-
-        app.task(mut ctx)
-
-        return ctx.text('True')
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交失败'))
+        ctx.task(mut ctx)
+        return ctx.text('403: Wrong.')
+    } else {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 账户存在问题'))
+        ctx.task(mut ctx)
+        return ctx.text('401: Please login first.')
     }
 }
+
 
 @['/team.html']
 fn (mut app App) team(mut ctx Context) veb.Result {

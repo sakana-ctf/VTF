@@ -1,6 +1,6 @@
 <div align="center" style="display:grid;place-items:center;">
 <p>
-    <a href="https://gitee.com/sakana_ctf/vtf" target="_blank"><img width="180" src="./image/vtf-logo.svg" alt="VTF logo"></a>
+    <a href="https://gitee.com/sakana_ctf/vtf" target="_blank"><img width="180" src="./static/image/vtf-logo.svg" alt="VTF logo"></a>
 <h1>VTF</h1>
 </p>
 </div>
@@ -83,32 +83,31 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 
 | 需求                | 当前情况                                              | 检验人        |
 |:-----------------:|:-------------------------------------------------:|:----------:|
-| 版本号               | v1.2.1(解决登录安全问题, 添加网页批量修改功能)                      | sudopacman |
-| wiki版本号           | 当前跟随到v1.2.1                                       | sudopacman |
-| firefox兼容问题       | js部分未支持, 可能需要重构源码                                 |            |
+| 版本号               | v2.1.0(更换veb架构. 修复flag提交功能, 完善开发者测试功能)                      | sudopacman |
+| wiki版本号           | 当前跟随到v2.1.0                                       | sudopacman |
+| firefox兼容问题       | 需要将cookie更换到`Context`, 待重构                                |            |
+| 说明书       | 已修正debian脚本错误             |   H4nn4h   |
 | edge兼容问题          | 已适配                                               | sudopacman |
-| 线程设置              | 当前可以直接设置进程数, 未配置变量执行                              | sudopacman |
+| 线程设置              | 当前可以直接设置进程数, 未配置变量执行                              |      |
 | 登录措施              | 普通用户登录与注册                                         | sudopacman |
 | 管理员               | 未支持                                               |            |
 | 非member视角         | 未支持                                               |            |
 | 权限区分              | 未实现, 考虑使用新函数统一区分权限                                |            |
 | 登录状态维持            | 当前页基本解决                                           | sudopacman |
-| 登录安全              | 实现登录函数`login_status()`, 未扩展到其他路由                  | sudopacman |
-| 题目                | 已支持显示题目,当前支持提交flag                                | sudopacman |
-| 多flag设置           | `[]string`无法通过sqlite传递, 需设置fkey创建子db.             |            |
+| 登录安全              | 实现登录函数`login_status`, 其他路由已完善                | sudopacman |
+| 题目                |  支持提交flag         | sudopacman |
+| 多flag设置           | 已实现             |   sudopacman         |
 | 数据库               | 当前仅支持sqlite3数据库                                   | sudopacman |
-| 数据库安全             | 使用base64编码数据进行导入取出                                | sudopacman |
-| 登录-cookie-数据库密码系统 | 统一使用base64/sha512进行管理                             | sudopacman |
+| 数据库安全             | 统一使用base64编码, sha256单向加密传递数据                         | sudopacman |
 | 错误显示              | 已重构, js上统一使用`showinfo(${mess})`显示错误               | sudopacman |
-| 提交flag            | 提交flag过程已完善, 未设置题目db                              | sudopacman |
-| 提交更新              | 基础更新原理已实现, 未进行详细设置                                | sudopacman |
-| 函数分离              | 分离多个文件, 还未进行权限管理                                  | sudopacman |
-| 动态计分              | 动态计算分值(需重改数据库?)                                   |            |
-| 线程数设置             | 支持自定义线程数(默认为3)                                    | sudopacman |
-| html分块编辑          | 待重构                                               |            |
+| 提交更新              | 已完成                               | sudopacman |
+| 函数分离              | 已分离成多个模块                                  | sudopacman |
+| 动态计分              | 需要对数据库遍历                                   |            |
+| 线程数设置             | 当前重构版本不支持设置线程            |  |
+| html分块编辑          | 需要重写自动化                                               |sudopacman          |
 | 图片格式修改为webp           | 以后再慢慢调                                           |            |
-| 中英文显示问题           | 未考虑实现方式                                           |            |
-| 数据可视化             | 考虑使用godot接管数据                                     |            |
+| 中英文显示问题           | 待重构                                           |            |
+| 数据可视化             | 使用godot/redot接管数据                                     |            |
 | html批量修改          | `templates_split`部分修改后批量导入, 暂时需使用python, 不支持动态修改. |    sudopacman        |
 
 # 参与贡献
