@@ -335,7 +335,7 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
     
     if the_cookie_id == '' {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后提交flag'))
-        ctx.task(mut ctx)
+        app.task(mut ctx)
         return ctx.text('401: Please login first.')
     } else if login.return_bool {
         flag := url_decode_str(ctx.form['flag'])
@@ -343,15 +343,15 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
 
         if post_flag(app.db, tid, flag, login.id_check.first().pid) {
             ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
-            ctx.task(mut ctx)
+            app.task(mut ctx)
             return ctx.text('200: Seccess.')
         }
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交失败'))
-        ctx.task(mut ctx)
+        app.task(mut ctx)
         return ctx.text('403: Wrong.')
     } else {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 账户存在问题'))
-        ctx.task(mut ctx)
+        app.task(mut ctx)
         return ctx.text('401: Please login first.')
     }
 }
