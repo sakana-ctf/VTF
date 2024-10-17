@@ -79,6 +79,14 @@ wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本
 ./vtf-[对应版本类型]
 ```
 
+# 运行
+
+编译好后(或拉取bin文件后)在服务器上推荐使用以下指令在后台运行:
+
+```bash
+nohup ./main >> log.txt 2>&1 &
+```
+
 # 支持
 
 | 需求                | 当前情况                                              | 检验人        |

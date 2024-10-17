@@ -104,16 +104,43 @@ fn main() {
     // 线程设置
     mut workers := 3
 
-    if os.args.len >= 2 {
+    if os.args.len >= 2 && os.args[1].int() != 0 {
         workers = os.args[1].int()
     }
 
     println('暂不支持设置线程数: ${workers}')
-    
-    mut app := &App{ db : connect_db() }
-    create_db(app.db)
 
+    //mut app := &App{ db : connect_db() , }
+    
     // 现在我们不需要反复打开关闭例子了:
+    /*
+    test_main_function(mut app.db)
+    
+    app.static_mime_types['.cjs'] = 'txt/javascript'
+    app.static_mime_types['.vbs'] = 'txt/javascript'
+    app.static_mime_types['.md'] = 'txt/plain'
+    app.static_mime_types['.png~'] = 'image/png'
+    app.handle_static('static', true) or {
+        panic(err)
+    }
+    */
+    
+    //veb.run[App, Context](mut app, 80)
+    mut app := new_app()
+    
+    veb.run_at[App, Context](
+        mut app,
+        veb.RunParams{
+            port: 80
+            //nr_workers: workers
+        }
+    ) or { panic(err) }
+}
+
+fn new_app() &App {
+    mut app := &App{ db : connect_db() , }
+    create_db(app.db)
+    
     test_main_function(mut app.db)
     
     app.static_mime_types['.cjs'] = 'txt/javascript'
@@ -124,15 +151,7 @@ fn main() {
         panic(err)
     }
 
-    veb.run[App, Context](mut app, 80)
-    /*
-    veb.run_at(
-        mut new_app(),
-        veb.RunParams{
-            port: 80
-            nr_workers: workers
-        }) or { panic(err) }
-    */
+    return app
 }
 
 // 使所有静态文件可用
@@ -206,6 +225,7 @@ fn (mut app App) loginapi(mut ctx Context) veb.Result {
     } else {
         ctx.set_cookie(name:'id', value:select_passwd.id_check[0].id)
         ctx.set_cookie(name:'passwd', value:url_encode_str(passwd))
+        ctx.redirect('/member.html')
         return ctx.text('200: Seccess.')
     }
     return ctx.text('404: Not found.')
@@ -270,7 +290,6 @@ fn (mut app App) member(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
-
         name := c_id
         email := url_decode_str(login.id_check[0].email)
         return $veb.html()
