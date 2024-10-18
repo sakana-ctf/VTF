@@ -71,6 +71,14 @@ struct Type{
         type_text   []Task
 }
 
+/*
+struct Rank{
+    pub:
+        personal_id        string
+        type_text   []Task
+}
+*/
+
 pub fn create_db(db sqlite.DB) {
     sql db {
         create table Personal

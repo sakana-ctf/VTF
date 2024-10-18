@@ -4,7 +4,7 @@ import db.sqlite { DB }
 import log
 import err_log
 
-const solved = '../image/complete.png'
+const solved = '../image/complete.webp'
 const unsolved = '../image/incomplete.png'
 
 // task报错函数

@@ -113,9 +113,9 @@ nohup ./main >> log.txt 2>&1 &
 | 动态计分              | 需要对数据库遍历                                   |            |
 | 线程数设置             | 当前重构版本不支持设置线程            |  |
 | html分块编辑          | 需要重写自动化                                               |sudopacman          |
-| 图片格式修改为webp           | 以后再慢慢调                                           |            |
+| 图片格式修改为webp           | 已更新, 图片采用无压缩+2速度                                           |  sudopacman  |
 | 中英文显示问题           | 待重构                                           |            |
-| 数据可视化             | 使用godot/redot接管数据                                     |            |
+| 数据可视化             | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                     |            |
 | html批量修改          | `templates_split`部分修改后批量导入, 暂时需使用python, 不支持动态修改. |    sudopacman        |
 
 # 参与贡献
@@ -142,4 +142,4 @@ VTF采用VY通用许可证, 以下是简易解释, 详情参考[LICENSE](./LICEN
 
 对于分发问题, 为方便更多人理解, 在VY许可证中有重新定义"版权转移"概念: 他人修改源码后可以闭源, 每个修改过的文件需放置版权说明, 如果要进行公开展示需标注作者个人的标志,若作者无特殊说明需标注社标(VYCMa.png)标或声明源码来自VYCMa.
 
-![](./image/VYCMa.png)
+![](./static/image/VYCMa.webp)

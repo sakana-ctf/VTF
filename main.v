@@ -6,6 +6,7 @@ module main
 import db.sqlite { DB }
 import veb
 import os
+import log
 import sql_db {
     connect_db,
     create_db,
@@ -19,6 +20,11 @@ import sql_db {
 
     build_task,
     post_flag,
+
+    get_personal,
+    find_task,
+    //find_task_score,
+    bool_solve,
 
     test_main_function
 }
@@ -138,7 +144,14 @@ fn main() {
 }
 
 fn new_app() &App {
-    mut app := &App{ db : connect_db() , }
+    data := os.execute_opt('v run ./templates_split/build.v') or {
+        os.Result{ 0, '${log.warn_log}更新html文件失败.'}
+    }
+    println(data.output)
+
+    mut app := &App{ 
+        db : connect_db() ,
+    }
     create_db(app.db)
     
     test_main_function(mut app.db)
@@ -147,6 +160,7 @@ fn new_app() &App {
     app.static_mime_types['.vbs'] = 'txt/javascript'
     app.static_mime_types['.md'] = 'txt/plain'
     app.static_mime_types['.png~'] = 'image/png'
+
     app.handle_static('static', true) or {
         panic(err)
     }
@@ -382,9 +396,28 @@ fn (mut app App) team(mut ctx Context) veb.Result {
     return $veb.html()
 }
 
+/**************
+ * 排行榜
+***************/
+
 @['/ranking.html']
 fn (mut app App) ranking(mut ctx Context) veb.Result {
-    return ctx.redirect('/team.html')
+    mess := cookie_mess(mut ctx)
+    return $veb.html()
+}
+
+@['/rankapi']
+fn (mut app App) rankapi(mut ctx Context) veb.Result {
+    mut data := '| 队伍名称 | 队伍得分 |' + find_task(app.db)
+    for i in get_personal(app.db) {
+        data += '\n| ${url_decode_str(i.id)} |  |'
+        for j in i.task {
+            data += ' ${bool_solve(j)} |'
+        }
+        data += '\n'
+    }
+    
+    return ctx.text(data)
 }
 
 @['/notice.html']
