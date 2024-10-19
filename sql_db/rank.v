@@ -11,35 +11,28 @@ pub fn get_personal(db DB) []Personal {
 	return data
 }
 
-pub fn find_task(db DB) string {
+pub fn find_task(db DB) []Task {
 	data := sql db {
 		select from Task
 	} or {
 		[]Task{}
 	}
-	mut text := ''
-	for i in data {
-		text += ' ${i.name}(${i.tid}) |'
-	}
-	return text
-}
-/*
-pub fn find_task_score(db DB, task Task) []Task {
-	task.
-	data := sql db {
-		select from PersonalFlag
-	} or {
-		[]Task{}
-	}
 	return data
 }
-*/
-pub fn bool_solve(pf PersonalFlag) string {
+
+pub fn bool_solve(pf PersonalFlag) bool {
 	if pf.complete == solved {
-		return '✓'
+		return true
 	} else {
-		return '✗'
+		return false
 	}
 }
 
-
+pub fn task_score(db DB, pf PersonalFlag) int {
+	data := sql db {
+		select from Task where tid == pf.parents_task
+	} or {
+		return 0
+	}
+	return data.first().score
+}

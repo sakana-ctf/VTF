@@ -5,4 +5,6 @@ bin/
 Vtf.code-workspace
 Vtf.exe
 vtf.exe
+templates_split/build
+templates_split/build.exe
 

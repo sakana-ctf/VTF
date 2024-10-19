@@ -28,7 +28,7 @@ fn set_html(main_html string) string {
 	header := readfile('header.html')
 	main := readfile(url)
 	js := readfile('js.html')
-	return '<!DOCTYPE html>\n<html lang="zh">\n${head}\n<body id="top">\n${header}\n${main}\n${js}\n</body>\n</html>'
+	return '<!DOCTYPE html>\n<html lang="zh">\n${head}\n<body id="top">\n${header}\n${js}\n${main}\n</body>\n</html>'
 }
 
 fn list_file(path string) []string {

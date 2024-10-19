@@ -6,7 +6,7 @@ module main
 import db.sqlite { DB }
 import veb
 import os
-import log
+import json
 import sql_db {
     connect_db,
     create_db,
@@ -23,8 +23,8 @@ import sql_db {
 
     get_personal,
     find_task,
-    //find_task_score,
     bool_solve,
+    task_score,
 
     test_main_function
 }
@@ -38,6 +38,12 @@ struct User {
 mut:
 	name string
 	id   int
+}
+
+struct Rank{
+    team_id string
+    score   int
+    task    []bool
 }
 
 // 基础结构体
@@ -107,6 +113,11 @@ fn cookie_mess(mut ctx Context) string {
 
 // 主函数
 fn main() {
+    // 更新html网页
+    os.execute_opt('${os.wd_at_startup}/templates_split/build') or {
+        os.execute('v ./templates_split/build.v')
+    }
+
     // 线程设置
     mut workers := 3
 
@@ -115,22 +126,7 @@ fn main() {
     }
 
     println('暂不支持设置线程数: ${workers}')
-
-    //mut app := &App{ db : connect_db() , }
-    
-    // 现在我们不需要反复打开关闭例子了:
-    /*
-    test_main_function(mut app.db)
-    
-    app.static_mime_types['.cjs'] = 'txt/javascript'
-    app.static_mime_types['.vbs'] = 'txt/javascript'
-    app.static_mime_types['.md'] = 'txt/plain'
-    app.static_mime_types['.png~'] = 'image/png'
-    app.handle_static('static', true) or {
-        panic(err)
-    }
-    */
-    
+   
     //veb.run[App, Context](mut app, 80)
     mut app := new_app()
     
@@ -144,10 +140,6 @@ fn main() {
 }
 
 fn new_app() &App {
-    data := os.execute_opt('v run ./templates_split/build.v') or {
-        os.Result{ 0, '${log.warn_log}更新html文件失败.'}
-    }
-    println(data.output)
 
     mut app := &App{ 
         db : connect_db() ,
@@ -403,21 +395,32 @@ fn (mut app App) team(mut ctx Context) veb.Result {
 @['/ranking.html']
 fn (mut app App) ranking(mut ctx Context) veb.Result {
     mess := cookie_mess(mut ctx)
+    task_name := find_task(app.db)
     return $veb.html()
 }
 
 @['/rankapi']
 fn (mut app App) rankapi(mut ctx Context) veb.Result {
-    mut data := '| 队伍名称 | 队伍得分 |' + find_task(app.db)
+    mut data := []Rank{}
     for i in get_personal(app.db) {
-        data += '\n| ${url_decode_str(i.id)} |  |'
+        mut delta := []bool{}
+        mut score := 0
         for j in i.task {
-            data += ' ${bool_solve(j)} |'
+            if bool_solve(j) {
+                delta << true
+                score += task_score(app.db, j)
+            } else {
+                delta << false
+            }
         }
-        data += '\n'
+        data << Rank{
+            team_id : url_decode_str(i.id)
+            score   : score
+            task    : delta
+        }
     }
     
-    return ctx.text(data)
+    return ctx.text(json.encode(data))
 }
 
 @['/notice.html']

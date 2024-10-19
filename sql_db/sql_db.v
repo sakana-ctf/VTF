@@ -71,13 +71,7 @@ struct Type{
         type_text   []Task
 }
 
-/*
-struct Rank{
-    pub:
-        personal_id        string
-        type_text   []Task
-}
-*/
+
 
 pub fn create_db(db sqlite.DB) {
     sql db {
@@ -153,12 +147,5 @@ pub fn test_main_function(mut db sqlite.DB) {
         println("Error: 存储数据出错")
         }
     }
-
-
-    db.close() or {
-        println('Error: 关闭数据库出错')
-        panic(err)
-    }
-
 }
 

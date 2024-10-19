@@ -375,9 +375,11 @@ body.nav-active { overflow: hidden; }
 
   /**
    * REUSED STYLE
+   * 限制最大为1400px
+   * .container { max-width: 1400px; }
    */
 
-  .container { max-width: 1400px; }
+  
 
   body.nav-active { overflow-y: overlay; }
 

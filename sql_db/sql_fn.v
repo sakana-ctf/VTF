@@ -81,6 +81,8 @@ pub fn register_db(db DB, id string, email string, passwd string) bool {
         personal_flag << PersonalFlag{ parents_task : i.tid, complete : unsolved }
     }
 
+    println(personal_flag)
+
     new_number := Personal{
         id      :   url_encode_str(id)
         email   :   url_encode_str(email)

@@ -90,19 +90,12 @@
     </div>
   </header>
 
-  <main>
-      <img src="../image/vtf-logo.png" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.png" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.png" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.png" width="300" alt="vtf-logo">
-  </main>
-
-
 <!-- 
     - 导入js
   -->
   <script src="../js/script.js"></script>
   <script src="../js/console.js"></script>
+  <script src="../js/rank.js"></script>
   <script>
     showinfo('${mess}');
   </script>
@@ -112,6 +105,86 @@
   -->
   <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
+
+
+  <main>
+    <div class="layer-box">
+      <div class="layer">
+        <h1 style="text-align: center;">排行榜</h1>
+          <table>
+            <tr>
+              <th>排名</th>
+              <th>选手名称</th>
+              <th>选手得分</th>
+              @for task in task_name
+              <th>${task.name}</th>
+              @end
+            </tr>
+            <tbody>
+            @for _ in 0..10
+            <tr>
+              <td>_</td>
+              <td>_</td>
+              <td>_</td>
+              @for _ in task_name
+              <td>_</td>
+              @end
+            </tr>
+            @end
+            </tbody>
+          </table>
+
+          <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            body{
+                padding: 100px;
+                box-sizing: border-box;
+            }
+            table{
+                border-collapse: collapse;
+            }
+            td,th{
+                color: #333;
+                font-size: 14px;
+                border-right: 1px solid #333;
+                line-height: 30px;
+                box-sizing: border-box;
+                white-space: nowrap;
+                background: #fff;
+            }
+            .layer-box{
+                width: 350px;
+                overflow: hidden;
+                position: relative;
+                border: 1px solid #000;
+            }
+            .layer{
+                width: 350px;
+                overflow: hidden;
+                overflow-x: scroll;
+            }
+            .td-1{
+                position: absolute;
+                left: 0;
+                z-index: 2;
+                width: 150px;
+            }
+            .zhanwei{
+                width: 149px;
+            }
+            table tr:nth-child(odd) td,
+            table tr:nth-child(odd) th{
+                background: #d3d3d3;
+            }
+        </style>
+
+        <script>
+          Rankapi();
+        </script>
+  </main>
 
 
 </body>
