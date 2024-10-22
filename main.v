@@ -1,4 +1,5 @@
 // v -d veb_livereload watch run .
+// ./templates_split/build ; v main.v ; ./main
 // 重新实时加载运行vweb应用程序
 
 module main
@@ -69,14 +70,18 @@ mut:
 
 /* ==================登录验证函数-===================
 fn function() {
-    //mess := cookie_mess(mut ctx)
+    // mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
     login := login_status(app.db, c_id, c_pwd)
 
-    if login.return_bool {
-        [main]
+    if c_id == '' {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+        [主要函数]
     } else {
+        ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
     }
 }
@@ -113,11 +118,6 @@ fn cookie_mess(mut ctx Context) string {
 
 // 主函数
 fn main() {
-    // 更新html网页
-    os.execute_opt('${os.wd_at_startup}/templates_split/build') or {
-        os.execute('v ./templates_split/build.v')
-    }
-
     // 线程设置
     mut workers := 3
 
@@ -133,7 +133,7 @@ fn main() {
     veb.run_at[App, Context](
         mut app,
         veb.RunParams{
-            port: 80
+            port: 8080
             //nr_workers: workers
         }
     ) or { panic(err) }
@@ -301,6 +301,7 @@ fn (mut app App) member(mut ctx Context) veb.Result {
         return $veb.html()
     
     } else {
+        ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
     }
 }
@@ -340,6 +341,7 @@ fn (mut app App) task(mut ctx Context) veb.Result {
         list_of_type := build_task(app.db)
         return $veb.html()
     } else {
+        ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
     }
 }
@@ -360,7 +362,6 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
     
     if the_cookie_id == '' {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后提交flag'))
-        app.task(mut ctx)
         return ctx.text('401: Please login first.')
     } else if login.return_bool {
         flag := url_decode_str(ctx.form['flag'])
@@ -368,15 +369,12 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
 
         if post_flag(app.db, tid, flag, login.id_check.first().pid) {
             ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
-            app.task(mut ctx)
             return ctx.text('200: Seccess.')
         }
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交失败'))
-        app.task(mut ctx)
         return ctx.text('403: Wrong.')
     } else {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 账户存在问题'))
-        app.task(mut ctx)
         return ctx.text('401: Please login first.')
     }
 }

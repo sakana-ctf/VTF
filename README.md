@@ -89,36 +89,37 @@ nohup ./main >> log.txt 2>&1 &
 
 # 支持
 
-| 需求                | 当前情况                                              | 检验人        |
-|:-----------------:|:-------------------------------------------------:|:----------:|
-| 版本号               | v2.2.1(排行榜更新, 修复了部分bug, 当前存在小幅兼容层问题)                      | sudopacman |
-| wiki版本号           | 当前跟随到v2.1.0                                       | sudopacman |
-| firefox兼容问题       | 需要将cookie更换到`Context`, 待重构                                |            |
-| 说明书       | 已修正debian脚本错误             |   H4nn4h   |
-| edge兼容问题          | 已适配                                               | sudopacman |
-| 线程设置              | 当前可以直接设置进程数, 未配置变量执行                              |      |
-| 登录措施              | 普通用户登录与注册                                         | sudopacman |
-| 管理员               | 未支持                                               |            |
-| 非member视角         | 未支持                                               |            |
-| 权限区分              | 未实现, 考虑使用新函数统一区分权限                                |            |
-| 登录状态维持            | 当前页基本解决                                           | sudopacman |
-| 登录安全              | 实现登录函数`login_status`, 其他路由已完善                | sudopacman |
-| 题目                |  支持提交flag         | sudopacman |
-| 多flag设置           | 已实现             |   sudopacman         |
-| 数据库               | 当前仅支持sqlite3数据库                                   | sudopacman |
-| 数据库安全             | 统一使用base64编码, sha256单向加密传递数据                         | sudopacman |
-| 错误显示              | 已重构, js上统一使用`showinfo(${mess})`显示错误               | sudopacman |
-| 提交更新              | 已完成                               | sudopacman |
-| 函数分离              | 已分离成多个模块                                  | sudopacman |
-| 排行榜                | 待实现js比较json更新数据库  |  sudopacman  |
-| 动态计分              | 等待更新                                   |            |
-| 一血, 二血, 三血              | 暂无明确实现思路                                   |            |
-| 线程数设置             | 当前重构版本不支持设置线程            |  |
-| html分块编辑          | 需要重写自动化                                               |sudopacman          |
-| 图片格式修改为webp           | 已更新, 图片采用无压缩+2速度                                           |  sudopacman  |
-| 中英文显示问题           | 待重构                                           |            |
-| 数据可视化             | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                     |            |
-| html批量修改          | `templates_split`部分修改后批量导入, 暂时需使用python, 不支持动态修改. |    sudopacman        |
+| 需求          | 当前情况                                                                         | 检验人        |
+|:-----------:|:----------------------------------------------------------------------------:|:----------:|
+| 版本号         | v2.3.0(实现排行榜基本功能, 修复了部分bug)                                                  | sudopacman |
+| wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman |
+| firefox兼容问题 | 需要将cookie更换到`Context`, 待重构                                                   |            |
+| 说明书         | 已修正debian脚本错误                                                                | H4nn4h     |
+| edge兼容问题    | 已适配                                                                          | sudopacman |
+| 线程设置        | 当前veb框架暂不支持                                                                  |            |
+| 登录措施        | 普通用户登录与注册                                                                    | sudopacman |
+| 管理员         | 未支持                                                                          |            |
+| 非member视角   | 未支持                                                                          |            |
+| 权限区分        | 未实现, 考虑使用新函数统一区分权限                                                           |            |
+| 登录状态维持      | 当前页基本解决                                                                      | sudopacman |
+| 登录安全        | 实现登录函数`login_status`, 其他路由已完善                                                | sudopacman |
+| 黑名单         | 禁止选手访问, 预计下一版本支持                                                             |            |
+| 题目          | 支持提交flag                                                                     | sudopacman |
+| 多flag设置     | 已实现                                                                          | sudopacman |
+| 数据库         | 当前仅支持sqlite3数据库                                                              | sudopacman |
+| 数据库安全       | 统一使用base64编码, sha256单向加密传递数据                                                 | sudopacman |
+| 错误显示        | 已重构, js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman |
+| 提交更新        | 已完成                                                                          | sudopacman |
+| 函数分离        | 已分离成多个模块                                                                     | sudopacman |
+| 排行榜         | 已完成                                                                          | sudopacman |
+| 动态计分        | 等待更新                                                                         |            |
+| 一血, 二血, 三血  | 暂无明确实现思路                                                                     |            |
+| 线程数设置       | 当前重构版本不支持设置线程                                                                |            |
+| html分块编辑    | 需要重写自动化                                                                      | sudopacman |
+| 图片格式修改为webp | 已更新, 图片采用无压缩+2速度                                                             | sudopacman |
+| 中英文显示问题     | 待重构                                                                          |            |
+| 数据可视化       | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                        |            |
+| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行 | sudopacman |
 
 # 参与贡献
 

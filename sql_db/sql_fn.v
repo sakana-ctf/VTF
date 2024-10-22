@@ -5,12 +5,15 @@ import err_log
 import log
 import db.sqlite { DB }
 
-
-
 // personal报错函数
 fn personal_err() []Personal {
     println('${log.false_log}查询错误')
     return []Personal{}
+}
+
+// 黑名单
+fn set_black_list() {
+
 }
 
 // 登录检测
@@ -18,7 +21,8 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
     id_check := sql db {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
     } or { personal_err() }
-    if id_check.len != 0 {
+    // there has a black list to set.
+    if id_check.len != 0 && true {
         return StatusReturn{true, false, id_check}
     } else {
         return StatusReturn{false, false, id_check}

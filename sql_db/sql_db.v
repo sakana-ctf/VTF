@@ -106,8 +106,8 @@ pub fn test_main_function(mut db sqlite.DB) {
                 task       :    []PersonalFlag{}
                 name       :    'ez_math'
                 diff       :    'baby'
-                intro      :    'test task'
-                score      :    10
+                intro      :    'flag: flag{test_1}'
+                score      :    50
                 container  :    false
         },
 
@@ -119,9 +119,9 @@ pub fn test_main_function(mut db sqlite.DB) {
                                 ]
                 task       :    []PersonalFlag{}
                 name       :    'mid_math'
-                diff       :    'baby'
-                intro      :    'test task'
-                score      :    10
+                diff       :    'middle'
+                intro      :    'flag: flag{test_2}, flag{test_3}'
+                score      :    100
                 container  :    false
         },
     
@@ -132,12 +132,40 @@ pub fn test_main_function(mut db sqlite.DB) {
                                     PostFlag{flag : 'flag{test_5}'},
                                 ]
                 task       :    []PersonalFlag{}
-                name       :    'ez_xss'
+                name       :    'ez_nasm'
                 diff       :    'baby'
-                intro      :    'new task'
-                score      :    10
+                intro      :    'flag: flag{test_4}, flag{test_5}'
+                score      :    50
                 container  :    false
-        }
+        },
+
+                Task{
+                type_text  :    'reverse'
+                flag       :    [
+                                    PostFlag{flag : 'flag{test_6}'},
+                                    PostFlag{flag : 'flag{test_7}'},
+                                ]
+                task       :    []PersonalFlag{}
+                name       :    'ez_rust'
+                diff       :    'baby'
+                intro      :    'flag: flag{test_6}, flag{test_7}'
+                score      :    50
+                container  :    false
+        },
+
+                        Task{
+                type_text  :    'reverse'
+                flag       :    [
+                                    PostFlag{flag : 'flag{test_8}'},
+                                    PostFlag{flag : 'flag{test_9}'},
+                                ]
+                task       :    []PersonalFlag{}
+                name       :    'mid_v'
+                diff       :    'middle'
+                intro      :    'flag: flag{test_8}, flag{test_9}'
+                score      :    100
+                container  :    false
+        },
     ]
 
     for i in data {

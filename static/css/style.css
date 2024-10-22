@@ -9,6 +9,14 @@
   --bg-background-color: rgb(23, 33, 46);
   --bg-card-color: rgb(74, 94, 119) ;
 
+
+  /** 选页框 */
+  --bg-page-now: rgb(187, 138, 180);
+  --bg-page-color: rgb(36, 53, 77);
+  --text-page-now: rgb(57, 81, 113);
+
+
+
   /** 按钮底色 */
   --bg-botton-white: #fffffffa;
 

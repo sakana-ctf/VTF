@@ -1,7 +1,7 @@
   <main>
     <div class="layer-box">
+      <h1>排行榜</h1>
       <div class="layer">
-        <h1 style="text-align: center;">排行榜</h1>
           <table>
             <tr>
               <th>排名</th>
@@ -12,24 +12,53 @@
               @end
             </tr>
             <tbody>
-            @for _ in 0..10
+            @for i in 0..10
             <tr>
-              <td>_</td>
-              <td>_</td>
-              <td>_</td>
-              @for _ in task_name
-              <td>_</td>
+              <td id="td${i}_rank"></td>
+              <td id="td${i}_team_id"></td>
+              <td id="td${i}_score"></td>
+              @for j in 0..task_name.len
+              <td id="td${i}_${j}"></td>
               @end
             </tr>
             @end
             </tbody>
+            
           </table>
+        </div>
+        <div class="center">
+          <ul id="page" class="pagination">
+            <li id="set_page"><a class="" onclick="alert(1);" href="#">«</a></li>
+          </ul>
+        </div>
+    </div>
 
           <style>
-            *{
-                margin: 0;
-                padding: 0;
-            }
+          .layer-box {
+            background: var(--bg-card-color);
+            width: 450px;
+            padding: 5px;
+            position: absolute;
+            top: 25%;
+            left: 0;
+            right:0;
+            margin: auto;
+            border-radius: 10px;  
+            border-width: 10px;
+          }
+
+          .layer-box h1 {
+            top: 10px;
+	          text-align: center;
+	          position: relative;
+	          color: var(--text-botton-white);
+	          font-size: 24px;
+	          font-weight: 600;
+	          letter-spacing: 5px;
+	          margin-bottom: 30px;
+	          cursor: pointer;
+	        }
+          
             body{
                 padding: 100px;
                 box-sizing: border-box;
@@ -38,22 +67,21 @@
                 border-collapse: collapse;
             }
             td,th{
-                color: #333;
+                text-align: center;
+                color: var(--text-botton-white);
                 font-size: 14px;
-                border-right: 1px solid #333;
+                border-right: 1px solid var(--bg-card-color);
                 line-height: 30px;
                 box-sizing: border-box;
                 white-space: nowrap;
-                background: #fff;
+                /*overflow: hidden; 隐藏超出容器的内容 */
+                /*text-overflow: ellipsis; 使用省略号表示被截断的文本 */
+                background: var(--bg-background-color);
             }
-            .layer-box{
-                width: 350px;
-                overflow: hidden;
-                position: relative;
-                border: 1px solid #000;
-            }
+            
+              .layer-box
             .layer{
-                width: 350px;
+                width: 450px;
                 overflow: hidden;
                 overflow-x: scroll;
             }
@@ -66,14 +94,47 @@
             .zhanwei{
                 width: 149px;
             }
+
+            /* 选页标 */
             table tr:nth-child(odd) td,
             table tr:nth-child(odd) th{
-                background: #d3d3d3;
+                background: var(--bg-oxford-blue-2);
+            }
+
+            ul.pagination {
+              display: inline-block;
+              margin: 0;
+            }
+
+            ul.pagination li {display: inline;}
+
+            ul.pagination li a {
+                color: var(--text-botton-white);
+                float: left;
+                padding: 8px 16px;
+                text-decoration: none;
+            }
+            ul.pagination li a.active {
+                background-color: var(--bg-page-now);
+                color: var(--text-page-now);
+            }
+
+            ul.pagination li a:hover:not(.active) {background-color: var(--bg-page-color);}
+
+            ul.pagination li a {
+                border-radius: 5px;
+            }
+
+            ul.pagination li a.active {
+                border-radius: 5px;
+            }
+            div.center {
+              text-align: center;
             }
         </style>
 
         <script>
-          Rankapi();
+          Rankapi(1);
         </script>
   </main>
 

@@ -1,3 +1,5 @@
+// 如果不是纯前端交互请不要使用`location.reload();`刷新, 统一使用后端进行刷新.
+
 function url_encode_str(input) {
     // 对输入字符串进行 URI 编码，确保所有字符都是安全的
     let encoded = encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
@@ -59,6 +61,9 @@ function fixpasswd() {
     if (newpasswd === passwdagain) {
         const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
         post_data(data, '/memberapi');
+        
+        // 临时用这个代替, 但是远程有时差就爆炸.
+        // location.reload();
     } else {
         alert("Error: 密码不一致");
     }
@@ -73,7 +78,9 @@ function passwdlogin() {
     var passwd  = url_encode_str(document.getElementById('passwd').value);
     const data = "email=" + email + "&passwd=" + passwd;
     post_data(data, '/loginapi');
-    location.reload();
+    
+    // 临时用这个代替, 但是远程有时差就爆炸.
+    // location.reload();
 }
 
 // 登出函数
@@ -88,6 +95,9 @@ function inputflag(tid){
     flag = url_encode_str(document.getElementById(tid).value);
     const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
     post_data(data, '/flagapi')
+    
+    // 临时用这个代替, 但是远程有时差就爆炸.
+    location.reload();
 }
 
 /*****************

@@ -1,4 +1,4 @@
-/**
+  /**
  * 缩小页打开侧页部分函数
  */
 const addEventOnElements = function (elements, eventType, callback) {
