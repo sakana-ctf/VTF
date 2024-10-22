@@ -45,17 +45,18 @@ function SetRankJson(data, nowtext) {
     data.sort(down);
 
     SetPage(Math.ceil(data.length / 10), nowtext);
-    for (i in data.slice((nowtext-1)*10, nowtext*10)) {
+    for (i in data) {
+        j = i + (nowtext - 1) * 10;
         var rank = "td" + i + "_rank";
-        document.getElementById(rank).innerHTML = parseInt(i)+1;
+        document.getElementById(rank).innerHTML = parseInt(j)+1;
         var team_id = "td" + i + "_team_id";
-        document.getElementById(team_id).innerHTML = data[i].team_id;
+        document.getElementById(team_id).innerHTML = data[j].team_id;
         var score = "td" + i + "_score";
-        document.getElementById(score).innerHTML = data[i].score;
-        for (j in data[i].task) {
-            var task = "td" + i + "_" + j;
+        document.getElementById(score).innerHTML = data[j].score;
+        for (k in data[j].task) {
+            var task = "td" + i + "_" + k;
             //alert(task);
-            document.getElementById(task).innerHTML = data[i].task[j];
+            document.getElementById(task).innerHTML = data[j].task[k];
             //alert(j);
             //
         }
