@@ -44,19 +44,20 @@ function SetRankJson(data, nowtext) {
     //data是上面数据名，需要先引入，然后sort函数中放up函数，就可以实现对接送进行排序
     data.sort(down);
 
+    show_data = data.slice((nowtext - 1) * 10, nowtext * 10);
     SetPage(Math.ceil(data.length / 10), nowtext);
-    for (i in data) {
+    for (i in show_data) {
         j = i + (nowtext - 1) * 10;
         var rank = "td" + i + "_rank";
         document.getElementById(rank).innerHTML = parseInt(j)+1;
         var team_id = "td" + i + "_team_id";
-        document.getElementById(team_id).innerHTML = data[j].team_id;
+        document.getElementById(team_id).innerHTML = show_data[i].team_id;
         var score = "td" + i + "_score";
-        document.getElementById(score).innerHTML = data[j].score;
-        for (k in data[j].task) {
+        document.getElementById(score).innerHTML = show_data[i].score;
+        for (k in show_data[i].task) {
             var task = "td" + i + "_" + k;
             //alert(task);
-            document.getElementById(task).innerHTML = data[j].task[k];
+            document.getElementById(task).innerHTML = show_data[i].task[k];
             //alert(j);
             //
         }
