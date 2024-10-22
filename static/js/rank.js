@@ -36,6 +36,7 @@ function SetPage(number, nowtext) {
 
 // 对数据进行执行, 需要重排序, 并按输出结果抽取
 function SetRankJson(data, nowtext) {
+    nowtext = parseInt(nowtext)
     data = JSON.parse(data);
     //按照升序排列
     function down(x, y) {
@@ -47,9 +48,9 @@ function SetRankJson(data, nowtext) {
     show_data = data.slice((nowtext - 1) * 10, nowtext * 10);
     SetPage(Math.ceil(data.length / 10), nowtext);
     for (i in show_data) {
-        j = i + (nowtext - 1) * 10;
+        j = parseInt(i) + (nowtext - 1) * 10;
         var rank = "td" + i + "_rank";
-        document.getElementById(rank).innerHTML = parseInt(j)+1;
+        document.getElementById(rank).innerHTML = j+1;
         var team_id = "td" + i + "_team_id";
         document.getElementById(team_id).innerHTML = show_data[i].team_id;
         var score = "td" + i + "_score";
