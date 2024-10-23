@@ -47,43 +47,39 @@ function SetRankJson(data, nowtext) {
 
     show_data = data.slice((nowtext - 1) * 10, nowtext * 10);
     SetPage(Math.ceil(data.length / 10), nowtext);
+
+    for (i=0; i<10; i++) {
+        var rank = "td" + i + "_rank";
+        document.getElementById(rank).innerHTML = '';
+        var team_id = "td" + i + "_team_id";
+        document.getElementById(team_id).innerHTML = '';
+        var score = "td" + i + "_score";
+        document.getElementById(score).innerHTML = '';
+        for (k in data[0].task) {
+            var task = "td" + i + "_" + k;
+            document.getElementById(task).innerHTML = '';
+        }
+    }
+
     for (i in show_data) {
+        console.log(i);
         j = parseInt(i) + (nowtext - 1) * 10;
-        if ( show_data[i].team_id == "" ) {
-            var rank = "td" + i + "_rank";
-            document.getElementById(rank).innerHTML = '';
-            var team_id = "td" + i + "_team_id";
-            document.getElementById(team_id).innerHTML = '';
-            var score = "td" + i + "_score";
-            document.getElementById(score).innerHTML = '';
-            for (k in show_data[i].task) {
-                var task = "td" + i + "_" + k;
-                //alert(task);
+        console.log(show_data[i].team_id);
+        var rank = "td" + i + "_rank";
+        document.getElementById(rank).innerHTML = j+1;
+        var team_id = "td" + i + "_team_id";
+        document.getElementById(team_id).innerHTML = show_data[i].team_id;
+        var score = "td" + i + "_score";
+        document.getElementById(score).innerHTML = show_data[i].score;
+        for (k in show_data[i].task) {
+            //alert(task);
+            var task = "td" + i + "_" + k;
+            if ( show_data[i].task[k] == true ) {
+                document.getElementById(task).innerHTML = '√';
+            } else if ( show_data[i].task[k] == false ) {
                 document.getElementById(task).innerHTML = '';
-                //alert(j);
-                //
             }
-        } else {
-            var rank = "td" + i + "_rank";
-            document.getElementById(rank).innerHTML = j+1;
-            var team_id = "td" + i + "_team_id";
-            document.getElementById(team_id).innerHTML = show_data[i].team_id;
-            var score = "td" + i + "_score";
-            document.getElementById(score).innerHTML = show_data[i].score;
-            for (k in show_data[i].task) {
-                var task = "td" + i + "_" + k;
-                //alert(task);
-                if ( show_data[i].task[k] == true ) {
-                    document.getElementById(task).innerHTML = '√';
-                } else if ( show_data[i].task[k] == false ) {
-                    document.getElementById(task).innerHTML = '';
-                }
-                //alert(j);
-                //
-            }
-            //console(id);
-            //alert(id);
-        } 
+        }
     }
 }
 
