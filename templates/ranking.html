@@ -145,8 +145,8 @@
           <style>
           .layer-box {
             background: var(--bg-card-color);
-            width: 450px;
-            padding: 5px;
+            width: 400px;
+            /*padding: 5px;*/
             position: absolute;
             top: 25%;
             left: 0;
@@ -190,18 +190,9 @@
             
               .layer-box
             .layer{
-                width: 450px;
+                width: 400px;
                 overflow: hidden;
                 overflow-x: scroll;
-            }
-            .td-1{
-                position: absolute;
-                left: 0;
-                z-index: 2;
-                width: 150px;
-            }
-            .zhanwei{
-                width: 149px;
             }
 
             /* 选页标 */
@@ -209,6 +200,19 @@
             table tr:nth-child(odd) th{
                 background: var(--bg-oxford-blue-2);
             }
+
+            .td-1{
+                position: absolute;
+                left: 0;
+                z-index: 2;
+                width: 150px;
+                background: var(--bg-page-now);
+            }
+            .zhanwei{
+                width: 149px;
+            }
+
+            /* 分页符 */
 
             ul.pagination {
               display: inline-block;
@@ -220,7 +224,7 @@
             ul.pagination li a {
                 color: var(--text-botton-white);
                 float: left;
-                padding: 8px 16px;
+                padding: 7px 10px;
                 text-decoration: none;
             }
             ul.pagination li a.active {

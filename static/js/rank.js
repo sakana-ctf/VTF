@@ -36,7 +36,7 @@ function SetPage(number, nowtext) {
 
 // 对数据进行执行, 需要重排序, 并按输出结果抽取
 function SetRankJson(data, nowtext) {
-    nowtext = parseInt(nowtext)
+    nowtext = parseInt(nowtext);
     data = JSON.parse(data);
     //按照升序排列
     function down(x, y) {
@@ -49,21 +49,41 @@ function SetRankJson(data, nowtext) {
     SetPage(Math.ceil(data.length / 10), nowtext);
     for (i in show_data) {
         j = parseInt(i) + (nowtext - 1) * 10;
-        var rank = "td" + i + "_rank";
-        document.getElementById(rank).innerHTML = j+1;
-        var team_id = "td" + i + "_team_id";
-        document.getElementById(team_id).innerHTML = show_data[i].team_id;
-        var score = "td" + i + "_score";
-        document.getElementById(score).innerHTML = show_data[i].score;
-        for (k in show_data[i].task) {
-            var task = "td" + i + "_" + k;
-            //alert(task);
-            document.getElementById(task).innerHTML = show_data[i].task[k];
-            //alert(j);
-            //
-        }
-        //console(id);
-        //alert(id);
+        if ( show_data[i].team_id == "" ) {
+            var rank = "td" + i + "_rank";
+            document.getElementById(rank).innerHTML = '';
+            var team_id = "td" + i + "_team_id";
+            document.getElementById(team_id).innerHTML = '';
+            var score = "td" + i + "_score";
+            document.getElementById(score).innerHTML = '';
+            for (k in show_data[i].task) {
+                var task = "td" + i + "_" + k;
+                //alert(task);
+                document.getElementById(task).innerHTML = '';
+                //alert(j);
+                //
+            }
+        } else {
+            var rank = "td" + i + "_rank";
+            document.getElementById(rank).innerHTML = j+1;
+            var team_id = "td" + i + "_team_id";
+            document.getElementById(team_id).innerHTML = show_data[i].team_id;
+            var score = "td" + i + "_score";
+            document.getElementById(score).innerHTML = show_data[i].score;
+            for (k in show_data[i].task) {
+                var task = "td" + i + "_" + k;
+                //alert(task);
+                if ( show_data[i].task[k] == true ) {
+                    document.getElementById(task).innerHTML = '√';
+                } else if ( show_data[i].task[k] == false ) {
+                    document.getElementById(task).innerHTML = '';
+                }
+                //alert(j);
+                //
+            }
+            //console(id);
+            //alert(id);
+        } 
     }
 }
 
