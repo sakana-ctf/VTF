@@ -129,7 +129,7 @@
             <div class="form">
               <h1 id="name">${task.name}</h1>
               <h4>${task.diff}  ${task.score}</h4>
-              <a id="intro">${task.intro}</a>
+              <a class="intro">${task.intro}</a>
               <div class="inputBox"><input id="${task.tid}" type="text" placeholder="请输入flag"></div>
               <div class="inputBox"><input onclick="inputflag('${task.tid.str()}')" type="submit" value="提交"></div>
               
@@ -165,13 +165,14 @@
 
     // 使介绍保持换行.
     function set_a_text() {
-    var a_text = document.getElementsByTagId('intro');
+    var a_text = document.getElementsByClassName('intro');
     for (var i = 0; i < a_text.length; i++) {
       a_text[i].innerHTML = a_text[i].innerHTML.replace(/\n/g, '<br>');
       }
     }
 
     set_a_text()
+
 </script>
 
   <style>
