@@ -17,6 +17,26 @@ function url_encode_str(input) {
     return base64;
 }
 
+function url_decode_str(input) {
+    // 替换回Base64编码中的原始字符
+    let base64 = input.replace(/-/g, '+'); // 替换 - 为 +
+    base64 = base64.replace(/_/g, '/'); // 替换 _ 为 /
+    
+    // 由于在编码时去除了末尾的 =，这里需要根据Base64的填充规则补回
+    const mod4 = base64.length % 4;
+    if (mod4 > 0) {
+        base64 += '='.repeat(4 - mod4);
+    }
+    
+    // 对修正后的Base64字符串进行解码
+    let decoded = window.atob(base64);
+    
+    // 对解码后的字符串进行URI解码
+    decoded = decodeURIComponent(decoded);
+
+    return decoded;
+}
+
 // post传递数据
 function post_data(data, route) {
     console.log("发送信息ing...");

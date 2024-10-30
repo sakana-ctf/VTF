@@ -48,8 +48,8 @@ pub fn build_task(db DB) []Type {
 }
 
 // 提交flag
-pub fn post_flag(db DB, tid int, flag string, pid int) bool {
-    err_log.logs('${log.set_log}pid:${pid} 提交 tid:${tid} flag:${flag}')
+pub fn post_flag(db DB, ip string, tid int, flag string, pid int) bool {
+    err_log.logs('${log.set_log}ip:${ip} pid:${pid} 提交 tid:${tid} flag:${flag}')
     task_flag := sql db {
         select from Task where tid == tid 
     } or { task_err() }
@@ -59,11 +59,13 @@ pub fn post_flag(db DB, tid int, flag string, pid int) bool {
         return false
     }
 
-    // 这里修改不太对, 还有需要对控制进行私有化, 还挺麻烦的.
     if PostFlag{ parents_task: tid, flag: flag } in task_flag.first().flag {
+        new_score := task_flag.first().score - 300 / (task_flag.first().max_score - task_flag.first().score + 10)
         sql db {
             update PersonalFlag set complete = solved where parents_task == tid  && parents_id == pid
+            update Task set score = new_score where tid == tid
         } or { err_log.logs('Flag: ${flag}错误') }
+        err_log.logs('${log.true_log}ip:${ip} pid:${pid} 提交正确 tid:${tid} flag:${flag}')
         return true
     } else {
         err_log.logs('Flag: 修改出错')

@@ -267,12 +267,14 @@ body.nav-active { overflow: hidden; }
   z-index: 4;
 }
 
+/*
 .header.active {
   padding-block: 8px;
   box-shadow: var(--shadow-1);
   border-block-end: 1px solid var(--bg-prussian-blue);
   animation: slideIn 0.5s ease forwards;
 }
+*/
 
 @keyframes slideIn {
   0% { transform: translateY(-100%); }

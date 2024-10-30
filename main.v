@@ -218,7 +218,7 @@ fn (mut app App) loginapi(mut ctx Context) veb.Result {
     email := url_decode_str(ctx.form['email'])
     passwd := url_decode_str(ctx.form['passwd'])
 
-    select_passwd := select_passwd_db(app.db, email, passwd)
+    select_passwd := select_passwd_db(app.db, ctx.ip(), email, passwd)
 
     if select_passwd.return_bool {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 用户不存在'))
@@ -260,15 +260,22 @@ fn (mut app App) refusrerapi(mut ctx Context) veb.Result {
     email := url_decode_str(ctx.form['email'])
     passwd := url_decode_str(ctx.form['passwd'])
 
+    // 这里应该使用正则匹配, 现在只是粗暴区分用户名和邮箱.
     if id.index('@') != none {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 名称中禁止包含"@"'))
-        return ctx.redirect('/error.html')
+        return ctx.text('401: Usernames are forbidden to contain "@".')
     }
 
-    // email 的格式也应该进行正则匹配.
+    // email 的格式应该进行更详细的正则匹配.
+    if email.index('@') == none {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: email格式存在错误'))
+        return ctx.text('401: There is an error in the email format.')
+    }
+
+    
     if register_status(app.db, id, email, passwd) {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 检测到提交无效数据'))
-        return ctx.redirect('/error.html')
+        return ctx.text('403: Invalid data was detected')
     }
 
     if register_db(app.db, id, email, passwd) {
@@ -327,7 +334,7 @@ fn (mut app App) memberapi(mut ctx Context) veb.Result {
 ***************/
 
 @['/task.html']
-fn (mut app App) task(mut ctx Context) veb.Result {
+fn (mut app App) task(mut ctx Context, display_task string) veb.Result {
     mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
@@ -367,7 +374,7 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
         flag := url_decode_str(ctx.form['flag'])
         tid := url_decode_str(ctx.form['tid']).int()
 
-        if post_flag(app.db, tid, flag, login.id_check.first().pid) {
+        if post_flag(app.db, ctx.ip(), tid, flag, login.id_check.first().pid) {
             ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
             return ctx.text('200: Seccess.')
         }

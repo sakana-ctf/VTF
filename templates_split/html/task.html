@@ -6,9 +6,10 @@
         <!--your task-->    
         <div class="card">
           <div class="card-border-top">
+            <p class="score">${task.score}</p>
             <span>${task.name}</span>
             <p class="job">${task.diff}</p>
-            <button onclick="showModal('${task.name}')"><image src="${task.task[c_pid - 1].complete}" width="100px"></image></button>
+            <button onclick='showModal("${task.name}")'><image src="${task.task[c_pid - 1].complete}" width="100px"></image></button>
           </div>
         </div>
         <!-- 模态框本身 -->
@@ -18,8 +19,8 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="form">
               <h1 id="name">${task.name}</h1>
-              <h4>${task.diff}</h4>
-              <a>${task.intro}</a>
+              <h4>${task.diff}  ${task.score}</h4>
+              <a id="intro">${task.intro}</a>
               <div class="inputBox"><input id="${task.tid}" type="text" placeholder="请输入flag"></div>
               <div class="inputBox"><input onclick="inputflag('${task.tid.str()}')" type="submit" value="提交"></div>
               
@@ -52,6 +53,17 @@
             closeModal();
         }
     }
+
+    // 使介绍保持换行.
+    function set_a_text() {
+    var a_text = document.getElementsByTagId('intro');
+    for (var i = 0; i < a_text.length; i++) {
+      a_text[i].innerHTML = a_text[i].innerHTML.replace(/\n/g, '<br>');
+      }
+    }
+
+    set_a_text()
+    
 </script>
 
   <style>
@@ -111,6 +123,7 @@
         padding: 20px;
         border: 3px solid var(--bg-background-color);
         width: 80%; /* 或指定宽度 */
+        max-width: 1000px;
         border-radius: 10px;
         color: var(--text-botton-white);
     }
@@ -180,10 +193,22 @@
     color: var(--text-table-color);
     text-align: center;
     display: block;
-    padding-top: 20px;
+    padding-top: 5px;
     font-size: 1.3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
+  .card .score {
+    font-weight: 400;
+    color:var(--text-title-color);
+    display: block;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 15px;
+  }
+
   .card .job {
     font-weight: 400;
     color:var(--text-title-color);

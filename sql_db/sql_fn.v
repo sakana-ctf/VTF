@@ -13,7 +13,7 @@ fn personal_err() []Personal {
 
 // 黑名单
 fn set_black_list() {
-
+    
 }
 
 // 登录检测
@@ -30,8 +30,8 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
 }
 
 // 查询密码
-pub fn select_passwd_db(db DB, email string, passwd string) StatusReturn {
-    err_log.logs('${log.set_log}: email/id:${email} password:${passwd} 正在登录.')
+pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusReturn {
+    err_log.logs('${log.set_log}: ip:${ip} email/id:${email} password:${passwd} 正在登录.')
     id_check := sql db {
         select from Personal where id == url_encode_str(email) || email == url_encode_str(email)
     } or { personal_err() }
@@ -45,7 +45,7 @@ pub fn select_passwd_db(db DB, email string, passwd string) StatusReturn {
     for i in id_check {
         if i.passwd == err_log.sha256_str(passwd) {
             not_passwd = false
-            err_log.logs('${log.true_log}: pid:${i.pid} 已登录.')
+            err_log.logs('${log.true_log}: ip:${ip} pid:${i.pid} is login.')
         }
     }
     return StatusReturn{false, not_passwd, id_check}
@@ -84,8 +84,6 @@ pub fn register_db(db DB, id string, email string, passwd string) bool {
     for i in tasks {
         personal_flag << PersonalFlag{ parents_task : i.tid, complete : unsolved }
     }
-
-    println(personal_flag)
 
     new_number := Personal{
         id      :   url_encode_str(id)
