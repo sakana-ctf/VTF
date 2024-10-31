@@ -7,4 +7,6 @@ Vtf.exe
 vtf.exe
 templates_split/build
 templates_split/build.exe
+make
+make.v
 

@@ -35,11 +35,13 @@ import encoding.base64 {
     url_decode_str 
 }
 
+/*
 struct User {
 mut:
 	name string
 	id   int
 }
+*/
 
 struct Rank{
     team_id string
@@ -50,11 +52,11 @@ struct Rank{
 // 基础结构体
 struct Context {
     veb.Context
-mut:
+// mut:
 	// In the context struct we store data that could be different
 	// for each request. Like a User struct or a session id
-	user       User
-	session_id string
+	// user       User
+	// session_id string
 //mut:
     //db    sqlite.DB
     //counter shared Counter
@@ -126,8 +128,12 @@ fn main() {
     }
 
     println('暂不支持设置线程数: ${workers}')
-   
-    //veb.run[App, Context](mut app, 80)
+    
+    /*
+    mut app := App{}
+    veb.run[App, Context](mut app, 8080)
+    */
+
     mut app := new_app()
     
     veb.run_at[App, Context](

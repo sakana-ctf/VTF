@@ -37,6 +37,12 @@ function url_decode_str(input) {
     return decoded;
 }
 
+function reload_page() {
+    window.setTimeout(function () {
+        window.location.reload();
+    },300)
+}
+
 // post传递数据
 function post_data(data, route) {
     console.log("发送信息ing...");
@@ -83,7 +89,7 @@ function fixpasswd() {
         post_data(data, '/memberapi');
         
         // 临时用这个代替, 但是远程有时差就爆炸.
-        // location.reload();
+        reload_page();
     } else {
         alert("Error: 密码不一致");
     }
@@ -100,7 +106,7 @@ function passwdlogin() {
     post_data(data, '/loginapi');
     
     // 临时用这个代替, 但是远程有时差就爆炸.
-    // location.reload();
+    reload_page();
 }
 
 // 登出函数
@@ -114,10 +120,10 @@ function logout() {
 function inputflag(tid){
     flag = url_encode_str(document.getElementById(tid).value);
     const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
-    post_data(data, '/flagapi')
+    post_data(data, '/flagapi');
     
     // 临时用这个代替, 但是远程有时差就爆炸.
-    location.reload();
+    reload_page();
 }
 
 /*****************

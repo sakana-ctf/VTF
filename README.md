@@ -10,7 +10,7 @@
 VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, VTF具有以下特点:
 
 * 编译到clang, 运行中拥有更高的效率;
-* 直接使用自带的vweb框架, 无需学习配置其他web框架;
+* 直接使用自带的veb框架, 无需学习配置其他web框架;
 * vlang拥有很方便的交叉编译能力, 可以轻松实现跨平台;
 * 支持分屏操作, 在最小屏幕中也能正常使用;
 * 由[二次元姛战队](https://gitee.com/sakana_ctf)维护, 二次元含量极高.
@@ -72,58 +72,77 @@ v main.v
 
 ### 二进制文件
 
+我们也不定期提供稳定版本用于快速部署服务, 可以通过以下方式直接获取预编译好的源码.
+
 ```bash
-git clone https://gitee.com/sakana_ctf/vtf.git
-cd vtf
 wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
-./vtf-[对应版本类型]
+./vtf-[对应版本类型]-[系统类型].zip
+unzip vtf-[对应版本类型]-[系统类型].zip
+cd vtf-[对应版本类型]-[系统类型]
+./main
 ```
 
 # 运行
 
-编译好后(或拉取bin文件后)在服务器上推荐使用以下指令在后台运行:
+## 调试运行
+
+调试运行方便对于修改源码过程中快速看见代码的更新情况, 在第一次进行调试前推荐先编译修改提交html文件的子件:
 
 ```bash
-nohup ./main >> log.txt 2>&1 &
+v ./templates_split/build.v
+```
+
+在每次更新后可以运行以下代码:
+
+```shell
+./templates_split/build ; v main.v ; ./main
+```
+
+## 服务器运行
+
+在正式的服务器环境中推荐使用以下指令在后台运行:
+
+```bash
+nohup ./main &
 ```
 
 # 支持
 
-| 需求          | 当前情况                                                                         | 检验人        |
-|:-----------:|:----------------------------------------------------------------------------:|:----------:|
-| 版本号         | v2.4.0(优化基础功能)                                                  | sudopacman |
-| wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman |
-| 数据测试 |  在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用  | sudopacman, Kengwang |
-|   测试反馈   | 存在资源印用错误, 现已修复 | secret |
-|   测试反馈   | 存在题目未格式化问题, 现暂用替代方案 | adwa |
-| firefox兼容问题 | 需要将cookie更换到`Context`, 待重构                                                   |            |
-| 说明书         | 已修正debian脚本错误                                                                | H4nn4h     |
-| edge兼容问题    | 已适配                                                                          | sudopacman |
-| 线程设置        | 当前veb框架暂不支持                                                                  |            |
-| 登录措施        | 普通用户登录与注册                                                                    | sudopacman |
-| 管理员         | 未支持                                                                          |            |
-| 非member视角   | 未支持                                                                          |            |
-| 权限区分        | 未实现, 考虑使用新函数统一区分权限                                                           |            |
-| 登录状态维持      | 当前页基本解决                                                                      | sudopacman |
-| 登录安全        | 实现登录函数`login_status`, 其他路由已完善                                                | sudopacman |
-| 黑名单         | 禁止选手访问, 预计下一版本支持                                                             |            |
-| 题目          | 支持提交flag                                                                     | sudopacman |
-| 多flag设置     | 已实现                                                                          | sudopacman |
-| 数据库         | 当前仅支持sqlite3数据库                                                              | sudopacman |
-| 数据库安全       | 统一使用base64编码, sha256单向加密传递数据                                                 | sudopacman |
-| 错误显示        | 已重构, js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman |
-| 提交更新        | 已完成                                                                          | sudopacman |
-| 函数分离        | 已分离成多个模块                                                                     | sudopacman |
-| 排行榜         | 已完成                                                                          | sudopacman |
-| 动态计分        | 已更新                                                                         |            | sudopacman
-| 一血, 二血, 三血  | 暂无明确实现思路                                                                     |            |
-| 线程数设置       | 当前重构版本不支持设置线程                                                                |            |
-| html分块编辑    | 使用复杂脚本替代编辑问题                                                                      | sudopacman |
-| ip检测功能    | 支持最基础的ip检测 | sudopacman |
-| 图片格式修改为webp | 已更新, 图片采用无压缩+2速度                                                             | sudopacman |
-| 中英文显示问题     | 待重构                                                                          |            |
-| 数据可视化       | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                        |            |
-| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行 | sudopacman |
+| 需求          | 当前情况                                                                         | 检验人                  |
+|:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
+| 版本号         | v2.4.2(更新了基本交互)                                                              | sudopacman           |
+| wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman           |
+| 数据测试        | 在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用                                   | sudopacman, Kengwang |
+| 测试反馈        | 存在资源印用错误, 现已修复                                                               | secret               |
+| 测试反馈        | 存在题目未格式化问题, 现暂用替代方案                                                          | adwa                 |
+| firefox兼容问题 | 需要将cookie更换到`Context`, 待重构                                                   |                      |
+| 说明书         | 已修正debian脚本错误                                                                | H4nn4h               |
+| edge兼容问题    | 已适配                                                                          | sudopacman           |
+| 线程设置        | 当前veb框架暂不支持                                                                  |                      |
+| 登录措施        | 普通用户登录与注册                                                                    | sudopacman           |
+| 管理员         | 未支持                                                                          |                      |
+| 非member视角   | 未支持                                                                          |                      |
+| 权限区分        | 未实现, 考虑使用新函数统一区分权限                                                           |                      |
+| 登录状态维持      | 当前页基本解决                                                                      | sudopacman           |
+| 登录安全        | 实现登录函数`login_status`, 其他路由已完善                                                | sudopacman           |
+| 黑名单         | 禁止选手访问, 预计下一版本支持                                                             |                      |
+| 题目          | 支持提交flag                                                                     | sudopacman           |
+| 多flag设置     | 已实现                                                                          | sudopacman           |
+| 数据库         | 当前仅支持sqlite3数据库                                                              | sudopacman           |
+| 数据库安全       | 统一使用base64编码, sha256单向加密传递数据                                                 | sudopacman           |
+| 错误显示        | 已重构, js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman           |
+| 提交更新        | 已完成                                                                          | sudopacman           |
+| 函数分离        | 已分离成多个模块                                                                     | sudopacman           |
+| 排行榜         | 已完成                                                                          | sudopacman           |
+| 动态计分        | 已更新                                                                          |                      |
+| 一血, 二血, 三血  | 暂无明确实现思路                                                                     |                      |
+| 线程数设置       | 当前重构版本不支持设置线程                                                                |                      |
+| html分块编辑    | 使用复杂脚本替代编辑问题                                                                 | sudopacman           |
+| ip检测功能      | 支持最基础的ip检测                                                                   | sudopacman           |
+| 图片格式修改为webp | 已更新, 图片采用无压缩+2速度                                                             | sudopacman           |
+| 中英文显示问题     | 待重构                                                                          |                      |
+| 数据可视化       | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                        |                      |
+| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行 | sudopacman           |
 
 # 参与贡献
 
