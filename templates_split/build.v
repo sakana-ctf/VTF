@@ -10,6 +10,11 @@ fn main() {
 	for i in list_file('./html') {
 		write_html(i, set_html(i))
 	}
+
+	data := readfile('./css/console.css')
+	url := '../static/css/console.css'
+	os.write_file(url, data) or { return }
+	println('\033[32m[True] \033[0m文件储存于: ${url}')
 }
 
 fn readfile(path string) string {

@@ -1,0 +1,47 @@
+{
+    "massage": {
+        "license": "VTF网络安全竞赛平台由©2024 VY开源中国 开源。开源协议遵循VY通用许可证."
+    },
+    "button": {
+        "exit": "退出",
+        "update": "更新",
+        "change_password": "修改密码",
+    },
+    "page": [
+        {
+            "console": "控制台",
+            "bashboard": "面板",
+            "member": "成员",
+            "team": "队伍",
+            "challenge": "题目",
+            "data": "数据",
+            "detect": "监控",
+        },
+        {
+            "notice": "告示",
+            "login": "登录账号",
+            "forgot_password": "忘记密码?",
+            "signup": "注册账号",
+        },
+        {
+            "challenge": "挑战",
+        },
+        {
+            "ranking": "排名",
+            "list": "排行榜",
+        },
+        {
+            "team": "战队",
+        },
+        {
+            "member": "个人",
+            "email": "邮箱",
+        },
+        {
+            "signup": "注册",
+        },
+        {
+            "login": "登录",
+        },
+    ]
+}

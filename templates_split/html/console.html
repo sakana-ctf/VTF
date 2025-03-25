@@ -1,5 +1,94 @@
-  <main>
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-  </main>
+<main>
+  <link rel="stylesheet" href="../css/console.css">
+  <div class="viewport">
+    <!-- 侧边栏 -->
+    <div id="sidebar">
+      <ul class="nav">
+        <li>
+          <a href="#panel">面板</a>
+        </li>
+        <li>
+          <a href="#member">成员</a>
+        </li>
+        <li>
+          <a href="#team">队伍</a>
+        </li>
+        <li>
+          <a href="#challenge">题目</a>
+        </li>
+        <li>
+          <a href="#data">数据</a>
+        </li>
+        <li>
+          <a href="#control">监控</a>
+        </li>
+      </ul>
+    </div>
+    <!-- 内容区 -->
+    <div id="content">
+      <h1 id="panel">面板</h1>
+      <div class="content">
+        <canvas id="myCanvas" width="300" height="300"></canvas>
+        <script>
+
+          var canvas = document.getElementById('myCanvas');
+          var ctx = canvas.getContext('2d');
+          // 绘制坐标轴
+          ctx.moveTo(10, 250);
+          ctx.lineTo(250, 250);
+          ctx.moveTo(10, 250);
+          ctx.lineTo(10, 10);
+          ctx.stroke();
+
+          // 绘制简单的柱状图
+          var data = [100, 200, 150, 250, 300, 129, 182, 123, 313, 13, 31, 3, 1, 31, 3, 1];
+          var barWidth = 10;
+          var barSpacing = 20;
+          for (var i = 0; i < data.length; i++) {
+            var barHeight = data[i];
+            ctx.fillRect(50 + i * (barWidth + barSpacing), 250 - barHeight, barWidth, barHeight);
+          }
+
+
+        </script>
+      </div>
+
+      <h1 id="member">成员</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="team">队伍</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="challenge">题目</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="data">数据</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="control">监控</h1>
+      <div class="content">
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var links = document.querySelectorAll('#sidebar .nav a');
+    links.forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        var targetId = this.getAttribute('href').substring(1); // 获取id，去掉#
+        var targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' }); // 平滑滚动到目标位置
+        }
+      });
+    });
+  });
+</script>

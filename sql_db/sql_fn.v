@@ -2,22 +2,39 @@ module sql_db
 
 import encoding.base64 { url_encode_str, url_decode_str }
 import err_log
-import log
+import vlog
 import db.sqlite { DB }
 
 // personal报错函数
 fn personal_err() []Personal {
-    println('${log.false_log}查询错误')
+    println('${vlog.false_log}查询错误')
     return []Personal{}
 }
 
-// 黑名单
+// 黑名单personal_err
 fn set_black_list() {
     
 }
 
+// whoami权限检测
+pub fn personal_whoami(db DB, c_id string, c_pwd string) string {
+    id_check := sql db {
+        select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
+    } or { personal_err() }
+    // there has a black list to set.
+    if id_check.len != 0 && true {
+        return id_check.first().whoami
+    } else {
+        return ''
+    }
+}
+
+
 // 登录检测
 pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
+    // 临时解决
+    personal_err()
+
     id_check := sql db {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
     } or { personal_err() }
@@ -31,7 +48,11 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
 
 // 查询密码
 pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusReturn {
-    err_log.logs('${log.set_log}: ip:${ip} email/id:${email} password:${passwd} 正在登录.')
+    // 临时解决
+    personal_err()
+
+    err_log.logs('${vlog.set_log}: ip:${ip} email/id:${email} password:${passwd} 正在登录.')
+
     id_check := sql db {
         select from Personal where id == url_encode_str(email) || email == url_encode_str(email)
     } or { personal_err() }
@@ -45,15 +66,19 @@ pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusRet
     for i in id_check {
         if i.passwd == err_log.sha256_str(passwd) {
             not_passwd = false
-            err_log.logs('${log.true_log}: ip:${ip} pid:${i.pid} is login.')
+            err_log.logs('${vlog.true_log}: ip:${ip} pid:${i.pid} is login.')
         }
     }
+
     return StatusReturn{false, not_passwd, id_check}
 }
 
 // ========================= 注册函数 =================================
 // 注册检测
 pub fn register_status(db DB, id string, email string, passwd string) bool {
+    // 临时解决
+    personal_err()
+
     mut return_bool := false
 
     new_number := Personal{
@@ -61,14 +86,14 @@ pub fn register_status(db DB, id string, email string, passwd string) bool {
         email   :   url_encode_str(email)
         passwd  :   err_log.sha256_str(passwd)
         whoami  :   'member'
-        task    :   []PersonalFlag{}
+        challenge    :   []PersonalFlag{}
     }
 
     id_check := sql db {
         select from Personal where id == new_number.id || email == new_number.email
     } or { personal_err() }
     if id_check.len != 0 || new_number.id == '' {
-        println('${log.false_log}: 检测到提交无效数据')
+        println('${vlog.false_log}: 检测到提交无效数据')
         return_bool = true
     }
     return return_bool
@@ -76,13 +101,16 @@ pub fn register_status(db DB, id string, email string, passwd string) bool {
 
 // 注册函数
 pub fn register_db(db DB, id string, email string, passwd string) bool {
+    vlog.temporary()
+
+
     mut return_bool := false
 
     mut personal_flag := []PersonalFlag{}
-    tasks := sql db {select from Task} or { []Task{} }
+    challenges := sql db {select from Task} or { []Task{} }
 
-    for i in tasks {
-        personal_flag << PersonalFlag{ parents_task : i.tid, complete : unsolved }
+    for i in challenges {
+        personal_flag << PersonalFlag{ parents_challenge : i.tid, complete : unsolved }
     }
 
     new_number := Personal{
@@ -90,13 +118,13 @@ pub fn register_db(db DB, id string, email string, passwd string) bool {
         email   :   url_encode_str(email)
         passwd  :   err_log.sha256_str(passwd)
         whoami  :   'member'
-        task    :   personal_flag
+        challenge    :   personal_flag
     }
 
     sql db {
         insert new_number into Personal
     } or {
-        println("${log.false_log}: 存储数据出错${new_number}")
+        println("${vlog.false_log}: 存储数据出错${new_number}")
         return_bool = true
     }
     return return_bool
@@ -105,6 +133,12 @@ pub fn register_db(db DB, id string, email string, passwd string) bool {
 // ========================= 修改密码 =================================
 // 
 pub fn id_check(db DB, c_id string, oldpasswd string, newpasswd string) bool {
+    // 临时解决
+    personal_err()
+
+    vlog.temporary()
+
+
     id_check := sql db {
         select from Personal where id == c_id && passwd == err_log.sha256_str(oldpasswd)
     } or { personal_err() }
@@ -113,7 +147,7 @@ pub fn id_check(db DB, c_id string, oldpasswd string, newpasswd string) bool {
         sql db {
             update Personal set passwd = newpasswd where id == c_id && passwd == oldpasswd is none
         } or { 
-            err_log.logs('${log.false_log}: ${c_id}修改密码失败')
+            err_log.logs('${vlog.false_log}: ${c_id}修改密码失败')
             return false
         }
         return true

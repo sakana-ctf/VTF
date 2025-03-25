@@ -26,92 +26,181 @@
 
 <body id="top">
 <header class="header" data-header>
-    <div class="container">
+  <div class="container">
 
-      <a href="/" class="logo">
-        <img src="../image/vtf-logo.svg" width="40" alt="vtf-logo">
-      </a>
+    <a href="/" class="logo">
+      <img src="../image/vtf-logo.svg" width="40" alt="vtf-logo">
+    </a>
 
-      <nav class="navbar" data-navbar>
+    <nav class="navbar" data-navbar>
 
-        <div class="navbar-top">
-          <a href="/" class="logo">
-            <img src="../image/vtf-logo.svg" width="80" alt="vtf-logo">
-          </a>
+      <div class="navbar-top">
+        <a href="/" class="logo">
+          <img src="../image/vtf-logo.svg" width="80" alt="vtf-logo">
+        </a>
 
-          <button class="nav-close-btn" aria-label="close menu" data-nav-toggler>
-            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
-          </button>
-        </div>
+        <button class="nav-close-btn" aria-label="close menu" data-nav-toggler>
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
 
-        <ul class="navbar-list">
-         <li>
+      <ul class="navbar-list">
+        <li>
           <a href="console.html" class="navbar-link hover-1" data-nav-toggler>控制台</a>
         </li>
-         <li>
-            <a href="notice.html" class="navbar-link hover-1" data-nav-toggler>告示</a>
-          </li>
+        <li>
+          <a href="notice.html" class="navbar-link hover-1" data-nav-toggler>告示</a>
+        </li>
 
-          <li>
-            <a href="task.html" class="navbar-link hover-1" data-nav-toggler>题目</a>
-          </li>
+        <li>
+          <a href="challenge.html" class="navbar-link hover-1" data-nav-toggler>题目</a>
+        </li>
 
-          <li>
-            <a href="ranking.html" class="navbar-link hover-1" data-nav-toggler>排名</a>
-          </li>
+        <li>
+          <a href="ranking.html" class="navbar-link hover-1" data-nav-toggler>排名</a>
+        </li>
 
-         <li>
-            <a id="navbar4" href="team.html" class="navbar-link hover-1" data-nav-toggler>战队</a>
-          </li>
+        <li>
+          <a id="navbar4" href="team.html" class="navbar-link hover-1" data-nav-toggler>战队</a>
+        </li>
 
-          <li>
-            <a id="navbar5" href="member.html" class="navbar-link hover-1" data-nav-toggler>个人</a>
-          </li>
+        <li>
+          <a id="navbar5" href="member.html" class="navbar-link hover-1" data-nav-toggler>个人</a>
+        </li>
 
-        </ul>
+      </ul>
 
-        <p class="navbar-bottom">
-          <img src="../image/VYCMa.webp" width="180" alt="VYCMa">
-        </p>
+      <p class="navbar-bottom">
+        <img src="../image/VYCMa.webp" width="180" alt="VYCMa">
+      </p>
 
-        <p class="copyright-text">
-          vtf platform copyleft ©2024 VYOSC.<br>
-          Open source follows the VY General License.<br>
-          vtf比赛平台由©2024 VY开源中国 开源.<br>
-          开源协议遵循VY通用许可证.
-        </p>
+      <p class="copyright-text">
+        vtf platform copyleft ©2024 VYOSC.<br>
+        Open source follows the VY General License.<br>
+        vtf比赛平台由©2024 VY开源中国 开源.<br>
+        开源协议遵循VY通用许可证.
+      </p>
 
-      </nav>
+    </nav>
 
-      <button class="nav-open-btn" aria-label="open menu" data-nav-toggler>
-        <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
-      </button>
+    <button class="nav-open-btn" aria-label="open menu" data-nav-toggler>
+      <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+    </button>
 
-    </div>
-  </header>
+  </div>
+</header>
 
 <!-- 
     - 导入js
   -->
-  <script src="../js/script.js"></script>
-  <script src="../js/console.js"></script>
-  <script src="../js/rank.js"></script>
-  <script>
-    showinfo('${mess}');
-  </script>
+<script src="../js/script.js"></script>
+<script src="../js/console.js"></script>
+<script src="../js/rank.js"></script>
+<script src="../js/chart.js"></script>
 
-  <!-- 
+<script>
+  showinfo('${mess}');
+</script>
+
+<!-- 
     - UI链接
   -->
-  <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
+<script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
+<main>
+  <link rel="stylesheet" href="../css/console.css">
+  <div class="viewport">
+    <!-- 侧边栏 -->
+    <div id="sidebar">
+      <ul class="nav">
+        <li>
+          <a href="#panel">面板</a>
+        </li>
+        <li>
+          <a href="#member">成员</a>
+        </li>
+        <li>
+          <a href="#team">队伍</a>
+        </li>
+        <li>
+          <a href="#challenge">题目</a>
+        </li>
+        <li>
+          <a href="#data">数据</a>
+        </li>
+        <li>
+          <a href="#control">监控</a>
+        </li>
+      </ul>
+    </div>
+    <!-- 内容区 -->
+    <div id="content">
+      <h1 id="panel">面板</h1>
+      <div class="content">
+        <canvas id="myCanvas" width="300" height="300"></canvas>
+        <script>
+
+          var canvas = document.getElementById('myCanvas');
+          var ctx = canvas.getContext('2d');
+          // 绘制坐标轴
+          ctx.moveTo(10, 250);
+          ctx.lineTo(250, 250);
+          ctx.moveTo(10, 250);
+          ctx.lineTo(10, 10);
+          ctx.stroke();
+
+          // 绘制简单的柱状图
+          var data = [100, 200, 150, 250, 300, 129, 182, 123, 313, 13, 31, 3, 1, 31, 3, 1];
+          var barWidth = 10;
+          var barSpacing = 20;
+          for (var i = 0; i < data.length; i++) {
+            var barHeight = data[i];
+            ctx.fillRect(50 + i * (barWidth + barSpacing), 250 - barHeight, barWidth, barHeight);
+          }
 
 
-  <main>
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-      <img src="../image/vtf-logo.svg" width="300" alt="vtf-logo">
-  </main>
+        </script>
+      </div>
+
+      <h1 id="member">成员</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="team">队伍</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="challenge">题目</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="data">数据</h1>
+      <div class="content">
+
+      </div>
+      <h1 id="control">监控</h1>
+      <div class="content">
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var links = document.querySelectorAll('#sidebar .nav a');
+    links.forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        var targetId = this.getAttribute('href').substring(1); // 获取id，去掉#
+        var targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' }); // 平滑滚动到目标位置
+        }
+      });
+    });
+  });
+</script>
 
 </body>
 </html>

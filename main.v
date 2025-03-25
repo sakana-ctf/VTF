@@ -19,14 +19,15 @@ import sql_db {
     id_check,
     find_user,
 
-    build_task,
+    build_challenge,
     post_flag,
 
     get_personal,
-    find_task,
+    find_challenge,
     bool_solve,
-    task_score,
+    challenge_score,
 
+    personal_whoami,
     test_main_function
 }
 
@@ -46,7 +47,7 @@ mut:
 struct Rank{
     team_id string
     score   int
-    task    []bool
+    challenge    []bool
 }
 
 // 基础结构体
@@ -64,6 +65,7 @@ struct Context {
 
 pub struct App {
     veb.StaticHandler
+    //veb.Middleware[Context]
 	// In the app struct we store data that should be accessible by all endpoints.
 	// For example, a database or configuration values.
 mut:
@@ -114,6 +116,7 @@ fn cookie_mess(mut ctx Context) string {
     return url_decode_str(mess)
 }
 
+
 /*************
  *  功能函数
 *************/
@@ -150,13 +153,29 @@ fn new_app() &App {
     mut app := &App{ 
         db : connect_db() ,
     }
+
+    /*
+    app.use(
+        veb.cors[Context](veb.CorsOptions{
+                origins: ['*']
+                allowed_methods: [.get, .head, .patch, .put, .post, .delete]
+            }
+        )
+    )
+    */
+
     create_db(app.db)
     
     test_main_function(mut app.db)
-    
+
     app.static_mime_types['.cjs'] = 'txt/javascript'
     app.static_mime_types['.vbs'] = 'txt/javascript'
+    app.static_mime_types['.yml'] = 'txt/javascript'
+    app.static_mime_types['.mts'] = 'txt/javascript'
+    app.static_mime_types['.hml'] = 'txt/javascript'
     app.static_mime_types['.md'] = 'txt/plain'
+    app.static_mime_types['.markdown'] = 'txt/plain'
+    app.static_mime_types['.jade'] = 'txt/plain'
     app.static_mime_types['.png~'] = 'image/png'
 
     app.handle_static('static', true) or {
@@ -178,6 +197,7 @@ fn new_app() &App {
 /*************
  * 首页文件页
 *************/ 
+
 @['/']
 fn (mut app App) index(mut ctx Context) veb.Result {
     mess := cookie_mess(mut ctx)
@@ -247,8 +267,8 @@ fn (mut app App) loginapi(mut ctx Context) veb.Result {
  * 注册文件页
 ***************/ 
 
-@['/refusrer.html']
-fn (mut app App) refusrer(mut ctx Context) veb.Result {
+@['/signup.html']
+fn (mut app App) signup(mut ctx Context) veb.Result {
     mess := cookie_mess(mut ctx)
 
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
@@ -260,8 +280,8 @@ fn (mut app App) refusrer(mut ctx Context) veb.Result {
     }
 }
 
-@['/refusrerapi'; post]
-fn (mut app App) refusrerapi(mut ctx Context) veb.Result {
+@['/signupapi'; post]
+fn (mut app App) signupapi(mut ctx Context) veb.Result {
     id := url_decode_str(ctx.form['id'])
     email := url_decode_str(ctx.form['email'])
     passwd := url_decode_str(ctx.form['passwd'])
@@ -309,6 +329,7 @@ fn (mut app App) member(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
+        ctx.set_cookie(name:'whoami', value: url_encode_str(login.id_check.first().whoami))
         name := c_id
         email := url_decode_str(login.id_check[0].email)
         return $veb.html()
@@ -339,8 +360,8 @@ fn (mut app App) memberapi(mut ctx Context) veb.Result {
  * 挑战页
 ***************/
 
-@['/task.html']
-fn (mut app App) task(mut ctx Context, display_task string) veb.Result {
+@['/challenge.html']
+fn (mut app App) challenge(mut ctx Context, display_challenge string) veb.Result {
     mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
@@ -351,7 +372,7 @@ fn (mut app App) task(mut ctx Context, display_task string) veb.Result {
         return ctx.redirect('/login.html')
     } else if login.return_bool {
         c_pid := find_user(app.db, url_encode_str(c_id), c_pwd).pid
-        list_of_type := build_task(app.db)
+        list_of_type := build_challenge(app.db)
         return $veb.html()
     } else {
         ctx.set_cookie(name:'id', value: '')
@@ -406,7 +427,7 @@ fn (mut app App) team(mut ctx Context) veb.Result {
 @['/ranking.html']
 fn (mut app App) ranking(mut ctx Context) veb.Result {
     mess := cookie_mess(mut ctx)
-    task_name := find_task(app.db)
+    challenge_name := find_challenge(app.db)
     return $veb.html()
 }
 
@@ -416,18 +437,18 @@ fn (mut app App) rankapi(mut ctx Context) veb.Result {
     for i in get_personal(app.db) {
         mut delta := []bool{}
         mut score := 0
-        for j in i.task {
+        for j in i.challenge {
             if bool_solve(j) {
                 delta << true
-                score += task_score(app.db, j)
+                score += challenge_score(app.db, j)
             } else {
                 delta << false
             }
         }
         data << Rank{
-            team_id : url_decode_str(i.id)
-            score   : score
-            task    : delta
+            team_id 	: url_decode_str(i.id)
+            score   	: score
+            challenge   : delta
         }
     }
     
@@ -437,4 +458,31 @@ fn (mut app App) rankapi(mut ctx Context) veb.Result {
 @['/notice.html']
 fn (mut app App) notice(mut ctx Context) veb.Result {
     return ctx.redirect('/team.html')
+}
+
+/**************
+ * 后台控制系统
+***************/
+
+@['/console.html']
+fn (mut app App) console(mut ctx Context) veb.Result {
+    mess := cookie_mess(mut ctx)
+    return $veb.html()
+    /*
+    mess := cookie_mess(mut ctx)
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_status(app.db, c_id, c_pwd)
+
+    if c_id == '' {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+            return $veb.html() 
+        }
+    } else {
+        ctx.set_cookie(name:'id', value: '')
+        return ctx.redirect('/error.html')
+    }
+    */
 }

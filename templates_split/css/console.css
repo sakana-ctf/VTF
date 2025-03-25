@@ -1,0 +1,136 @@
+/* style.css */
+:root {
+    /** 文本颜色 */
+    --text-wild-blue-yonder: rgb(93, 135, 191);
+    --text-carolina-blue: rgb(201, 117, 189);
+    --text-botton-white: #fffff1fa;
+
+    /** 背景颜色 */
+    --bg-oxford-blue-3: rgb(82, 107, 138);
+    --bg-background-color: rgb(23, 33, 46);
+
+    /** 选页框 */
+    --bg-page-color: rgb(36, 53, 77);
+    --text-page-now: rgb(57, 81, 113);
+}
+
+/* 通用样式 */
+body,
+html {
+    margin: 0;
+    padding: 0;
+}
+
+.viewport {
+    display: flex;
+    height: 100vh;
+    overflow: auto;
+}
+
+/* 侧边栏样式 */
+#sidebar {
+    width: 100px;
+    background-color: var(--bg-oxford-blue-3);
+    color: #c52323;
+    /*按钮大小*/
+    padding: 10px;
+}
+
+/* 按钮外部 */
+#sidebar .nav {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* 按钮顶部 */
+#sidebar .nav li {
+    margin-top: 5px;
+}
+
+#sidebar .nav li:first-child {
+    margin-top: 80px;
+}
+
+/* 文字设置 */
+#sidebar .nav a {
+    color: var(--text-botton-white);
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 10px;
+}
+
+#sidebar .nav a:hover {
+    background-color: var(--bg-background-color);
+}
+
+/* 内容区样式 */
+#content {
+    flex-grow: 1;
+    padding: 5px;
+    /* background-color: #d81f1fa9; */
+    overflow-y: auto;
+}
+
+#content section {
+    display: none;
+    /* 默认隐藏所有section */
+}
+
+#content section.active {
+    display: block;
+    /* 显示当前激活的section */
+}
+
+#content h2 {
+    color: #ff0000;
+}
+
+#content ul,
+#content ol {
+    list-style-type: none;
+    padding: 0;
+}
+
+#content li {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#content li img {
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+#content li p {
+    margin: 0;
+}
+
+/* 交互效果 */
+#sidebar .nav a[data-target="member"]:checked~#content .member,
+#sidebar .nav a[data-target="task"]:checked~#content .task {
+    display: block;
+}
+
+#content h1 {
+    color: var(--text-wild-blue-yonder);
+    margin-bottom: 60px;
+}
+
+#content h1:first-child {
+    margin-top: 80px;
+}
+
+/* 内容区 */
+.content {
+    border-style: solid;
+    border-color: var(--text-wild-blue-yonder);
+    border-radius: 5px;
+    box-shadow: 3px 3px 0px var(--bg-page-color),
+        -3px -3px 0px var(--text-page-now);
+    padding: 5px;
+}

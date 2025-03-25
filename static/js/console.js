@@ -66,14 +66,14 @@ function post_data(data, route) {
 }
 
 // 注册函数
-function refusrer() {
+function signup() {
     var id = url_encode_str(document.getElementById('id').value);
     var email = url_encode_str(document.getElementById('email').value);
     var passwd = document.getElementById('passwd').value;
     var passwdagain = document.getElementById('passwdagain').value;
     if (passwd === passwdagain) {             
         const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
-        post_data(data, '/refusrerapi');
+        post_data(data, '/signupapi');
         
         // 临时用这个代替, 但是远程有时差就爆炸.
         reload_page('/member.html');
@@ -116,6 +116,7 @@ function passwdlogin() {
 function logout() {
     delCookie('id');
     delCookie('passdwd');
+    delCookie('whoami');
     location.reload();
 }
 
@@ -164,10 +165,10 @@ function NoLog() {
         var the_member = document.getElementById('navbar5');
         the_team.innerText = "注册";
         the_member.innerText = "登录";
-        the_team.href = "refusrer.html";
+        the_team.href = "signup.html";
         the_member.href = "login.html";
     };
-    if (cookie_whoami != "root") {
+    if (cookie_whoami == "member" || cookie_whoami == "") {
         KillConsole();
     };
 

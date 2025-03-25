@@ -7,8 +7,8 @@
               <th>排名</th>
               <th>选手名称</th>
               <th>选手得分</th>
-              @for task in task_name
-              <th>${task.name}</th>
+              @for challenge in challenge_name
+              <th>${challenge.name}</th>
               @end
             </tr>
             <tbody>
@@ -17,7 +17,7 @@
               <td id="td${i}_rank"></td>
               <td id="td${i}_team_id"></td>
               <td id="td${i}_score"></td>
-              @for j in 0..task_name.len
+              @for j in 0..challenge_name.len
               <td id="td${i}_${j}"></td>
               @end
             </tr>

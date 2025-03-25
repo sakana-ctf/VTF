@@ -11,7 +11,7 @@ pub fn get_personal(db DB) []Personal {
 	return data
 }
 
-pub fn find_task(db DB) []Task {
+pub fn find_challenge(db DB) []Task {
 	data := sql db {
 		select from Task
 	} or {
@@ -28,9 +28,9 @@ pub fn bool_solve(pf PersonalFlag) bool {
 	}
 }
 
-pub fn task_score(db DB, pf PersonalFlag) int {
+pub fn challenge_score(db DB, pf PersonalFlag) int {
 	data := sql db {
-		select from Task where tid == pf.parents_task
+		select from Task where tid == pf.parents_challenge
 	} or {
 		return 0
 	}
