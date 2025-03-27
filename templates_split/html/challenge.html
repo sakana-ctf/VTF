@@ -1,134 +1,145 @@
-  <main>
-    @for list in list_of_type
-    <h1 class="type-text">${list.name}</h1>
-    <div class="tools-card">
-        @for challenge in list.type_text
-        <!--your challenge-->    
-        <div class="card">
-          <div class="card-border-top">
-            <p class="score">${challenge.score}</p>
-            <span>${challenge.name}</span>
-            <p class="job">${challenge.diff}</p>
-            <button onclick='showModal("${challenge.name}")'><image src="${challenge.challenge[c_pid - 1].complete}" width="100px"></image></button>
-          </div>
+<main>
+  @for list in list_of_type
+  <h1 class="type-text">${list.name}</h1>
+  <div class="tools-card">
+    @for challenge in list.type_text
+    <!--your challenge-->
+    <div class="card">
+      <div class="card-border-top">
+        <p class="score">${challenge.score}</p>
+        <span>${challenge.name}</span>
+        <p class="job">${challenge.diff}</p>
+        <button onclick='showModal("${challenge.name}")'>
+          <img src="${challenge.challenge[c_pid - 1].complete}">
+        </button>
+      </div>
+    </div>
+    <!-- 模态框本身 -->
+    <div id="${challenge.name}" class="modal">
+      <!-- 模态框内容 -->
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="form">
+          <h1 id="name">${challenge.name}</h1>
+          <h4>${challenge.diff} ${challenge.score}</h4>
+          <a class="intro">${challenge.intro}</a>
+          <div class="inputBox"><input id="${challenge.tid}" type="text" placeholder="请输入flag"></div>
+          <div class="inputBox"><input onclick="inputflag('${challenge.tid.str()}')" type="submit" value="提交"></div>
+
         </div>
-        <!-- 模态框本身 -->
-        <div id="${challenge.name}" class="modal">
-          <!-- 模态框内容 -->
-          <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div class="form">
-              <h1 id="name">${challenge.name}</h1>
-              <h4>${challenge.diff}  ${challenge.score}</h4>
-              <a class="intro">${challenge.intro}</a>
-              <div class="inputBox"><input id="${challenge.tid}" type="text" placeholder="请输入flag"></div>
-              <div class="inputBox"><input onclick="inputflag('${challenge.tid.str()}')" type="submit" value="提交"></div>
-              
-            </div>
-          </div>
-        </div> 
-        @end
+      </div>
     </div>
     @end
-  </main>
+  </div>
+  @end
+</main>
 
-  <script>
-    // 显示模态框的函数
-    var modal;
+<script>
+  // 显示模态框的函数
+  var modal;
 
-    function showModal(name) {
-      myModal = document.getElementById(name);
-      myModal.style.display = "block";
-      modal = myModal;
+  function showModal(name) {
+    myModal = document.getElementById(name);
+    myModal.style.display = "block";
+    modal = myModal;
+  }
+
+  // 关闭模态框的函数
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  // 监听窗口点击事件，如果点击了模态框以外的区域，则关闭模态框
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      closeModal();
     }
+  }
 
-    // 关闭模态框的函数
-    function closeModal() {
-      modal.style.display = "none";
-    }
-
-    // 监听窗口点击事件，如果点击了模态框以外的区域，则关闭模态框
-    window.onclick = function(event) {
-      if (event.target == modal) {
-            closeModal();
-        }
-    }
-
-    // 使介绍保持换行.
-    function set_a_text() {
+  // 使介绍保持换行.
+  function set_a_text() {
     var a_text = document.getElementsByClassName('intro');
     for (var i = 0; i < a_text.length; i++) {
       a_text[i].innerHTML = a_text[i].innerHTML.replace(/\n/g, '<br>');
-      }
     }
+  }
 
-    set_a_text()
+  set_a_text()
 
 </script>
 
-  <style>
-    main{
-      /*background: var(--bg-card-color);*/
-      padding: 5px;
-      padding-bottom: 45px;
-      position: absolute;
-      top: 90px;
-      left: 0px;
-      right:0px;
-      margin: auto;
-      border-radius: 10px;
-    }
+<style>
+  main {
+    /*background: var(--bg-card-color);*/
+    padding: 5px;
+    padding-bottom: 45px;
+    position: absolute;
+    top: 90px;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    border-radius: 10px;
+  }
 
-    .type-text{
-      margin: auto;
-      padding: 15px;
-      color: var(--text-wild-blue-yonder);
-    }
+  .type-text {
+    margin: auto;
+    padding: 15px;
+    color: var(--text-wild-blue-yonder);
+  }
 
-    /* 关闭按钮样式 */
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+  /* 关闭按钮样式 */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    
-/*
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /*
     ========================模态框=====================
 */
-.modal {
-        display: none; /* 默认隐藏 */
-        position: fixed; /* 固定在视口 */
-        z-index: 1; /* 置于顶层 */
-        left: 0;
-        top: 0;
-        width: 100%; /* 宽度全屏 */
-        height: 100%; /* 高度全屏 */
-        overflow: auto; /* 允许滚动 */
-        background-color: rgba(0,0,0,0.4); /* 黑色背景，半透明 */
-    }
+  .modal {
+    display: none;
+    /* 默认隐藏 */
+    position: fixed;
+    /* 固定在视口 */
+    z-index: 1;
+    /* 置于顶层 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* 宽度全屏 */
+    height: 100%;
+    /* 高度全屏 */
+    overflow: auto;
+    /* 允许滚动 */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* 黑色背景，半透明 */
+  }
 
-    /* 模态框内容样式 */
-    .modal-content {
-        background-color: var(--bg-card-color);
-        margin: 15% auto; /* 15% 垂直位置，水平居中 */
-        padding: 20px;
-        border: 3px solid var(--bg-background-color);
-        width: 80%; /* 或指定宽度 */
-        max-width: 1000px;
-        border-radius: 10px;
-        color: var(--text-botton-white);
-    }
+  /* 模态框内容样式 */
+  .modal-content {
+    background-color: var(--bg-card-color);
+    margin: 15% auto;
+    /* 15% 垂直位置，水平居中 */
+    padding: 20px;
+    border: 3px solid var(--bg-background-color);
+    width: 80%;
+    /* 或指定宽度 */
+    max-width: 1000px;
+    border-radius: 10px;
+    color: var(--text-botton-white);
+  }
 
-    /* 输入框样式 */
+  /* 输入框样式 */
   .form .inputBox {
     width: 100%;
     margin-top: 20px;
@@ -156,7 +167,7 @@
   /* 登录按钮样式 */
 
   .form .inputBox input[type="submit"] {
-    position:static;
+    position: static;
     bottom: 80px;
     background: var(--bg-botton-white);
     color: var(--text-wild-blue-yonder);
@@ -165,18 +176,19 @@
     font-weight: 600;
     cursor: pointer;
   }
-/*
+
+  /*
     ========================程序获取部分=====================
 */
-.tools-card {
+  .tools-card {
     border: 0px dashed;
     display: grid;
     grid-gap: 15px;
     grid-template-columns: repeat(auto-fill, 200px);
     justify-content: center;
-}
+  }
 
-.card {
+  .card {
     width: 200px;
     height: 100px;
     background-image: var(--tools-card-color);
@@ -187,7 +199,7 @@
     margin: auto;
     font-family: inherit;
   }
-  
+
   .card span {
     font-weight: 600;
     color: var(--text-table-color);
@@ -199,10 +211,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .card .score {
     font-weight: 400;
-    color:var(--text-title-color);
+    color: var(--text-title-color);
     display: block;
     text-align: left;
     padding-left: 10px;
@@ -211,43 +223,39 @@
 
   .card .job {
     font-weight: 400;
-    color:var(--text-title-color);
+    color: var(--text-title-color);
     display: block;
     text-align: right;
     padding-right: 10px;
     padding-top: 15px;
     font-size: 15px;
   }
-  
-  .card .img {
-    width: 70px;
-    height: 70px;
-    background: var(--tools-card-image-color);
-    border-radius: 100%;
-    margin: auto;
-    margin-top: 20px;
+
+  .card img {
+    max-width: 80px;
+    max-height: 80px;
   }
-  
+
   .card button {
-    padding: 0px 50px;
-    display: block;
-    position:absolute;
-    top: -30px;
-    margin: auto;
+    width: 200px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    /* Center vertically */
+    left: 50%;
+    /* Center horizontally */
+    transform: translate(-50%, -50%);
+    /* Move the button to the exact center */
+
     border-radius: 8px;
     border: none;
-    margin-top: 30px;
-    background: var(--button);
   }
-  
+
   .card button:hover {
     background: var(--button-hover);
     color: var(--button-hover-text);
   }
-
-  image {
-    position:absolute;
-    top: 4upx;
-  }
-
-  </style>
+</style>

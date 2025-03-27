@@ -17,6 +17,7 @@ function url_encode_str(input) {
     return base64;
 }
 
+
 function url_decode_str(input) {
     // 替换回Base64编码中的原始字符
     let base64 = input.replace(/-/g, '+'); // 替换 - 为 +
@@ -49,6 +50,7 @@ function post_data(data, route) {
     /*******************************************************
     *   这里留了一个大坑, 不知道为什么firefox无法返回数值
     ********************************************************/
+
     const XHR = new XMLHttpRequest();  
     XHR.addEventListener("load", (event) => {
         console.log("发送成功, 正在校验账号");
@@ -65,18 +67,29 @@ function post_data(data, route) {
     XHR.send(data);
 }
 
+// 使用async/await来“阻塞”直到响应
+async function sendDataAndWaitForResponse(data, route) {
+    try {
+        const response = await post_data(data, route);
+        console.log("响应数据:", response);
+    } catch (error) {
+        console.error("发生错误:", error.message);
+    }
+}
+
 // 注册函数
 function signup() {
     var id = url_encode_str(document.getElementById('id').value);
     var email = url_encode_str(document.getElementById('email').value);
     var passwd = document.getElementById('passwd').value;
     var passwdagain = document.getElementById('passwdagain').value;
+    
     if (passwd === passwdagain) {             
         const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
+        alert('?');
+        //post_data(data, '/signupapi');
         post_data(data, '/signupapi');
-        
-        // 临时用这个代替, 但是远程有时差就爆炸.
-        reload_page('/member.html');
+        alert('确认注册');
     } else {
         alert("Error: 密码不一致");
     }
@@ -90,9 +103,7 @@ function fixpasswd() {
     if (newpasswd === passwdagain) {
         const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
         post_data(data, '/memberapi');
-        
-        // 临时用这个代替, 但是远程有时差就爆炸.
-        reload_page('/member.html');
+        alert('确认更新密码');
     } else {
         alert("Error: 密码不一致");
     }
@@ -107,9 +118,7 @@ function passwdlogin() {
     var passwd  = url_encode_str(document.getElementById('passwd').value);
     const data = "email=" + email + "&passwd=" + passwd;
     post_data(data, '/loginapi');
-    
-    // 临时用这个代替, 但是远程有时差就爆炸.
-    reload_page('/member.html');
+    alert('确认登录');
 }
 
 // 登出函数
@@ -127,7 +136,7 @@ function inputflag(tid){
     post_data(data, '/flagapi');
     
     // 临时用这个代替, 但是远程有时差就爆炸.
-    reload_page('/task.html');
+    reload_page('/challenge.html');
 }
 
 /*****************

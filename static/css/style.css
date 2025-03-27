@@ -7,7 +7,7 @@
   /** 背景颜色 */
   --bg-oxford-blue-2: rgb(6, 6, 15);
   --bg-background-color: rgb(23, 33, 46);
-  --bg-card-color: rgb(74, 94, 119) ;
+  --bg-card-color: rgb(74, 94, 119);
 
 
   /** 选页框 */
@@ -55,16 +55,15 @@
   --red-outline: rgb(139, 24, 24);
   --text-title-color: rgb(118, 155, 204);
   --text-table-color: rgb(164, 213, 235);
-  --table-header-color: rgb(52,67,87);
+  --table-header-color: rgb(52, 67, 87);
   --table-background-color: rgb(83, 107, 138);
   --box-gear-color: rgb(107, 172, 210);
-  --tools-card-image-color: rgb(255,255,255);
-  --button: rgba(165, 210, 236, 0.2);
+  --tools-card-image-color: rgb(255, 255, 255);
   --button-text: rgb(0, 0, 0);
-  --button-hover: rgba(232, 139, 234, 0.2);
+  --button-hover: rgba(255, 168, 252, 0.25);
   --button-hover-text: rgb(0, 0, 0);
 
-  --tools-card-color: linear-gradient(130deg,rgb(18, 21, 26),rgb(31, 59, 107),rgb(18, 21, 26));
+  --tools-card-color: linear-gradient(130deg, rgb(22, 27, 33), rgb(67, 107, 172), rgb(22, 27, 33));
 
   --member-table-padding: 14px;
   --organizing-table-padding: 12px;
@@ -80,10 +79,10 @@
 
 .notification {
   text-align: center;
-  margin:auto;
-  top:100;
-  left:0;
-  right:0;
+  margin: auto;
+  top: 100;
+  left: 0;
+  right: 0;
   position: fixed;
   width: 250px;
   height: 50px;
@@ -114,21 +113,27 @@
   box-sizing: border-box;
 }
 
-li { list-style: none; }
+li {
+  list-style: none;
+}
 
 a,
 img,
 span,
 input,
 button,
-ion-icon { display: block; }
+ion-icon {
+  display: block;
+}
 
 a {
   color: inherit;
   text-decoration: none;
 }
 
-img { height: auto; }
+img {
+  height: auto;
+}
 
 input,
 button {
@@ -143,9 +148,13 @@ input {
   outline: none;
 }
 
-button { cursor: pointer; }
+button {
+  cursor: pointer;
+}
 
-address { font-style: normal; }
+address {
+  font-style: normal;
+}
 
 html {
   font-size: 10px;
@@ -161,11 +170,17 @@ body {
   overflow-y: overlay;
 }
 
-body.nav-active { overflow: hidden; }
+body.nav-active {
+  overflow: hidden;
+}
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar {
+  width: 5px;
+}
 
-::-webkit-scrollbar-track { background-color: transparent; }
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--bg-carolina-blue);
@@ -176,17 +191,23 @@ body.nav-active { overflow: hidden; }
   #REUSED STYLE 重复使用的部分
 \*-----------------------------------*/
 
-.container { padding-inline: 16px; }
+.container {
+  padding-inline: 16px;
+}
 
 .hover-1,
-.hover-2 { transition: var(--transition-1); }
+.hover-2 {
+  transition: var(--transition-1);
+}
 
-.hover-1:is(:hover, :focus-visible) { 
+.hover-1:is(:hover, :focus-visible) {
   color: var(--text-wild-blue-yonder);
   transform: translateX(3px);
 }
 
-.hover-2:is(:hover, :focus-visible) { color: var(--text-carolina-blue); }
+.hover-2:is(:hover, :focus-visible) {
+  color: var(--text-carolina-blue);
+}
 
 .profile-card {
   display: flex;
@@ -194,7 +215,9 @@ body.nav-active { overflow: hidden; }
   gap: 10px;
 }
 
-.profile-card .profile-banner { border-radius: var(--radius-circle); }
+.profile-card .profile-banner {
+  border-radius: var(--radius-circle);
+}
 
 .headline {
   color: var(--text-columbia-blue);
@@ -207,14 +230,18 @@ body.nav-active { overflow: hidden; }
   font-weight: var(--weight-extraBold);
 }
 
-.headline-2 { font-size: var(--fontSize-2); }
+.headline-2 {
+  font-size: var(--fontSize-2);
+}
 
 .headline-3 {
   font-size: var(--fontSize-2);
   line-height: var(--lineHeight-2);
 }
 
-.section-title { margin-block-end: 10px; }
+.section-title {
+  margin-block-end: 10px;
+}
 
 .headline .span {
   background-image: var(--gradient-1);
@@ -241,13 +268,13 @@ body.nav-active { overflow: hidden; }
 
 .mess-text {
   font-size: var(--fontSize-1);
-  color:var(--text-botton-white);
+  color: var(--text-botton-white);
 }
 
 .con-text {
   font-size: var(--fontSize-1);
   font-weight: var(--text-weight-3);
-  color:var(--text-botton-white);
+  color: var(--text-botton-white);
 }
 
 
@@ -255,7 +282,9 @@ body.nav-active { overflow: hidden; }
   # HEADER 头部
 \*-----------------------------------*/
 
-.header .btn { display: none; }
+.header .btn {
+  display: none;
+}
 
 .header {
   position: fixed;
@@ -277,8 +306,13 @@ body.nav-active { overflow: hidden; }
 */
 
 @keyframes slideIn {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .header .container {
@@ -324,7 +358,9 @@ body.nav-active { overflow: hidden; }
   border-block-end: 1px solid var(--border-prussian-blue);
 }
 
-.navbar-list { border-block-end: 1px solid var(--border-white-alpha-15); }
+.navbar-list {
+  border-block-end: 1px solid var(--border-white-alpha-15);
+}
 
 .navbar-link {
   color: var(--text-carolina-blue);
@@ -332,7 +368,9 @@ body.nav-active { overflow: hidden; }
   padding-block: 10px;
 }
 
-.navbar-link.hover-1{ font-weight: var(--text-weight-1); }
+.navbar-link.hover-1 {
+  font-weight: var(--text-weight-1);
+}
 
 .navbar-bottom {
   color: var(--text-carolina-blue);
@@ -348,7 +386,9 @@ body.nav-active { overflow: hidden; }
 
 }
 
-.navbar .profile-card { margin-block-end: 15px; }
+.navbar .profile-card {
+  margin-block-end: 15px;
+}
 
 .navbar .profile-card .card-title {
   color: var(--text-columbia-blue);
@@ -356,7 +396,9 @@ body.nav-active { overflow: hidden; }
   font-weight: var(--weight-semiBold);
 }
 
-.navbar .profile-card .card-subtitle { font-size: var(--fontSize-7); }
+.navbar .profile-card .card-subtitle {
+  font-size: var(--fontSize-7);
+}
 
 .navbar .link-list {
   columns: 2;
@@ -389,9 +431,11 @@ body.nav-active { overflow: hidden; }
    * .container { max-width: 1400px; }
    */
 
-  
 
-  body.nav-active { overflow-y: overlay; }
+
+  body.nav-active {
+    overflow-y: overlay;
+  }
 
 
 
@@ -402,7 +446,9 @@ body.nav-active { overflow: hidden; }
   .nav-open-btn,
   .navbar-top,
   .navbar-bottom,
-  .copyright-text { display: none; }
+  .copyright-text {
+    display: none;
+  }
 
   .navbar,
   .navbar.active {
@@ -417,7 +463,9 @@ body.nav-active { overflow: hidden; }
     margin-inline: auto;
   }
 
-  .header .btn { margin-inline-start: 0; }
+  .header .btn {
+    margin-inline-start: 0;
+  }
 
   .navbar-link {
     color: var(--text-wild-blue-yonder);
@@ -430,4 +478,3 @@ body.nav-active { overflow: hidden; }
   }
 
 }
-

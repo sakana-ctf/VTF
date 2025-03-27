@@ -1,40 +1,40 @@
-  <main>
-      <div class="form">
-        <h2>登录账号</h2>
-        <form>
-          <div class="inputBox"><input id="email" type="text" placeholder="ID/邮箱"></div>
-          <div class="inputBox"><input id="passwd" type="password" placeholder="密码"></div>
-          
-          <div class="inputBox"><input onclick="passwdlogin()" type="submit" value="登录"></div>
-          <div class="forget-font">
-          <a href="#" onclick="ForgetPasswd()" class="forget">忘记密码?</a>
-          <a href="signup.html" class="forget">注册账号</a>
-          </div>
-        </form>
+<main>
+  <div class="form">
+    <h2>登录账号</h2>
+    <form>
+      <div class="inputBox"><input id="email" type="text" placeholder="ID/邮箱"></div>
+      <div class="inputBox"><input id="passwd" type="password" placeholder="密码"></div>
+
+      <div class="inputBox"><input onclick="passwdlogin()" type="submit" value="登录"></div>
+      <div class="forget-font">
+        <a href="#" onclick="ForgetPasswd()" class="forget">忘记密码?</a>
+        <a href="signup.html" class="forget">注册账号</a>
       </div>
-  </main>
+    </form>
+  </div>
+</main>
 
-  <style>
-main{
-      background: var(--bg-card-color);
-      width: 400px;
-      padding: 5px;
-      position: absolute;
-      top: 25%;
-      left: 0;
-      right:0;
-      margin: auto;
-      border-radius: 10px;
-}
+<style>
+  main {
+    background: var(--bg-card-color);
+    width: 400px;
+    padding: 5px;
+    position: absolute;
+    top: 25%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+  }
 
-.form {
+  .form {
     position: relative;
     width: 100%;
     height: 100%;
     padding: 50px;
-}
+  }
 
-.form h2 {
+  .form h2 {
     text-align: center;
     position: relative;
     color: var(--text-botton-white);
@@ -43,18 +43,18 @@ main{
     letter-spacing: 5px;
     margin-bottom: 30px;
     cursor: pointer;
-}
+  }
 
-.form h2:hover:before {
+  .form h2:hover:before {
     width: 53px;
-}
+  }
 
-.form .inputBox {
+  .form .inputBox {
     width: 100%;
     margin-top: 20px;
-}
+  }
 
-.form .inputBox input {
+  .form .inputBox input {
     width: 100%;
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.2);
@@ -67,15 +67,15 @@ main{
     font-size: 16px;
     letter-spacing: 1px;
     color: var(--text-botton-white);
-}
+  }
 
-.form .inputBox input::placeholder {
+  .form .inputBox input::placeholder {
     color: var(--text-botton-white);
-}
+  }
 
-/* 登录按钮样式 */
+  /* 登录按钮样式 */
 
-.form .inputBox input[type="submit"] {
+  .form .inputBox input[type="submit"] {
     position: absolute;
     right: 39%;
     bottom: 80px;
@@ -85,16 +85,15 @@ main{
     margin-bottom: 20px;
     font-weight: 600;
     cursor: pointer;
-}
+  }
 
-.forget-font{
-  margin-top: 80px;
-}
+  .forget-font {
+    margin-top: 80px;
+  }
 
-.forget {
+  .forget {
     margin-top: 3px;
     color: var(--text-carolina-blue);
     letter-spacing: 1px;
-}
-  </style>
-
+  }
+</style>

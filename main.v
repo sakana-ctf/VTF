@@ -65,7 +65,6 @@ struct Context {
 
 pub struct App {
     veb.StaticHandler
-    //veb.Middleware[Context]
 	// In the app struct we store data that should be accessible by all endpoints.
 	// For example, a database or configuration values.
 mut:
@@ -138,7 +137,7 @@ fn main() {
     */
 
     mut app := new_app()
-    
+
     veb.run_at[App, Context](
         mut app,
         veb.RunParams{
@@ -153,16 +152,6 @@ fn new_app() &App {
     mut app := &App{ 
         db : connect_db() ,
     }
-
-    /*
-    app.use(
-        veb.cors[Context](veb.CorsOptions{
-                origins: ['*']
-                allowed_methods: [.get, .head, .patch, .put, .post, .delete]
-            }
-        )
-    )
-    */
 
     create_db(app.db)
     

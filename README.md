@@ -110,12 +110,12 @@ nohup ./main &
 
 | 需求          | 当前情况                                                                         | 检验人                  |
 |:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
-| 版本号         | v2.4.2(更新了基本交互)                                                              | sudopacman           |
+| 版本号         | v2.5.0(兼容firefox, 后端提上日程)                                                              | sudopacman           |
 | wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman           |
 | 数据测试        | 在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用                                   | sudopacman, Kengwang |
 | 测试反馈        | 存在资源印用错误, 现已修复                                                               | secret               |
 | 测试反馈        | 存在题目未格式化问题, 现暂用替代方案                                                          | adwa                 |
-| firefox兼容问题 | 需要将cookie更换到`Context`, 待重构                                                   |                      |
+| firefox兼容问题 | 已最低限度适配                                                  |   sudopacman                   |
 | 说明书         | 已修正debian脚本错误                                                                | H4nn4h               |
 | edge兼容问题    | 已适配                                                                          | sudopacman           |
 | 线程设置        | 当前veb框架暂不支持                                                                  |                      |
@@ -135,14 +135,16 @@ nohup ./main &
 | 函数分离        | 已分离成多个模块                                                                     | sudopacman           |
 | 排行榜         | 已完成                                                                          | sudopacman           |
 | 动态计分        | 已更新                                                                          |                      |
-| 一血, 二血, 三血  | 暂无明确实现思路                                                                     |                      |
+| 一血, 二血, 三血  | 将重新调整数据库                                                                     |                      |
 | 线程数设置       | 当前重构版本不支持设置线程                                                                |                      |
 | html分块编辑    | 使用复杂脚本替代编辑问题                                                                 | sudopacman           |
 | ip检测功能      | 支持最基础的ip检测                                                                   | sudopacman           |
-| 图片格式修改为webp | 已更新, 图片采用无压缩+2速度                                                             | sudopacman           |
-| 中英文显示问题     | 待重构                                                                          |                      |
-| 数据可视化       | 使用godot/redot接管数据, 我不确定redot的发展, 保留意见                                        |                      |
-| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行 | sudopacman           |
+| 图片格式 | 已优化                                                             | sudopacman           |
+| 中英文显示问题     | 应支持多语言, 在`/templates_split/language`中添加语言                                                                          |                      |
+| 数据可视化       | 使用js实现简单的可视化                                        |                      |
+| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行, 当前需要重构语言部分, 重新拆分编译规则 | sudopacman           |
+| 后台功能    | 已实现基本 | sudopacman           |
+| 日志功能    | 为弥补新版本vlang的问题采用了替代方案, 将在未来修复bug后解决日志问题 | sudopacman           |
 
 # 参与贡献
 
