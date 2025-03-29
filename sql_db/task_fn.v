@@ -16,18 +16,12 @@ fn challenge_err() []Task {
 // 题目数据更新
 
 fn challenge_db(db DB, i string) []Task {
-    //临时解决
-    challenge_err()
-
 	return sql db {
         select from Task where type_text == i
     } or { challenge_err() }
 }
 
 pub fn build_challenge(db DB) []Type {
-    //临时解决
-    challenge_err()
-
     mut list_of_type := []Type{}
 
     mut list := []string{}
@@ -55,9 +49,6 @@ pub fn build_challenge(db DB) []Type {
 
 // 提交flag
 pub fn post_flag(db DB, ip string, tid int, flag string, pid int) bool {
-    //临时解决
-    challenge_err()
-
     err_log.logs('${vlog.set_log}ip:${ip} pid:${pid} 提交 tid:${tid} flag:${flag}')
     challenge_flag := sql db {
         select from Task where tid == tid 
@@ -83,9 +74,6 @@ pub fn post_flag(db DB, ip string, tid int, flag string, pid int) bool {
 }
 
 pub fn find_user(db DB, id string, pwd string) Personal {
-    //临时解决
-    personal_err()
-
     pid := sql db {
         select from Personal where id == id && passwd == err_log.sha256_str(pwd)
     } or { personal_err() }

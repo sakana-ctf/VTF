@@ -32,9 +32,6 @@ pub fn personal_whoami(db DB, c_id string, c_pwd string) string {
 
 // 登录检测
 pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
-    // 临时解决
-    personal_err()
-
     id_check := sql db {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
     } or { personal_err() }
@@ -48,9 +45,6 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
 
 // 查询密码
 pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusReturn {
-    // 临时解决
-    personal_err()
-
     err_log.logs('${vlog.set_log}: ip:${ip} email/id:${email} password:${passwd} 正在登录.')
 
     id_check := sql db {
@@ -76,9 +70,6 @@ pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusRet
 // ========================= 注册函数 =================================
 // 注册检测
 pub fn register_status(db DB, id string, email string, passwd string) bool {
-    // 临时解决
-    personal_err()
-
     mut return_bool := false
 
     new_number := Personal{
@@ -101,9 +92,6 @@ pub fn register_status(db DB, id string, email string, passwd string) bool {
 
 // 注册函数
 pub fn register_db(db DB, id string, email string, passwd string) bool {
-    vlog.temporary()
-
-
     mut return_bool := false
 
     mut personal_flag := []PersonalFlag{}
@@ -133,12 +121,6 @@ pub fn register_db(db DB, id string, email string, passwd string) bool {
 // ========================= 修改密码 =================================
 // 
 pub fn id_check(db DB, c_id string, oldpasswd string, newpasswd string) bool {
-    // 临时解决
-    personal_err()
-
-    vlog.temporary()
-
-
     id_check := sql db {
         select from Personal where id == c_id && passwd == err_log.sha256_str(oldpasswd)
     } or { personal_err() }

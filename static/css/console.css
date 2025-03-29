@@ -3,7 +3,8 @@
     /** 文本颜色 */
     --text-wild-blue-yonder: rgb(93, 135, 191);
     --text-carolina-blue: rgb(201, 117, 189);
-    --text-botton-white: #fffff1fa;
+    --text-botton-white: rgb(196, 196, 196);
+    --text-set-white: rgb(190, 190, 190);
 
     /** 背景颜色 */
     --bg-oxford-blue-3: rgb(82, 107, 138);
@@ -118,7 +119,7 @@ html {
 
 #content h1 {
     color: var(--text-wild-blue-yonder);
-    margin-bottom: 60px;
+    margin-bottom: 55px;
 }
 
 #content h1:first-child {
@@ -126,11 +127,12 @@ html {
 }
 
 /* 内容区 */
-.content {
+.content-bar {
     border-style: solid;
     border-color: var(--text-wild-blue-yonder);
     border-radius: 5px;
     box-shadow: 3px 3px 0px var(--bg-page-color),
         -3px -3px 0px var(--text-page-now);
     padding: 5px;
+    min-height: 300px;
 }

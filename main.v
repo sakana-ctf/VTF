@@ -51,7 +51,7 @@ struct Rank{
 }
 
 // 基础结构体
-struct Context {
+pub struct Context {
     veb.Context
 // mut:
 	// In the context struct we store data that could be different
@@ -65,6 +65,7 @@ struct Context {
 
 pub struct App {
     veb.StaticHandler
+    veb.Middleware[Context]
 	// In the app struct we store data that should be accessible by all endpoints.
 	// For example, a database or configuration values.
 mut:
@@ -158,6 +159,7 @@ fn new_app() &App {
     test_main_function(mut app.db)
 
     app.static_mime_types['.cjs'] = 'txt/javascript'
+    app.static_mime_types['.map'] = 'txt/javascript'
     app.static_mime_types['.vbs'] = 'txt/javascript'
     app.static_mime_types['.yml'] = 'txt/javascript'
     app.static_mime_types['.mts'] = 'txt/javascript'
@@ -170,6 +172,13 @@ fn new_app() &App {
     app.handle_static('static', true) or {
         panic(err)
     }
+
+    app.use(veb.cors[Context](veb.CorsOptions{
+                // allow CORS requests from every domain
+                origins: ['*']
+                // allow CORS requests with the following request methods:
+                allowed_methods: [.get, .head, .patch, .put, .post, .delete]
+        }))
 
     return app
 }

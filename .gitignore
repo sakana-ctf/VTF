@@ -1,12 +1,12 @@
 main
 main.exe
-data.db
 bin/
-Vtf.code-workspace
-Vtf.exe
-vtf.exe
 templates_split/build
 templates_split/build.exe
+templates_split/set_language
+templates_split/set_language.exe
 make
+make.exe
 make.v
+data.db
 

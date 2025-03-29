@@ -96,9 +96,17 @@
 <script src="../js/script.js"></script>
 <script src="../js/console.js"></script>
 <script src="../js/rank.js"></script>
+<script src="../js/mychart.js"></script>
+
+<!--
+    - 可视化界面
+-->
+<script src="../js/node_modules/chart.js/dist/chart.umd.js"></script>
 
 <script>
   showinfo('${mess}');
+  Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.5)';
+  Chart.defaults.color = 'rgb(255, 255, 255)';
 </script>
 
 <!-- 
@@ -106,149 +114,165 @@
   -->
 <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
-  <main>
-    <div class="layer-box">
-      <h1>排行榜</h1>
-      <div class="layer">
-          <table>
-            <tr>
-              <th>排名</th>
-              <th>选手名称</th>
-              <th>选手得分</th>
-              @for challenge in challenge_name
-              <th>${challenge.name}</th>
-              @end
-            </tr>
-            <tbody>
-            @for i in 0..10
-            <tr>
-              <td id="td${i}_rank"></td>
-              <td id="td${i}_team_id"></td>
-              <td id="td${i}_score"></td>
-              @for j in 0..challenge_name.len
-              <td id="td${i}_${j}"></td>
-              @end
-            </tr>
+
+<
+<main>
+
+  <div class="layer-box">
+    <h1>排行榜</h1>
+    <canvas id="myChart"></canvas>
+    <div class="layer">
+      <table>
+        <tr>
+          <th>排名</th>
+          <th>选手名称</th>
+          <th>选手得分</th>
+          @for challenge in challenge_name
+          <th>${challenge.name}</th>
+          @end
+        </tr>
+        <tbody>
+          @for i in 0..10
+          <tr>
+            <td id="td${i}_rank"></td>
+            <td id="td${i}_team_id"></td>
+            <td id="td${i}_score"></td>
+            @for j in 0..challenge_name.len
+            <td id="td${i}_${j}"></td>
             @end
-            </tbody>
-            
-          </table>
-        </div>
-        <div class="center">
-          <ul id="page" class="pagination">
-            <li id="set_page"><a class="" onclick="alert(1);" href="#">«</a></li>
-          </ul>
-        </div>
+          </tr>
+          @end
+        </tbody>
+
+      </table>
     </div>
+    <div class="center">
+      <ul id="page" class="pagination">
+        <li id="set_page"><a class="" onclick="alert(1);" href="#">«</a></li>
+      </ul>
+    </div>
+  </div>
 
-          <style>
-          .layer-box {
-            background: var(--bg-card-color);
-            width: 70%;
-            max-width: 1200px;
-            position: absolute;
-            top: 25%;
-            left: 0;
-            right:0;
-            margin: auto;
-            border-radius: 10px;  
-            border-width: 10px;
-          }
+  <style>
+    .layer-box {
+      background: var(--bg-card-color);
+      width: 70%;
+      max-width: 1200px;
+      position: absolute;
+      top: 15%;
+      left: 0;
+      right: 0;
+      margin: auto;
+      border-radius: 10px;
+      border-width: 10px;
+    }
 
-          .layer-box h1 {
-            top: 10px;
-	          text-align: center;
-	          position: relative;
-	          color: var(--text-botton-white);
-	          font-size: 24px;
-	          font-weight: 600;
-	          letter-spacing: 5px;
-	          margin-bottom: 30px;
-	          cursor: pointer;
-	        }
-          
-            body{
-                padding: 100px;
-                box-sizing: border-box;
-            }
-            table{
-                border-collapse: collapse;
-            }
-            td,th{
-                text-align: center;
-                color: var(--text-botton-white);
-                font-size: 14px;
-                border-right: 1px solid var(--bg-card-color);
-                line-height: 30px;
-                box-sizing: border-box;
-                white-space: nowrap;
-                /*overflow: hidden; 隐藏超出容器的内容 */
-                /*text-overflow: ellipsis; 使用省略号表示被截断的文本 */
-                background: var(--bg-background-color);
-            }
-            
-              .layer-box
-            .layer{
-                overflow: hidden;
-                overflow-x: scroll;
-            }
+    .layer-box h1 {
+      top: 10px;
+      text-align: center;
+      position: relative;
+      color: var(--text-botton-white);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 5px;
+      margin-bottom: 30px;
+      cursor: pointer;
+    }
 
-            /* 选页标 */
-            table tr:nth-child(odd) td,
-            table tr:nth-child(odd) th{
-                background: var(--bg-oxford-blue-2);
-            }
+    body {
+      padding: 100px;
+      box-sizing: border-box;
+    }
 
-            .td-1{
-                position: absolute;
-                left: 0;
-                z-index: 2;
-                width: 150px;
-                background: var(--bg-page-now);
-            }
-            .zhanwei{
-                width: 149px;
-            }
+    table {
+      border-collapse: collapse;
+    }
 
-            /* 分页符 */
+    td,
+    th {
+      text-align: center;
+      color: var(--text-botton-white);
+      font-size: 14px;
+      border-right: 1px solid var(--bg-card-color);
+      line-height: 30px;
+      box-sizing: border-box;
+      white-space: nowrap;
+      /*overflow: hidden; 隐藏超出容器的内容 */
+      /*text-overflow: ellipsis; 使用省略号表示被截断的文本 */
+      background: var(--bg-background-color);
+    }
 
-            ul.pagination {
-              display: inline-block;
-              margin: 0;
-            }
+    .layer-box .layer {
+      overflow: hidden;
+      overflow-x: scroll;
+      /*text-align: center;*/
+    }
 
-            ul.pagination li {display: inline;}
+    /* 选页标 */
+    table tr:nth-child(odd) td,
+    table tr:nth-child(odd) th {
+      background: var(--bg-oxford-blue-2);
+    }
 
-            ul.pagination li a {
-                color: var(--text-botton-white);
-                float: left;
-                padding: 7px 10px;
-                text-decoration: none;
-            }
-            ul.pagination li a.active {
-                background-color: var(--bg-page-now);
-                color: var(--text-page-now);
-            }
+    .td-1 {
+      position: absolute;
+      left: 0;
+      z-index: 2;
+      width: 150px;
+      background: var(--bg-page-now);
+    }
 
-            ul.pagination li a:hover:not(.active) {background-color: var(--bg-page-color);}
+    .zhanwei {
+      width: 149px;
+    }
 
-            ul.pagination li a {
-                border-radius: 5px;
-            }
+    /* 分页符 */
 
-            ul.pagination li a.active {
-                border-radius: 5px;
-            }
-            div.center {
-              text-align: center;
-            }
-        </style>
+    ul.pagination {
+      display: inline-block;
+      margin: 0;
+    }
 
-        <script>
-          Rankapi(1);
-        </script>
-  </main>
+    ul.pagination li {
+      display: inline;
+    }
 
+    ul.pagination li a {
+      color: var(--text-botton-white);
+      float: left;
+      padding: 7px 10px;
+      text-decoration: none;
+    }
 
+    ul.pagination li a.active {
+      background-color: var(--bg-page-now);
+      color: var(--text-page-now);
+    }
+
+    ul.pagination li a:hover:not(.active) {
+      background-color: var(--bg-page-color);
+    }
+
+    ul.pagination li a {
+      border-radius: 5px;
+    }
+
+    ul.pagination li a.active {
+      border-radius: 5px;
+    }
+
+    div.center {
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    // 获取图表容器
+    var canvas = document.getElementById('myChart')
+    ranking_line(canvas);
+
+    Rankapi(1);
+  </script>
+</main>
 </body>
 </html>

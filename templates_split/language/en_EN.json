@@ -1,0 +1,47 @@
+{
+    "massage": {
+        "license": "vtf platform copyleft ©2024 VYOSC.Open source follows the VY General License."
+    },
+    "button": {
+        "exit": "exit",
+        "update": "update",
+        "change_password": "change password",
+    },
+    "page": [
+        {
+            "console": "console",
+            "bashboard": "bashboard",
+            "member": "member",
+            "team": "team",
+            "challenge": "challenge",
+            "data": "data",
+            "detect": "detect",
+        },
+        {
+            "notice": "notice",
+            "login": "login",
+            "forgot_password": "forgot password?",
+            "signup": "signup",
+        },
+        {
+            "challenge": "challenge",
+        },
+        {
+            "ranking": "ranking",
+            "list": "list",
+        },
+        {
+            "team": "team",
+        },
+        {
+            "member": "member",
+            "email": "email",
+        },
+        {
+            "signup": "signup",
+        },
+        {
+            "login": "login",
+        },
+    ]
+}

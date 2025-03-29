@@ -47,24 +47,23 @@ function reload_page(path) {
 // post传递数据
 function post_data(data, route) {
     console.log("发送信息ing...");
-    /*******************************************************
-    *   这里留了一个大坑, 不知道为什么firefox无法返回数值
-    ********************************************************/
-
-    const XHR = new XMLHttpRequest();  
-    XHR.addEventListener("load", (event) => {
+    fetch(route, {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         console.log("发送成功, 正在校验账号");
+    })
+    .catch(error => {
+        console.log('Error:', error);
     });
-    
-    // 错误提示
-    XHR.addEventListener("error", (event) => {
-        console.log("Error: 发送失败");
-    });
-
-    // 建立请求
-    XHR.open("POST", route);
-    XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    XHR.send(data);
 }
 
 // 使用async/await来“阻塞”直到响应
@@ -86,7 +85,6 @@ function signup() {
     
     if (passwd === passwdagain) {             
         const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
-        alert('?');
         //post_data(data, '/signupapi');
         post_data(data, '/signupapi');
         alert('确认注册');
@@ -111,14 +109,10 @@ function fixpasswd() {
 
 // 登录函数
 function passwdlogin() {
-    /*****************************
-    *   修改方法参考main.v文件
-    ******************************/
     var email = url_encode_str(document.getElementById('email').value);
-    var passwd  = url_encode_str(document.getElementById('passwd').value);
+    var passwd = url_encode_str(document.getElementById('passwd').value);
     const data = "email=" + email + "&passwd=" + passwd;
     post_data(data, '/loginapi');
-    alert('确认登录');
 }
 
 // 登出函数

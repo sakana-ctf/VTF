@@ -96,9 +96,17 @@
 <script src="../js/script.js"></script>
 <script src="../js/console.js"></script>
 <script src="../js/rank.js"></script>
+<script src="../js/mychart.js"></script>
+
+<!--
+    - 可视化界面
+-->
+<script src="../js/node_modules/chart.js/dist/chart.umd.js"></script>
 
 <script>
   showinfo('${mess}');
+  Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.5)';
+  Chart.defaults.color = 'rgb(255, 255, 255)';
 </script>
 
 <!-- 
@@ -106,6 +114,8 @@
   -->
 <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
+
+<
 <main>
   <link rel="stylesheet" href="../css/console.css">
   <div class="viewport">
@@ -132,60 +142,179 @@
         </li>
       </ul>
     </div>
-    <!-- 内容区 -->
+
+    <!-- 内容区域 -->
     <div id="content">
+
       <h1 id="panel">面板</h1>
-      <div class="content">
-        <canvas id="myCanvas" width="300" height="300"></canvas>
-        <script>
+      <div class="content-bar">
+        <h5>比赛信息:</h5>
+        <div class="tools-card">
+          <div class="card">
+            <canvas id="canvas1"></canvas>
+          </div>
+          <div class="card">
+            <canvas id="canvas2"></canvas>
+          </div>
+        </div>
 
-          var canvas = document.getElementById('myCanvas');
-          var ctx = canvas.getContext('2d');
-          // 绘制坐标轴
-          ctx.moveTo(10, 250);
-          ctx.lineTo(250, 250);
-          ctx.moveTo(10, 250);
-          ctx.lineTo(10, 10);
-          ctx.stroke();
+        <div class="set-card">
+          <h5>平台设置:</h5>
+          <div class="drop-zone" id="drop-zone">
+            拖动图片到这里修改显示图标
+          </div>
+          <input type="text" id="title-input" placeholder="新的标题">
+          <input onclick="updateTitle()" type="submit" value="更新">
+        </div>
 
-          // 绘制简单的柱状图
-          var data = [100, 200, 150, 250, 300, 129, 182, 123, 313, 13, 31, 3, 1, 31, 3, 1];
-          var barWidth = 10;
-          var barSpacing = 20;
-          for (var i = 0; i < data.length; i++) {
-            var barHeight = data[i];
-            ctx.fillRect(50 + i * (barWidth + barSpacing), 250 - barHeight, barWidth, barHeight);
-          }
-
-
-        </script>
+        <h5>主页模板:</h5>
+        <textarea id="message" name="message"></textarea>
+        <input onclick="updateTitle()" type="submit" value="更新">
       </div>
 
       <h1 id="member">成员</h1>
-      <div class="content">
+      <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <input type="text" id="title-input" placeholder="关键词">
+          <select id="group" value="x">
+            <option value="1">root</option>
+            <option value="2">member</option>
+            <option value="x">...</option>
+          </select>
+          <input type="text" id="title-input" placeholder="新的标题">
+          <input onclick="updateTitle()" type="submit" value="查询">
+        </div>
 
       </div>
+
       <h1 id="team">队伍</h1>
-      <div class="content">
+      <div class="content-bar">
 
       </div>
       <h1 id="challenge">题目</h1>
-      <div class="content">
+      <div class="content-bar">
 
       </div>
+
       <h1 id="data">数据</h1>
-      <div class="content">
+      <div class="content-bar">
 
       </div>
+
       <h1 id="control">监控</h1>
-      <div class="content">
+      <div class="content-bar">
 
       </div>
+
+
     </div>
   </div>
 </main>
 
+<style>
+  h5 {
+    color: var(--text-set-white);
+  }
+
+  .tools-card {
+    border: 0px dashed;
+    display: grid;
+    grid-gap: 20px;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+
+  /* 默认设置两列 */
+  .tools-card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 500px) {
+    .tools-card {
+      grid-template-columns: 1fr;
+      /* 一列布局 */
+    }
+  }
+
+  .card {
+    margin: 0 auto;
+    height: 200px;
+  }
+
+  .set-card {
+    display: grid;
+    grid-gap: 10px;
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--text-set-white);
+    padding: 30px;
+    color: var(--text-set-white);
+    text-align: center;
+  }
+
+  search {
+    height: 100px;
+    padding: 10px 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--text-botton-white);
+  }
+
+  input::placeholder {
+    color: var(--text-botton-white);
+  }
+
+  input[type="submit"] {
+    background: var(--bg-botton-white);
+    color: var(--text-wild-blue-yonder);
+    height: 60px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  textarea {
+    width: 100% !important;
+    height: 300px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+
+  .search {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+  }
+</style>
+
 <script>
+  var canvas1 = document.getElementById('canvas1');
+  var canvas2 = document.getElementById('canvas2');
+  ranking_doughnut(canvas1);
+  ranking_polararea(canvas2);
+
+  function updateTitle() {
+    alert(1);
+  }
+
+</script>
+
+<script>
+  // 平滑移动
   document.addEventListener('DOMContentLoaded', function () {
     var links = document.querySelectorAll('#sidebar .nav a');
     links.forEach(function (link) {
@@ -200,6 +329,5 @@
     });
   });
 </script>
-
 </body>
 </html>

@@ -90,9 +90,6 @@ struct Type{
 
 
 pub fn create_db(db sqlite.DB) {
-    vlog.temporary()
-
-
     sql db {
         create table Personal
         create table Task

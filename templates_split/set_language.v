@@ -22,7 +22,7 @@ fn set_regex(data string) bool {
 }
 
 fn main() {
-	data := readfile('language/zh_CN.json')
+	data := readfile('./language/zh_CN.json')
 	json_data := data.split('\n')
 	for i in json_data {
 		if set_regex(i) {

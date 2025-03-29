@@ -6,10 +6,6 @@ pub const set_log = '\033[33m[Setting] \033[0m'
 pub const warn_log = '\033[33m[Warn] \033[0m'
 pub const threat_log = '\033[31m[Threat] \033[0m'
 
-pub fn temporary() {
-	println(false_log)
-	println(true_log)
-	println(set_log)
-	println(warn_log)
-	println(threat_log)
-}
+
+
+

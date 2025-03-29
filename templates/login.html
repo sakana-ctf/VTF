@@ -96,9 +96,17 @@
 <script src="../js/script.js"></script>
 <script src="../js/console.js"></script>
 <script src="../js/rank.js"></script>
+<script src="../js/mychart.js"></script>
+
+<!--
+    - 可视化界面
+-->
+<script src="../js/node_modules/chart.js/dist/chart.umd.js"></script>
 
 <script>
   showinfo('${mess}');
+  Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.5)';
+  Chart.defaults.color = 'rgb(255, 255, 255)';
 </script>
 
 <!-- 
@@ -106,6 +114,8 @@
   -->
 <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
+
+<
 <main>
   <div class="form">
     <h2>登录账号</h2>
@@ -113,7 +123,7 @@
       <div class="inputBox"><input id="email" type="text" placeholder="ID/邮箱"></div>
       <div class="inputBox"><input id="passwd" type="password" placeholder="密码"></div>
 
-      <div class="inputBox"><a href="#" onclick="passwdlogin()">登录</a></div>
+      <div class="inputBox"><a onclick="passwdlogin()">登录</a></div>
       <div class="forget-font">
         <a href="#" onclick="ForgetPasswd()" class="forget">忘记密码?</a>
         <a href="signup.html" class="forget">注册账号</a>
@@ -183,7 +193,7 @@
 
   /* 登录按钮样式 */
 
-  .form .inputBox input[type="submit"] {
+  .form .inputBox a {
     position: absolute;
     right: 39%;
     bottom: 80px;
