@@ -1,18 +1,93 @@
-  <main>
-      <a class="section-text">第二届VYCTF挑战赛</a>
-      <img src="../image/vyctf.webp" width="300" alt="vtf-logo">
-      <a class="text">开始时间: 2024.10.31 8:00<br>截止时间: 2024.11.03 8:00</a>
-  </main>
+<main>
+  <a class="section-text">第二届VYCTF挑战赛</a>
+  <img src="../image/vyctf.webp" width="300" alt="vtf-logo">
+  <a class="text">开始时间: 2024.10.31 8:00<br>截止时间: 2024.11.03 8:00</a>
+</main>
 
-  <style>
-    main{
-      background: rgba(252, 93, 93, 0);
-      width: 350px;
-      padding: 20px;
-      position: absolute;
-      top: 15%;
-      left: 0;
-      right:0;
-      margin: auto;
-}
-  </style>
+
+<style>
+  main {
+    background: rgba(252, 93, 93, 0);
+    width: 350px;
+    padding: 20px;
+    position: absolute;
+    top: 15%;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+
+  .modal {
+    position: fixed;
+    /* 固定在视口 */
+    z-index: 1;
+    /* 置于顶层 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* 宽度全屏 */
+    height: 100%;
+    /* 高度全屏 */
+    overflow: auto;
+    /* 允许滚动 */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* 黑色背景，半透明 */
+  }
+
+  /* 模态框内容样式 */
+  .modal-content {
+    background-color: var(--bg-card-color);
+    margin: 15% auto;
+    /* 15% 垂直位置，水平居中 */
+    padding: 20px;
+    border: 3px solid var(--bg-background-color);
+    width: 60%;
+    /* 或指定宽度 */
+    max-width: 1000px;
+    border-radius: 10px;
+    color: var(--text-botton-white);
+  }
+
+  /* 输入框样式 */
+  .form .inputBox {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /*
+    ========================模态框=====================
+  */
+
+  .form .inputBox input {
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--text-botton-white);
+  }
+
+  .form .inputBox input::placeholder {
+    color: var(--text-botton-white);
+  }
+
+  /* 登录按钮样式 */
+
+  .form .inputBox a {
+    text-align: center;
+    margin: 0 auto;
+    background: var(--bg-botton-white);
+    color: var(--text-wild-blue-yonder);
+    max-width: 80px;
+    padding: 10px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+</style>

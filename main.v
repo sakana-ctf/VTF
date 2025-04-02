@@ -6,13 +6,13 @@ module main
 
 import db.sqlite { DB }
 import veb
-import os
 import json
+import cmd { start, CmdSet }
 import sql_db {
     connect_db,
-    create_db,
     
     login_status,
+    login_root_status,
     select_passwd_db,
     register_status,
     register_db,
@@ -35,6 +35,8 @@ import encoding.base64 {
     url_encode_str, 
     url_decode_str 
 }
+
+const version := "v2.6.0"
 
 /*
 struct User {
@@ -123,38 +125,28 @@ fn cookie_mess(mut ctx Context) string {
 
 // 主函数
 fn main() {
-    // 线程设置
-    mut workers := 3
-
-    if os.args.len >= 2 && os.args[1].int() != 0 {
-        workers = os.args[1].int()
-    }
-
-    println('暂不支持设置线程数: ${workers}')
+    cmd_set := start(version)
+    db := connect_db(cmd_set.nohup, cmd_set.args) or { exit(1) }
     
-    /*
-    mut app := App{}
-    veb.run[App, Context](mut app, 8080)
-    */
+    println('暂不支持设置线程数: ${cmd_set.workers}')
 
-    mut app := new_app()
+    mut app := new_app(db)
+
 
     veb.run_at[App, Context](
         mut app,
         veb.RunParams{
-            port: 8080
+            port: cmd_set.port
             //nr_workers: workers
         }
     ) or { panic(err) }
 }
 
-fn new_app() &App {
+fn new_app(db DB) &App {
 
     mut app := &App{ 
-        db : connect_db() ,
+        db : db,
     }
-
-    create_db(app.db)
     
     test_main_function(mut app.db)
 
@@ -465,22 +457,17 @@ fn (mut app App) notice(mut ctx Context) veb.Result {
 @['/console.html']
 fn (mut app App) console(mut ctx Context) veb.Result {
     mess := cookie_mess(mut ctx)
-    return $veb.html()
-    /*
-    mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
-    login := login_status(app.db, c_id, c_pwd)
+    login := login_root_status(app.db, c_id, c_pwd)
 
     if c_id == '' {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
             return $veb.html() 
-        }
     } else {
         ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
     }
-    */
 }

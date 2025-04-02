@@ -43,6 +43,19 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
     }
 }
 
+// 管理员检测
+pub fn login_root_status(db DB, c_id string, c_pwd string) StatusReturn {
+    id_check := sql db {
+        select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd) && whoami != 'member'
+    } or { personal_err() }
+    // there has a black list to set.
+    if id_check.len != 0 && true {
+        return StatusReturn{true, false, id_check}
+    } else {
+        return StatusReturn{false, false, id_check}
+    }
+}
+
 // 查询密码
 pub fn select_passwd_db(db DB, ip string, email string, passwd string) StatusReturn {
     err_log.logs('${vlog.set_log}: ip:${ip} email/id:${email} password:${passwd} 正在登录.')

@@ -17,7 +17,54 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 # 使用
 
-我们提供了源码与编译好的二进制文件以供使用:
+我们提供了源码与编译好的二进制文件以供使用.
+
+```
+./main -h
+VTF v2.6.0, CTF competition platform based on the V programming language.
+Basic usages:
+ 运行程序:      main [Options]
+ 运行程序(设置线程数):  main [walkers] [Options]
+Options:
+ -h, -help                              显示编码的基本信息并退出.
+ -v, --version                          显示版本号并退出.
+ -n, --nohup                            守护进程并将日志输出到nohup.out文件(目前只支持在linux设置).
+ -p, --port [int]                       设置端口号.
+```
+
+### 二进制文件
+
+我们根据情况提供稳定版本用于快速部署服务, 可以通过以下方式直接获取预编译好的源码.
+
+```bash
+wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
+./vtf-[对应版本类型]-[系统类型].zip
+unzip vtf-[对应版本类型]-[系统类型].zip
+cd vtf-[对应版本类型]-[系统类型]
+./main
+```
+
+如果不了解也可以在[发行版](https://gitee.com/sakana_ctf/vtf/releases)找到对应版本的文件下载并解压, 文件列表如下:
+
+```
+vtf
+├── static
+│   ├── css
+│   ├── image
+│   └── js
+├── main
+└── data.db
+```
+
+其中main是执行程序, 使用后data.db是数据库文件, 用于存储本次比赛的所有数据, 无需安装任何东西, 直接运行`./main`可以得到VTF环境.
+
+**注意**: 我们在新版本中禁止了`nohup ./main &`的写法, 请采用`./main -n`或`./main --nohup`代替运行.
+
+## 自行编译
+
+### 依赖
+
+- sqlite3
 
 ## 前置条件
 
@@ -53,98 +100,63 @@ sudo dnf -y install sqlite-devel
 * 在`v/thirdparty`里面创建一个新的文件夹`sqlite`
 * 将 zip 解压缩到该文件夹中
 
-### 配置
+### 编译
 
-### 依赖
+#### 获取源码
 
-- sqlite3
-
-### 自行编译
+git用户可以直接使用代码:
 
 ```bash
 git clone https://gitee.com/sakana_ctf/vtf.git
 cd vtf
-v main.v
-./main
 ```
 
-我们可以在编译时设置参数`-os [linux/windows]`使程序交叉编译到其他平台.
+非git用户可以前往网站下载[VTF](https://gitee.com/sakana_ctf/vtf).
 
-### 二进制文件
+#### 初次编译
 
-我们也不定期提供稳定版本用于快速部署服务, 可以通过以下方式直接获取预编译好的源码.
+编译程序只需要执行`v main.v`, 但是在此之前我们推荐先完成`/templates_split/build.v`文件的编译, 便于后续修改html模板:
 
 ```bash
-wget https://gitee.com/sakana_ctf/vtf/releases/tag/[版本号]/vtf-[对应版本类型]
-./vtf-[对应版本类型]-[系统类型].zip
-unzip vtf-[对应版本类型]-[系统类型].zip
-cd vtf-[对应版本类型]-[系统类型]
-./main
+v templates_split/build.v
 ```
 
-# 运行
+#### 调试运行
 
-## 调试运行
-
-调试运行方便对于修改源码过程中快速看见代码的更新情况, 在第一次进行调试前推荐先编译修改提交html文件的子件:
+编译并运行:
 
 ```bash
-v ./templates_split/build.v
+./templates_split/build ; v main.v ; ./main 
 ```
 
-在每次更新后可以运行以下代码:
+以上代码先将`templates_split`文件夹下的所有文件编译到`templates`, 然后编译主程序, 最后运行主程序.
 
-```shell
-./templates_split/build ; v main.v ; ./main
-```
+#### 服务器运行
 
-## 服务器运行
-
-在正式的服务器环境中推荐使用以下指令在后台运行:
-
-```bash
-nohup ./main &
-```
+**注意**: 我们在新版本中禁止了`nohup ./main &`的写法, 请采用`./main -n`或`./main --nohup`代替运行.
 
 # 支持
 
 | 需求          | 当前情况                                                                         | 检验人                  |
 |:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
-| 版本号         | v2.5.2(兼容firefox, 填充后端内容)                                                              | sudopacman           |
+| 版本号         | v2.6.0(实现基本的root权限分配和控制台)                                  | sudopacman           |
 | wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman           |
 | 数据测试        | 在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用                                   | sudopacman, Kengwang |
 | 测试反馈        | 存在资源印用错误, 现已修复                                                               | secret               |
 | 测试反馈        | 存在题目未格式化问题, 现暂用替代方案                                                          | adwa                 |
-| firefox兼容问题 | 已最低限度适配                                                  |   sudopacman                   |
+| firefox兼容问题 | 已最低限度适配                                                  |   sudopacman, VintageGameBoy                   |
 | 说明书         | 已修正debian脚本错误                                                                | H4nn4h               |
-| edge兼容问题    | 已适配                                                                          | sudopacman           |
 | 线程设置        | 当前veb框架暂不支持                                                                  |                      |
-| 登录措施        | 普通用户登录与注册                                                                    | sudopacman           |
-| 管理员         | 未支持                                                                          |                      |
-| 非member视角   | 未支持                                                                          |                      |
-| 权限区分        | 未实现, 考虑使用新函数统一区分权限                                                           |                      |
-| 登录状态维持      | 当前页基本解决                                                                      | sudopacman           |
 | 登录安全        | 实现登录函数`login_status`, 其他路由已完善                                                | sudopacman           |
-| 黑名单         | 禁止选手访问, 预计下一版本支持                                                             |                      |
+| 黑名单         | 禁止选手访问, 将移动在控制台设置                                                             |                      |
 | 题目          | 支持提交flag                                                                     | sudopacman           |
 | 多flag设置     | 已实现                                                                          | sudopacman           |
 | 数据库         | 当前仅支持sqlite3数据库                                                              | sudopacman           |
-| 数据库安全       | 统一使用base64编码, sha256单向加密传递数据                                                 | sudopacman           |
-| 错误显示        | 已重构, js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman           |
-| 提交更新        | 已完成                                                                          | sudopacman           |
-| 函数分离        | 已分离成多个模块                                                                     | sudopacman           |
-| 排行榜         | 已完成                                                                          | sudopacman           |
-| 动态计分        | 已更新                                                                          |                      |
-| 一血, 二血, 三血  | 将重新调整数据库                                                                     |                      |
-| 线程数设置       | 当前重构版本不支持设置线程                                                                |                      |
-| html分块编辑    | 使用复杂脚本替代编辑问题                                                                 | sudopacman           |
-| ip检测功能      | 支持最基础的ip检测                                                                   | sudopacman           |
-| 图片格式 | 已优化                                                             | sudopacman           |
-| 中英文显示问题     | 应支持多语言, 在`/templates_split/language`中添加语言                                                                          |                      |
-| 数据可视化       | 使用js实现简单的可视化                                        |                      |
+| 错误显示        | 等待重写, 目前js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman           |
+| 排行榜         | 实现基本的图形表格, 待实现数据拉取功能                                                                          | sudopacman           |
+| 一血, 二血, 三血  | 将重新调整数据库                                                                     |                      |                   |
+| 中英文显示问题     | 在`/templates_split/language`中添加语言, 脚本问题待解决                                                                          |                      |
 | html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行, 当前需要重构语言部分, 重新拆分编译规则 | sudopacman           |
-| 后台功能    | 已实现基本 | sudopacman           |
-| 日志功能    | 为弥补新版本vlang的问题采用了替代方案, 将在未来修复bug后解决日志问题 | sudopacman           |
 
 # 参与贡献
 

@@ -46,12 +46,12 @@
             拖动图片到这里修改显示图标
           </div>
           <input type="text" id="title-input" placeholder="新的标题">
-          <input onclick="updateTitle()" type="submit" value="更新">
+          <a onclick="updateTitle()">更新</a>
         </div>
 
         <h5>主页模板:</h5>
         <textarea id="message" name="message"></textarea>
-        <input onclick="updateTitle()" type="submit" value="更新">
+        <a onclick="updateTitle()">更新</a>
       </div>
 
       <h1 id="member">成员</h1>
@@ -65,9 +65,9 @@
             <option value="x">...</option>
           </select>
           <input type="text" id="title-input" placeholder="新的标题">
-          <input onclick="updateTitle()" type="submit" value="查询">
-        </div>
+          <a onclick="updateTitle()">查询</a>
 
+        </div>
       </div>
 
       <h1 id="team">队伍</h1>
@@ -112,13 +112,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 500px) {
-    .tools-card {
-      grid-template-columns: 1fr;
-      /* 一列布局 */
-    }
-  }
-
   .card {
     margin: 0 auto;
     height: 200px;
@@ -160,12 +153,15 @@
     color: var(--text-botton-white);
   }
 
-  input[type="submit"] {
+  .content-bar a {
+    text-align: center;
+    margin: 0 auto;
     background: var(--bg-botton-white);
     color: var(--text-wild-blue-yonder);
-    height: 60px;
-    margin-bottom: 20px;
+    width: 80px;
+    padding: 10px;
     font-weight: 600;
+    border-radius: 10px;
     cursor: pointer;
   }
 
@@ -178,8 +174,20 @@
 
   .search {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 30%);
     gap: 1px;
+  }
+
+  @media (max-width: 600px) {
+    .tools-card {
+      grid-template-columns: 1fr;
+      /* 一列布局 */
+    }
+
+    .search {
+      grid-template-columns: repeat(2, 1fr);
+      /* 两列布局 */
+    }
   }
 </style>
 

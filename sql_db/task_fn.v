@@ -14,7 +14,6 @@ fn challenge_err() []Task {
 }
 
 // 题目数据更新
-
 fn challenge_db(db DB, i string) []Task {
 	return sql db {
         select from Task where type_text == i

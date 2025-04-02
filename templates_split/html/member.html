@@ -1,42 +1,42 @@
-  <main>
+<main>
     <div class="form">
-      <h2>${name}</h2>
-      <h3 class="mess-text">邮箱:</h3>
-      <h3 class="con-text">${email}</h3><br>
-      <div class="logout"><input onclick="logout()" type="submit" value="退出"></div>
-      <h4 class="mess-text">修改密码:</h4>
-      <form>
-        <div class="inputBox"><input id="old-passwd" type="text" placeholder="初始密码"></div>
-        <div class="inputBox"><input id="new-passwd" type="password" placeholder="新的密码"></div>
-        <div class="inputBox"><input id="passwd-again" type="password" placeholder="确认密码"></div>
-        <div class="inputBox"><input onclick="fixpasswd()" type="submit" value="更新"></div>
-      </form>
-      
-      
-    </div>
-  </main>
+        <h2>${name}</h2>
+        <h3 class="mess-text">邮箱:</h3>
+        <h3 class="con-text">${email}</h3><br>
+        <div class="logout"><a onclick="logout()">退出</a></div>
+        <h4 class="mess-text">修改密码:</h4>
+        <form>
+            <div class="inputBox"><input id="old-passwd" type="text" placeholder="初始密码"></div>
+            <div class="inputBox"><input id="new-passwd" type="password" placeholder="新的密码"></div>
+            <div class="inputBox"><input id="passwd-again" type="password" placeholder="确认密码"></div>
+            <div class="inputBox"><a onclick="fixpasswd()">更新</a></div>
+        </form>
 
-  <style>
-    main{
-          background: var(--bg-card-color);
-          width: 400px;
-          padding: 5px;
-          padding-bottom: 45px;
-          position: absolute;
-          top: 25%;
-          left: 0;
-          right:0;
-          margin: auto;
-          border-radius: 10px;
+
+    </div>
+</main>
+
+<style>
+    main {
+        background: var(--bg-card-color);
+        width: 400px;
+        padding: 5px;
+        padding-bottom: 45px;
+        position: absolute;
+        top: 20%;
+        left: 0;
+        right: 0;
+        margin: auto;
+        border-radius: 10px;
     }
-    
+
     .form {
         position: relative;
         width: 100%;
         height: 100%;
         padding: 50px;
     }
-    
+
     .form h2 {
         text-align: center;
         position: relative;
@@ -47,16 +47,16 @@
         margin-bottom: 30px;
         cursor: pointer;
     }
-    
+
     .form h2:hover:before {
         width: 53px;
     }
-    
+
     .form .inputBox {
         width: 100%;
         margin-top: 20px;
     }
-    
+
     .form .inputBox input {
         width: 100%;
         padding: 10px 20px;
@@ -71,21 +71,22 @@
         letter-spacing: 1px;
         color: var(--text-botton-white);
     }
-    
+
     .form .inputBox input::placeholder {
         color: var(--text-botton-white);
     }
 
     /* 登录按钮样式 */
-    
-    .form .inputBox input[type="submit"] {
-        position: absolute;
-        right: 39%;
+
+    .form .inputBox a {
+        text-align: center;
+        margin: 0 auto;
         background: var(--bg-botton-white);
         color: var(--text-wild-blue-yonder);
-        max-width: 100px;
-        margin-bottom: 20px;
+        max-width: 80px;
+        padding: 10px;
         font-weight: 600;
+        border-radius: 10px;
         cursor: pointer;
     }
 
@@ -93,7 +94,7 @@
 
     .form .logout {
         width: 100%;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     .form .logout input {
@@ -115,19 +116,17 @@
         color: var(--text-have-url-color);
     }
 
-    .form .logout input[type="submit"] {
+    .form .logout a {
+        text-align: center;
         position: absolute;
-        right: 13%;
-        top: 100px;
+        right: 14%;
+        top: 125px;
         background: var(--bg-botton-white);
         color: var(--text-wild-blue-yonder);
-        max-width: 100px;
-        margin-bottom: 20px;
+        width: 80px;
+        padding: 10px;
         font-weight: 600;
+        border-radius: 10px;
         cursor: pointer;
     }
-    
-
-    
-      </style>
-
+</style>

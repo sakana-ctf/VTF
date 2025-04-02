@@ -87,7 +87,6 @@ function signup() {
         const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
         //post_data(data, '/signupapi');
         post_data(data, '/signupapi');
-        alert('确认注册');
     } else {
         alert("Error: 密码不一致");
     }
@@ -101,7 +100,6 @@ function fixpasswd() {
     if (newpasswd === passwdagain) {
         const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
         post_data(data, '/memberapi');
-        alert('确认更新密码');
     } else {
         alert("Error: 密码不一致");
     }
@@ -118,8 +116,12 @@ function passwdlogin() {
 // 登出函数
 function logout() {
     delCookie('id');
-    delCookie('passdwd');
+    delCookie('passwd');
     delCookie('whoami');
+    /*
+     临时用这个, 但是本质上应该是通过js关闭模态框,
+     不应该直接刷新增加服务器压力.
+    */
     location.reload();
 }
 
@@ -128,9 +130,7 @@ function inputflag(tid){
     flag = url_encode_str(document.getElementById(tid).value);
     const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
     post_data(data, '/flagapi');
-    
-    // 临时用这个代替, 但是远程有时差就爆炸.
-    reload_page('/challenge.html');
+    location.reload();
 }
 
 /*****************
@@ -171,12 +171,33 @@ function NoLog() {
         the_team.href = "signup.html";
         the_member.href = "login.html";
     };
-    if (cookie_whoami == "member" || cookie_whoami == "") {
+
+
+    if (cookie_whoami == url_encode_str("member") || cookie_whoami == "") {
         KillConsole();
     };
 
 }
 
+// 存储先前的Cookie值
+var previousCookieId = findCookie('id');
+var previousCookieWhoami = findCookie('whoami');
+
+// 检查Cookie是否已更改的函数
+function checkCookieChanges() {
+    var currentCookieId = findCookie('id');
+    var currentCookieWhoami = findCookie('whoami');
+
+    if (currentCookieId !== previousCookieId || currentCookieWhoami !== previousCookieWhoami) {
+        location.reload();
+
+        previousCookieId = currentCookieId;
+        previousCookieWhoami = currentCookieWhoami;
+    }
+}
+
+// 设置定时器，每秒检查一次Cookie变化
+setInterval(checkCookieChanges, 500);
 NoLog();
 
 

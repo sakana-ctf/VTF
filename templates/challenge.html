@@ -142,7 +142,7 @@
           <h4>${challenge.diff} ${challenge.score}</h4>
           <a class="intro">${challenge.intro}</a>
           <div class="inputBox"><input id="${challenge.tid}" type="text" placeholder="请输入flag"></div>
-          <div class="inputBox"><input onclick="inputflag('${challenge.tid.str()}')" type="submit" value="提交"></div>
+          <div class="inputBox"><a onclick="inputflag('${challenge.tid.str()}')">提交</a></div>
 
         </div>
       </div>
@@ -284,14 +284,14 @@
 
   /* 登录按钮样式 */
 
-  .form .inputBox input[type="submit"] {
-    position: static;
-    bottom: 80px;
+  .form .inputBox a {
+    text-align: center;
     background: var(--bg-botton-white);
     color: var(--text-wild-blue-yonder);
-    max-width: 100px;
-    margin-bottom: 20px;
+    max-width: 80px;
+    padding: 10px;
     font-weight: 600;
+    border-radius: 10px;
     cursor: pointer;
   }
 

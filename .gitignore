@@ -9,4 +9,5 @@ make
 make.exe
 make.v
 data.db
-
+nohup.out
+start
