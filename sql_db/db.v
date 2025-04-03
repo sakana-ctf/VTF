@@ -21,6 +21,69 @@ fn connect() sqlite.DB {
     return db
 }
 
+
+#include <unistd.h>
+#include <fcntl.h>
+    
+fn C.setsid() int
+fn C.umask(mask u32) u32
+fn C.chdir(path &char) int
+fn C.open(path &char, flags int, ...) int
+fn C.dup2(oldfd int, newfd int) int
+
+pub fn create_daemon(path string, args string) {
+    mut pid := os.fork()
+
+    if pid < 0 {
+       println("Error: create_daemon() first fork faild") 
+       exit(1)
+    }
+    if pid > 0 {
+        exit(0) 
+    }
+    
+    sid := C.setsid()
+    if sid < 0 {
+        println("Error: create_daemon() setsid faild")
+        exit(1)
+    }
+
+    pid = os.fork()
+    if pid < 0 {
+        println("Error: create_daemon() second fork faild")
+        exit(1)
+    }
+    if pid > 0 {
+        exit(0)
+    }
+
+    if C.chdir(c'./') < 0 {
+        println("Error: create_daemon() chdir faild")
+        exit(1)
+    }
+    C.umask(0)
+    dev_null := C.open(c'/dev/null', C.O_RDWR)
+    if dev_null < 0 {
+        println("Error: create_daemon() open /dev/null faild")
+        exit(1)
+    }
+    _ = C.dup2(dev_null, 0)
+    _ = C.dup2(dev_null, 1)
+    _ = C.dup2(dev_null, 2)
+    
+    // close(dev_null)
+    asm amd64 {
+        mov rax, 3
+        mov rdi, fd
+        syscall
+        ; 
+        ; r (dev_null) as fd
+    }
+     os.system('./main ${args}')
+}
+
+
+
 pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
     mut db := sqlite.DB{}
 
@@ -72,7 +135,7 @@ pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
         } $else {
             if set_nohup {
                 println('[veb] Running app on http://localhost:${port}/')
-                os.system('nohup ./main ${args} &')
+                create_daemon('./main', '${args}')
             } else {
                 os.system('./main ${args}')
             }
