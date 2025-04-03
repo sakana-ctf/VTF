@@ -21,7 +21,9 @@ fn connect() sqlite.DB {
     return db
 }
 
-pub fn connect_db(set_nohup bool, args string) ?sqlite.DB {
+pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
+    mut db := sqlite.DB{}
+
     if !os.exists('data.db') {
 
         id := os.input('Root id: ')
@@ -30,7 +32,7 @@ pub fn connect_db(set_nohup bool, args string) ?sqlite.DB {
             panic(err)
         }
 
-        db := connect()
+        db = connect()
         create_db(db)
 
         root_number := Personal{
@@ -48,8 +50,8 @@ pub fn connect_db(set_nohup bool, args string) ?sqlite.DB {
             os.rm('data.db') or { panic(err) }
             exit(1)
         }
-        
-        return db
+    } else {
+        db = connect()
     }
 
     /* 
@@ -69,6 +71,7 @@ pub fn connect_db(set_nohup bool, args string) ?sqlite.DB {
             os.system('.\\main ${args}')
         } $else {
             if set_nohup {
+                println('[veb] Running app on http://localhost:${port}/')
                 os.system('nohup ./main ${args} &')
             } else {
                 os.system('./main ${args}')
@@ -77,5 +80,5 @@ pub fn connect_db(set_nohup bool, args string) ?sqlite.DB {
         exit(1)
     }
 
-    return connect()
+    return db
 }

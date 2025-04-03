@@ -13,7 +13,8 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 * 直接使用自带的veb框架, 无需学习配置其他web框架;
 * vlang拥有很方便的交叉编译能力, 可以轻松实现跨平台;
 * 支持分屏操作, 在最小屏幕中也能正常使用;
-* 由[二次元姛战队](https://gitee.com/sakana_ctf)维护, 二次元含量极高.
+* VTF开发将贯彻精简理念, 让用户能更加方便快速地投入使用;
+* 由[二次元姛战队](https://vycma.xyz/sakana)维护, 二次元含量极高.
 
 # 使用
 
@@ -21,7 +22,7 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 ```
 ./main -h
-VTF v2.6.0, CTF competition platform based on the V programming language.
+VTF v2.6.0-beta, CTF competition platform based on the V programming language.
 Basic usages:
  运行程序:      main [Options]
  运行程序(设置线程数):  main [walkers] [Options]
@@ -140,7 +141,7 @@ v templates_split/build.v
 | 需求          | 当前情况                                                                         | 检验人                  |
 |:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
 | 版本号         | v2.6.0(实现基本的root权限分配和控制台)                                  | sudopacman           |
-| wiki版本号     | 当前跟随到v2.1.0                                                                  | sudopacman           |
+| wiki版本号     | 当前跟随到v2.1.0, 待更新                                                                  | sudopacman           |
 | 数据测试        | 在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用                                   | sudopacman, Kengwang |
 | 测试反馈        | 存在资源印用错误, 现已修复                                                               | secret               |
 | 测试反馈        | 存在题目未格式化问题, 现暂用替代方案                                                          | adwa                 |
@@ -156,7 +157,6 @@ v templates_split/build.v
 | 排行榜         | 实现基本的图形表格, 待实现数据拉取功能                                                                          | sudopacman           |
 | 一血, 二血, 三血  | 将重新调整数据库                                                                     |                      |                   |
 | 中英文显示问题     | 在`/templates_split/language`中添加语言, 脚本问题待解决                                                                          |                      |
-| html批量修改    | 删除主程序调用html构建脚本功能, 推荐使用`./templates_split/build ; v main.v ; ./main`指令进行调试运行, 当前需要重构语言部分, 重新拆分编译规则 | sudopacman           |
 
 # 参与贡献
 

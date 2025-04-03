@@ -36,7 +36,7 @@ import encoding.base64 {
     url_decode_str 
 }
 
-const version := "v2.6.0"
+const version := "v2.6.0-beta"
 
 /*
 struct User {
@@ -126,7 +126,7 @@ fn cookie_mess(mut ctx Context) string {
 // 主函数
 fn main() {
     cmd_set := start(version)
-    db := connect_db(cmd_set.nohup, cmd_set.args) or { exit(1) }
+    db := connect_db(cmd_set.nohup, cmd_set.args, cmd_set.port) or { exit(1) }
     
     println('暂不支持设置线程数: ${cmd_set.workers}')
 
