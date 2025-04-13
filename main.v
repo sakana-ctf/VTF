@@ -38,7 +38,7 @@ import encoding.base64 {
     url_decode_str 
 }
 
-const version := "v2.6.0-stable"
+const version := "v2.6.1-alpha"
 
 /*
 struct User {

@@ -24,7 +24,7 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 ```
 ./main -h
-VTF v2.6.0-beta, CTF competition platform based on the V programming language.
+VTF v2.6.1-alpha, CTF competition platform based on the V programming language.
 Basic usages:
  运行程序:      main [Options]
  运行程序(设置线程数):  main [walkers] [Options]
@@ -33,6 +33,7 @@ Options:
  -v, --version                          显示版本号并退出.
  -n, --nohup                            守护进程并将日志输出到nohup.out文件(目前只支持在linux设置).
  -p, --port [int]                       设置端口号.
+ -d, --database [string]                设置使用的数据库名.
 ```
 
 ### 二进制文件
@@ -56,10 +57,12 @@ vtf
 │   ├── image
 │   └── js
 ├── main
-└── data.db
+└── data
+    ├── README.md
+    └── data.db
 ```
 
-其中main是执行程序, 使用后data.db是数据库文件, 用于存储本次比赛的所有数据, 无需安装任何东西, 直接运行`./main`可以得到VTF环境.
+其中main是执行程序, 使用会创建数据库文件, 例如默认创建`data.db`为数据库文件存放在data文件夹中, 数据库文件存储本次比赛的所有数据, 无需安装任何东西, 直接运行`./main`可以得到VTF环境.
 
 **注意**: 我们在新版本中禁止了`nohup ./main &`的写法, 请采用`./main -n`或`./main --nohup`代替运行.
 

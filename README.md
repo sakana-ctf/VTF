@@ -24,15 +24,16 @@ We provide both source code and precompiled binaries for use.
 
 ```
 ./main -h
-VTF v2.6.0-beta, CTF competition platform based on the V programming language.
+VTF v2.6.1-alpha, CTF competition platform based on the V programming language.
 Basic usages:
-Run program: main [Options]
-Run program (with thread count): main [walkers] [Options]
+ 运行程序:      main [Options]
+ 运行程序(设置线程数):  main [walkers] [Options]
 Options:
--h, -help Show basic info and exit
--v, --version Show version number and exit
--n, --nohup Run as daemon and output logs to nohup.out (Linux only)
--p, --port [int] Set port number
+ -h, -help                              显示编码的基本信息并退出.
+ -v, --version                          显示版本号并退出.
+ -n, --nohup                            守护进程并将日志输出到nohup.out文件(目前只支持在linux设置).
+ -p, --port [int]                       设置端口号.
+ -d, --database [string]                设置使用的数据库名.
 ```
 
 ### Binaries
@@ -51,14 +52,16 @@ For detailed versions, visit our https://github.com/sakana-ctf/VTF/releases. The
 ```
 vtf
 ├── static
-│   ├── css
-│   ├── image
-│   └── js
+│   ├── css
+│   ├── image
+│   └── js
 ├── main
-└── data.db
+└── data
+    ├── README.md
+    └── data.db
 ```
 
-main is the executable. data.db is the database file created after use. Simply run ./main to start the VTF environment.
+Where `main` is the executable program that, when used, creates a database file. For example, it defaults to creating `data.db` as the database file stored in the `data` folder. The database file stores all data for the current competition. There is no need to install anything; simply running `./main` will give you the VTF environment.
 
 **Note**: The `nohup ./main &` syntax is deprecated. Use `./main -n` or `./main --nohup` instead.
 
