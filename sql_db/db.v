@@ -4,10 +4,11 @@ import os
 import vlog
 import err_log
 import db.sqlite
+import shell { test_daemon }
 import encoding.base64 { url_encode_str, url_decode_str }
 
-fn connect() sqlite.DB {
-    mut db := sqlite.connect('data.db')  or {
+fn connect(database string) sqlite.DB {
+    mut db := sqlite.connect('./data/${database}.db')  or {
         println('Error: sqlite调用错误')
         panic(err)
     }
@@ -21,73 +22,16 @@ fn connect() sqlite.DB {
     return db
 }
 
-
-#include <unistd.h>
-#include <fcntl.h>
-    
-fn C.setsid() int
-fn C.umask(mask u32) u32
-fn C.chdir(path &char) int
-fn C.open(path &char, flags int, ...) int
-fn C.dup2(oldfd int, newfd int) int
-
-pub fn create_daemon(path string, args string) {
-    mut pid := os.fork()
-
-    if pid < 0 {
-       println("Error: create_daemon() first fork faild") 
-       exit(1)
-    }
-    if pid > 0 {
-        exit(0) 
-    }
-    
-    sid := C.setsid()
-    if sid < 0 {
-        println("Error: create_daemon() setsid faild")
-        exit(1)
-    }
-
-    pid = os.fork()
-    if pid < 0 {
-        println("Error: create_daemon() second fork faild")
-        exit(1)
-    }
-    if pid > 0 {
-        exit(0)
-    }
-
-    if C.chdir(c'./') < 0 {
-        println("Error: create_daemon() chdir faild")
-        exit(1)
-    }
-    C.umask(0)
-    dev_null := C.open(c'/dev/null', C.O_RDWR)
-    if dev_null < 0 {
-        println("Error: create_daemon() open /dev/null faild")
-        exit(1)
-    }
-    _ = C.dup2(dev_null, 0)
-    _ = C.dup2(dev_null, 1)
-    _ = C.dup2(dev_null, 2)
-    
-    // close(dev_null)
-    asm amd64 {
-        mov rax, 3
-        mov rdi, fd
-        syscall
-        ; 
-        ; r (dev_null) as fd
-    }
-     os.system('./main ${args}')
-}
-
-
-
-pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
+pub fn connect_db(set_nohup bool, args string, port int, database string) ?sqlite.DB {
+    /* 
+        todo:
+        经过反复思考, 我认为还是需要引入cmd.CmdSet进行调用为益
+        不然后续对启动内容进行编写容易引起调用灾难, 但是我懒, 
+        所以先丢一个todo在这里, 等以后再慢慢替换过来.
+    */
     mut db := sqlite.DB{}
 
-    if !os.exists('data.db') {
+    if !os.exists('./data/${database}.db') {
 
         id := os.input('Root id: ')
         email := os.input('Root email: ')
@@ -95,7 +39,7 @@ pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
             panic(err)
         }
 
-        db = connect()
+        db = connect(database)
         create_db(db)
 
         root_number := Personal{
@@ -114,34 +58,10 @@ pub fn connect_db(set_nohup bool, args string, port int) ?sqlite.DB {
             exit(1)
         }
     } else {
-        db = connect()
+        db = connect(database)
     }
 
-    /* 
-        todo:
-        目前使用了最原始的方法代替后台运行, 
-        在windows下只提供了基础调试功能, 无法用于生产环境.
-        未来考虑优化单独设置守护进程.
-        这在后续是需要进行调整优化的.
-    */
-
-
-    if os.exists('start') {
-        os.rm('start') or { panic(err) }
-    } else {
-        os.write_file('start', '') or { panic(err) }
-        $if windows {
-            os.system('.\\main ${args}')
-        } $else {
-            if set_nohup {
-                println('[veb] Running app on http://localhost:${port}/')
-                create_daemon('./main', '${args}')
-            } else {
-                os.system('./main ${args}')
-            }
-        }
-        exit(1)
-    }
+    test_daemon(set_nohup, port)
 
     return db
 }

@@ -51,8 +51,6 @@
   --background-color: rgb(20, 20, 20);
   --background-line-color: rgb(41, 119, 255);
   --text-color: rgb(118, 155, 204);
-  --text-have-url-color: rgb(252, 114, 114);
-  --red-outline: rgb(139, 24, 24);
   --text-title-color: rgb(118, 155, 204);
   --text-table-color: rgb(164, 213, 235);
   --table-header-color: rgb(52, 67, 87);
@@ -62,6 +60,15 @@
   --button-text: rgb(0, 0, 0);
   --button-hover: rgba(255, 168, 252, 0.25);
   --button-hover-text: rgb(0, 0, 0);
+
+
+  /***************************
+   * 提示弹窗部分代码 
+   ***************************/
+  --alert-red-url-color: rgb(252, 114, 114);
+  --red-outline: rgb(139, 24, 24);
+  --alert-green-url-color: rgb(78, 208, 95);
+  --green-outline: rgb(0, 94, 46);
 
   --tools-card-color: linear-gradient(130deg, rgb(22, 27, 33), rgb(67, 107, 172), rgb(22, 27, 33));
 
@@ -87,7 +94,7 @@
   width: 250px;
   height: 50px;
   padding: 10px;
-  background-color: var(--text-have-url-color);
+  background-color: var(--alert-red-url-color);
   color: var(--text-botton-white);
   border: 1px solid var(--red-outline);
   border-radius: 5px;

@@ -30,7 +30,7 @@
 
       <h1 id="panel">面板</h1>
       <div class="content-bar">
-        <h5>比赛信息:</h5>
+        <h5>赛事信息:</h5>
         <div class="tools-card">
           <div class="card">
             <canvas id="canvas1"></canvas>
@@ -39,6 +39,13 @@
             <canvas id="canvas2"></canvas>
           </div>
         </div>
+
+        <h5>竞赛设置:</h5>
+        <select id="group" value="1">
+          <option value="1">个人赛</option>
+          <option value="2">团队赛</option>
+        </select>
+        <a onclick="updateTitle()">更新</a>
 
         <div class="set-card">
           <h5>平台设置:</h5>
@@ -59,24 +66,180 @@
         <h5>查询:</h5>
         <div class="search">
           <input type="text" id="title-input" placeholder="关键词">
-          <select id="group" value="x">
-            <option value="1">root</option>
-            <option value="2">member</option>
+          <select id="group" value="1">
+            <option value="1">所有成员</option>
+            <option value="2">root</option>
+            <option value="3">member</option>
             <option value="x">...</option>
           </select>
-          <input type="text" id="title-input" placeholder="新的标题">
+          <input type="text" id="title-input" placeholder="队伍名">
+          <input type="text" id="title-input" placeholder="邮箱号">
           <a onclick="updateTitle()">查询</a>
+        </div>
 
+
+        <div class="layer">
+          <table>
+            <tr>
+              <th>排名</th>
+              <th>选手名称</th>
+              <th>选手得分</th>
+            </tr>
+            <tbody>
+              @for i in 0..10
+              <tr>
+                <td id="td${i}_rank"></td>
+                <td id="td${i}_team_id"></td>
+                <td id="td${i}_score"></td>
+              </tr>
+              @end
+            </tbody>
+          </table>
         </div>
       </div>
 
       <h1 id="team">队伍</h1>
+
       <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <input type="text" id="title-input" placeholder="关键词">
+          <input type="text" id="title-input" placeholder="队员信息">
+          <input type="text" id="title-input" placeholder="队员邮箱">
+          <a onclick="updateTitle()">查询</a>
+        </div>
+
 
       </div>
-      <h1 id="challenge">题目</h1>
-      <div class="content-bar">
 
+      <h1 id="challenge">编辑题目</h1>
+      <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <select id="group" value="1">
+            <option value="1">所有题目</option>
+            @for i in 0..list_of_type.len
+            <option value="${i+2}">${list_of_type[i].name}</option>
+            @end
+          </select>
+          <input type="text" id="title-input" placeholder="赛道">
+          <input type="text" id="title-input" placeholder="队员信息">
+          <input type="text" id="title-input" placeholder="队员邮箱">
+          <a onclick="updateTitle()">查询</a>
+        </div>
+
+        <h5>题目列表:</h5>
+        <div class="layer">
+          <table>
+            <tr>
+              <th>题目名称</th>
+              <th>题目类型</th>
+              <th>选手得分</th>
+            </tr>
+            <tbody>
+              @for i in 0..10
+              <tr>
+                <td id="td${i}_rank"></td>
+                <td id="td${i}_team_id"></td>
+                <td id="td${i}_score"></td>
+              </tr>
+              @end
+            </tbody>
+
+          </table>
+        </div>
+
+
+        <h5>添加题目:</h5>
+        <form id="challenge-form">
+          <div class="form-group">
+            <label for="type_text">题目类型:</label>
+            <select id="type_text" value="0">
+              <option value="0">其他</option>
+              <option value="1">Reverse</option>
+            </select>
+            <input type="text" id="type_text_x" required>
+          </div>
+          <div class="form-group">
+            <label for="flag">flag值:</label>
+            <input type="text" id="flag" required>
+          </div>
+          <div class="form-group">
+            <label for="name">挑战名:</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="form-group">
+            <label for="diff">难度:</label>
+            <select id="diff" value="0">
+              <option value="0">其他</option>
+            </select>
+            <input type="text" id="diff_x" required>
+          </div>
+          <div class="form-group">
+            <label for="intro">挑战介绍:</label>
+            <textarea id='intro' required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="max_score">最大分值:</label>
+            <input type="number" id="max_score">
+          </div>
+          <div class="form-group">
+            <label for="score">当前分值:</label>
+            <input type="number" id="score">
+          </div>
+          <div class="form-group">
+            <label for="attachment">附件容器:</label>
+            <input type="checkbox" id="container">
+          </div>
+          <a onclick="addChallenge()">添加</a>
+        </form>
+
+        <script>
+          function getInputValue(selectName) {
+            var inputElement = document.getElementById(selectName);
+            if (inputElement.type === 'checkbox') {
+              return url_encode_str(inputElement.checked);
+            } else {
+              return url_encode_str(inputElement.value);
+            }
+          }
+
+          function getSelectedOptionText(selectName) {
+            var selectElement = document.getElementById(selectName);
+            var selectedValue = selectElement.value;
+            if (selectedValue == 0) {
+              return getInputValue(selectName + '_x')
+            }
+            for (var i = 1; i < selectElement.options.length; i++) {
+              if (selectElement.options[i].value === selectedValue) {
+                return url_encode_str(selectElement.options[i].textContent);
+              }
+            }
+            return '';
+          }
+
+          function addChallenge() {
+            // 获取表单元素
+            var typeText = getSelectedOptionText('type_text');
+            var flag = getInputValue('flag');
+            var name = getInputValue('name');
+            var diff = getSelectedOptionText('diff');
+            var intro = getInputValue('intro');
+            var maxScore = getInputValue('max_score');
+            var score = getInputValue('score');
+            var container = getInputValue('container');
+
+            var data = "type_text=" + typeText;
+            data += "&flag=" + flag;
+            data += "&name=" + name;
+            data += "&diff=" + diff;
+            data += "&intro=" + intro;
+            data += "&max_score=" + maxScore;
+            data += "&score=" + score;
+            data += "&container=" + container;
+            post_data(data, '/challengeapi/add');
+          }
+        </script>
       </div>
 
       <h1 id="data">数据</h1>
@@ -95,6 +258,7 @@
 </main>
 
 <style>
+  /* ==========================console页================================== */
   h5 {
     color: var(--text-set-white);
   }
@@ -165,6 +329,7 @@
     cursor: pointer;
   }
 
+  /* ============================写入index页================================ */
   textarea {
     width: 100% !important;
     height: 300px;
@@ -172,6 +337,7 @@
     background-color: rgba(255, 255, 255, 0.7);
   }
 
+  /* ============================检索部分================================ */
   .search {
     display: grid;
     grid-template-columns: repeat(3, 30%);
@@ -188,6 +354,66 @@
       grid-template-columns: repeat(2, 1fr);
       /* 两列布局 */
     }
+  }
+
+  /* ============================选项编辑页================================ */
+  .form-group {
+    display: flex;
+  }
+
+  .form-group label {
+    color: var(--text-set-white);
+    white-space: nowrap;
+  }
+
+  /* ============================表单================================ */
+  .layer-box {
+    background: var(--bg-card-color);
+    width: 70%;
+    max-width: 1200px;
+    position: absolute;
+    top: 15%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+    border-width: 10px;
+  }
+
+  .layer-box h1 {
+    top: 10px;
+    text-align: center;
+    position: relative;
+    color: var(--text-botton-white);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    margin-bottom: 30px;
+    cursor: pointer;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  td,
+  th {
+    text-align: center;
+    color: var(--text-botton-white);
+    font-size: 14px;
+    border-right: 1px solid var(--bg-card-color);
+    line-height: 30px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    /*overflow: hidden; 隐藏超出容器的内容 */
+    /*text-overflow: ellipsis; 使用省略号表示被截断的文本 */
+    background: var(--bg-background-color);
+  }
+
+  .layer-box .layer {
+    overflow: hidden;
+    overflow-x: scroll;
+    /*text-align: center;*/
   }
 </style>
 

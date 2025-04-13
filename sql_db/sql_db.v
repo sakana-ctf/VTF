@@ -30,7 +30,7 @@ pub struct Personal {
 pub struct PersonalFlag {
     pub:
         parents_id          int
-        parents_challenge        int
+        parents_challenge   int
         complete            string
 }
 
@@ -97,58 +97,6 @@ fn create_db(db sqlite.DB) {
         create table PersonalFlag
     } or {
         println('${vlog.warn_log}: 数据库创建失败, 可能已存在数据库: data.db')
-    }
-}
-
-
-
-// 测试部分初始化函数
-
-pub fn test_main_function(mut db sqlite.DB) {
-    the_data := sql db {
-        select from Task
-    } or { []Task{} }
-
-    if the_data.len != 0 {
-        return
-    }
-
-    data := [
-        Task{
-                type_text  :    'Crypto'
-                flag       :    [
-                                    PostFlag{flag : 'vyctf{adwa_is_the_best_crypto_player}'},
-                                ]
-                challenge       :    []PersonalFlag{}
-                name       :    'fast_attack'
-                diff       :    'normal'
-                intro      :    'basectf的精神延续\n出题人:sudopacman\n附件:https://wwtk.lanzoum.com/i44iq2dppize\n远程环境:139.155.139.109:10000'
-                max_score  :    300
-                score      :    300
-                container  :    false
-        },
-
-        Task{
-                type_text  :    'Crypto'
-                flag       :    [
-                                    PostFlag{flag : 'vyctf{0010011100000101010011100001101111110101011001000101011111101001}'},
-                                ]
-                challenge       :    []PersonalFlag{}
-                name       :    "Pell Company's A-level products"
-                diff       :    'normal'
-                intro      :    '我想拿它来做hash\n出题人:adwa\n附件:https://wwtk.lanzoum.com/iNvgK2dpql9c'
-                max_score  :    300
-                score      :    300
-                container  :    false
-        }
-    ]
-    
-    for i in data {
-        sql db {
-            insert i into Task
-        } or {
-        println("Error: 存储数据出错")
-        }
     }
 }
 

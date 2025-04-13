@@ -7,7 +7,7 @@ module main
 import db.sqlite { DB }
 import veb
 import json
-import cmd { start, CmdSet }
+import shell { start, CmdSet }
 import sql_db {
     connect_db,
     
@@ -28,7 +28,9 @@ import sql_db {
     challenge_score,
 
     personal_whoami,
-    test_main_function
+
+    //console
+    add_challenge
 }
 
 import encoding.base64 { 
@@ -36,7 +38,7 @@ import encoding.base64 {
     url_decode_str 
 }
 
-const version := "v2.6.0-beta"
+const version := "v2.6.0-stable"
 
 /*
 struct User {
@@ -68,15 +70,12 @@ pub struct Context {
 pub struct App {
     veb.StaticHandler
     veb.Middleware[Context]
-	// In the app struct we store data that should be accessible by all endpoints.
-	// For example, a database or configuration values.
 mut:
-    db DB
+    db      DB
 }
 
 /* ==================登录验证函数-===================
 fn function() {
-    // mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
     login := login_status(app.db, c_id, c_pwd)
@@ -112,13 +111,6 @@ fn cookie_passwd(ctx Context) string {
     return url_decode_str(c_pwd)
 }
 
-fn cookie_mess(mut ctx Context) string {
-    mess := ctx.get_cookie('mess') or { '' }
-    ctx.set_cookie(name:'mess', value:'')
-    return url_decode_str(mess)
-}
-
-
 /*************
  *  功能函数
 *************/
@@ -126,7 +118,8 @@ fn cookie_mess(mut ctx Context) string {
 // 主函数
 fn main() {
     cmd_set := start(version)
-    db := connect_db(cmd_set.nohup, cmd_set.args, cmd_set.port) or { exit(1) }
+
+    db := connect_db(cmd_set.nohup, cmd_set.args, cmd_set.port, cmd_set.database) or { exit(1) }
     
     println('暂不支持设置线程数: ${cmd_set.workers}')
 
@@ -138,7 +131,7 @@ fn main() {
         veb.RunParams{
             port: cmd_set.port
             //nr_workers: workers
-        }
+        },
     ) or { panic(err) }
 }
 
@@ -147,8 +140,6 @@ fn new_app(db DB) &App {
     mut app := &App{ 
         db : db,
     }
-    
-    test_main_function(mut app.db)
 
     app.static_mime_types['.cjs'] = 'txt/javascript'
     app.static_mime_types['.map'] = 'txt/javascript'
@@ -190,7 +181,6 @@ fn new_app() &App {
 
 @['/']
 fn (mut app App) index(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     return $veb.html()
 }
 
@@ -205,7 +195,6 @@ fn (mut app App) find_index(mut ctx Context) veb.Result {
 *****************/ 
 @['/error.html']
 fn (mut app App) error(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     return $veb.html()
 }
 
@@ -219,7 +208,6 @@ pub fn (mut ctx Context) not_found() veb.Result {
 ***************/ 
 @['/login.html']
 fn (mut app App) login(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     
     if c_id == '' {
@@ -259,8 +247,6 @@ fn (mut app App) loginapi(mut ctx Context) veb.Result {
 
 @['/signup.html']
 fn (mut app App) signup(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
-
     // 功能问题: 检测注册是否成功应该有提示, 如果成功直接跳转
     c_id := cookie_id(ctx)
     if c_id == '' {
@@ -310,7 +296,6 @@ fn (mut app App) signupapi(mut ctx Context) veb.Result {
 
 @['/member.html']
 fn (mut app App) member(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
     login := login_status(app.db, c_id, c_pwd)
@@ -351,8 +336,7 @@ fn (mut app App) memberapi(mut ctx Context) veb.Result {
 ***************/
 
 @['/challenge.html']
-fn (mut app App) challenge(mut ctx Context, display_challenge string) veb.Result {
-    mess := cookie_mess(mut ctx)
+fn (mut app App) challenge(mut ctx Context) veb.Result {
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
     login := login_status(app.db, c_id, c_pwd)
@@ -406,7 +390,6 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
 
 @['/team.html']
 fn (mut app App) team(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     return $veb.html()
 }
 
@@ -416,7 +399,6 @@ fn (mut app App) team(mut ctx Context) veb.Result {
 
 @['/ranking.html']
 fn (mut app App) ranking(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     challenge_name := find_challenge(app.db)
     return $veb.html()
 }
@@ -456,7 +438,6 @@ fn (mut app App) notice(mut ctx Context) veb.Result {
 
 @['/console.html']
 fn (mut app App) console(mut ctx Context) veb.Result {
-    mess := cookie_mess(mut ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
     login := login_root_status(app.db, c_id, c_pwd)
@@ -465,9 +446,49 @@ fn (mut app App) console(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
+            list_of_type := build_challenge(app.db)
             return $veb.html() 
     } else {
         ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
     }
 }
+
+@['/challengeapi/:set'; post]
+fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_root_status(app.db, c_id, c_pwd)
+
+    if c_id == '' {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+        match set {
+            'add' {
+                    type_text := url_decode_str(ctx.form['type_text'])
+                    // todo: 多个flag的问题
+                    flag := url_decode_str(ctx.form['flag'])
+                    name := url_decode_str(ctx.form['name'])
+                    diff := url_decode_str(ctx.form['diff'])
+                    intro := url_decode_str(ctx.form['intro'])
+                    max_score := url_decode_str(ctx.form['max_score']).int()
+                    score := url_decode_str(ctx.form['score']).int()
+                    container := url_decode_str(ctx.form['container']).bool()
+                    msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, container)
+                    ctx.set_cookie(name:'mess', value: url_encode_str(msg))
+                return ctx.text('200: Seccess.')
+            }
+            else {
+                return ctx.text('403: Wrong.')
+            }
+        }
+    } else {
+        ctx.set_cookie(name:'id', value: '')
+        return ctx.text('403: Wrong.')
+    }
+}
+
+
+
+

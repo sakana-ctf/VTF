@@ -1,5 +1,6 @@
 main
 main.exe
+main.c
 bin/
 templates_split/build
 templates_split/build.exe

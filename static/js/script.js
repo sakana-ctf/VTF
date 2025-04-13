@@ -15,31 +15,7 @@ const toggleNav = () => {
 };
 addEventOnElements(navTogglers, "click", toggleNav);
 function ForgetPasswd() {
-  alert("请联系管理员重置密码,\n联系QQ群:882482472");
-}
-
-/************
-*   按钮    *
-************/
-
-function showinfo(mess){
-  if(mess != ""){
-    showNotification(mess, 1000);
-  }
-}
-
-//提示信息
-function showNotification(message, duration) {
-  var notification = document.createElement('div');
-  notification.className = 'notification';
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  setTimeout(function () {
-    notification.style.opacity = 0;
-    setTimeout(function () {
-      document.body.removeChild(notification);
-    }, 1000);
-  }, duration);
+  showNotification("联系QQ群:882482472", 2000);
 }
 
 function alertmess(mess) {
@@ -50,4 +26,24 @@ function alertmess(mess) {
     $('#alertMessage').hide();  // 隐藏弹框
   }, 3000);  // 3秒
 }
+
+//提示信息
+function showNotification(mess, duration = 1000) {
+  var notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.textContent = mess;
+  if (mess.split(':')[0] != 'Error') {
+    notification.style.backgroundColor = 'var(--alert-green-url-color)';
+    notification.style.border = '1px solid var(--green-outline)';
+  }
+  document.body.appendChild(notification);
+  setTimeout(function () {
+    notification.style.opacity = 0;
+    setTimeout(function () {
+      document.body.removeChild(notification);
+    }, 1000);
+  }, duration);
+}
+
+
 

@@ -1,5 +1,3 @@
-// 如果不是纯前端交互请不要使用`location.reload();`刷新, 统一使用后端进行刷新.
-
 function url_encode_str(input) {
     // 对输入字符串进行 URI 编码，确保所有字符都是安全的
     let encoded = encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
@@ -29,19 +27,18 @@ function url_decode_str(input) {
         base64 += '='.repeat(4 - mod4);
     }
     
-    // 对修正后的Base64字符串进行解码
-    let decoded = window.atob(base64);
+    const binaryStr = window.atob(base64);
     
-    // 对解码后的字符串进行URI解码
-    decoded = decodeURIComponent(decoded);
-
-    return decoded;
-}
-
-function reload_page(path) {
-    window.setTimeout(function () {
-        window.location.href = path;
-    },300)
+    // 将二进制字符串转换为Uint8Array
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+    }
+    
+    // 使用TextDecoder转换为UTF-8
+    const utf8Str = new TextDecoder('utf-8').decode(bytes);
+    
+    return utf8Str;
 }
 
 // post传递数据
@@ -66,18 +63,14 @@ function post_data(data, route) {
     });
 }
 
-// 使用async/await来“阻塞”直到响应
-async function sendDataAndWaitForResponse(data, route) {
-    try {
-        const response = await post_data(data, route);
-        console.log("响应数据:", response);
-    } catch (error) {
-        console.error("发生错误:", error.message);
-    }
-}
-
 // 注册函数
 function signup() {
+    const currentTime = Date.now(); // 获取当前时间
+    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
+        showNotification("Error: 操作频繁");
+        return; // 阻止进一步操作
+    }
+    lastClickTime = currentTime; // 更新上次点击时间
     var id = url_encode_str(document.getElementById('id').value);
     var email = url_encode_str(document.getElementById('email').value);
     var passwd = document.getElementById('passwd').value;
@@ -88,12 +81,18 @@ function signup() {
         //post_data(data, '/signupapi');
         post_data(data, '/signupapi');
     } else {
-        alert("Error: 密码不一致");
+        showNotification("Error: 密码不一致");
     }
 }
 
 // 更新密码函数
 function fixpasswd() {
+    const currentTime = Date.now(); // 获取当前时间
+    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
+        showNotification("Error: 操作频繁");
+        return; // 阻止进一步操作
+    }
+    lastClickTime = currentTime; // 更新上次点击时间
     var oldpasswd = url_encode_str(document.getElementById('old-passwd').value);
     var newpasswd = document.getElementById('new-passwd').value;
     var passwdagain = document.getElementById('passwd-again').value;
@@ -101,12 +100,18 @@ function fixpasswd() {
         const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
         post_data(data, '/memberapi');
     } else {
-        alert("Error: 密码不一致");
+        showNotification("Error: 密码不一致");
     }
 }
 
 // 登录函数
 function passwdlogin() {
+    const currentTime = Date.now(); // 获取当前时间
+    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
+        showNotification("Error: 操作频繁");
+        return; // 阻止进一步操作
+    }
+    lastClickTime = currentTime; // 更新上次点击时间
     var email = url_encode_str(document.getElementById('email').value);
     var passwd = url_encode_str(document.getElementById('passwd').value);
     const data = "email=" + email + "&passwd=" + passwd;
@@ -118,19 +123,15 @@ function logout() {
     delCookie('id');
     delCookie('passwd');
     delCookie('whoami');
-    /*
-     临时用这个, 但是本质上应该是通过js关闭模态框,
-     不应该直接刷新增加服务器压力.
-    */
     location.reload();
 }
-
+ 
 // 提交flag
 function inputflag(tid){
     flag = url_encode_str(document.getElementById(tid).value);
     const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
     post_data(data, '/flagapi');
-    location.reload();
+
 }
 
 /*****************
@@ -179,25 +180,29 @@ function NoLog() {
 
 }
 
-// 存储先前的Cookie值
-var previousCookieId = findCookie('id');
-var previousCookieWhoami = findCookie('whoami');
-
 // 检查Cookie是否已更改的函数
 function checkCookieChanges() {
     var currentCookieId = findCookie('id');
     var currentCookieWhoami = findCookie('whoami');
-
+    var mess = findCookie('mess');
+  
     if (currentCookieId !== previousCookieId || currentCookieWhoami !== previousCookieWhoami) {
         location.reload();
-
+  
         previousCookieId = currentCookieId;
         previousCookieWhoami = currentCookieWhoami;
     }
-}
-
+    
+    if (mess != "") {
+        showNotification(url_decode_str(mess));
+        delCookie("mess");
+    }
+  }
+  
+// 存储先前的Cookie值
+var previousCookieId = findCookie('id');
+var previousCookieWhoami = findCookie('whoami');
 // 设置定时器，每秒检查一次Cookie变化
 setInterval(checkCookieChanges, 500);
+var lastClickTime = 0;
 NoLog();
-
-

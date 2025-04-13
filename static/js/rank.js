@@ -56,8 +56,8 @@ function SetRankJson(data, nowtext) {
         var score = "td" + i + "_score";
         document.getElementById(score).innerHTML = '';
         for (k in data[0].task) {
-            var task = "td" + i + "_" + k;
-            document.getElementById(task).innerHTML = '';
+            var challenge = "td" + i + "_" + k;
+            document.getElementById(challenge).innerHTML = '';
         }
     }
 
@@ -71,13 +71,12 @@ function SetRankJson(data, nowtext) {
         document.getElementById(team_id).innerHTML = show_data[i].team_id;
         var score = "td" + i + "_score";
         document.getElementById(score).innerHTML = show_data[i].score;
-        for (k in show_data[i].task) {
-            //alert(task);
-            var task = "td" + i + "_" + k;
-            if ( show_data[i].task[k] == true ) {
-                document.getElementById(task).innerHTML = '√';
+        for (k in show_data[i].challenge) {
+            var challenge = "td" + i + "_" + k;
+            if ( show_data[i].challenge[k] == true ) {
+                document.getElementById(challenge).innerHTML = '√';
             } else if ( show_data[i].task[k] == false ) {
-                document.getElementById(task).innerHTML = '';
+                document.getElementById(challenge).innerHTML = '';
             }
         }
     }

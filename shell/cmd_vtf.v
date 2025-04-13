@@ -1,4 +1,4 @@
-module cmd
+module shell
 
 import os
 
@@ -34,6 +34,13 @@ pub fn start(version string) CmdSet {
 			defa: '8080'
 			desc: '设置端口号.'
 		},
+		CmdOption{
+			abbr: '-d'
+			full: '--database'
+			vari: '[string]'
+			defa: 'data'
+			desc: '设置使用的数据库名.'
+		},
 	]
 
 	mut args := os.args.clone()
@@ -41,6 +48,7 @@ pub fn start(version string) CmdSet {
 	mut cmd_set := CmdSet {
 		args	: return_args(args)
 		port  	: long_options[3].options(args).int()
+		database: long_options[4].options(args)
 		nohup 	: false
 		workers	: 3
 	}

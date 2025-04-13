@@ -1,4 +1,4 @@
-module cmd
+module shell
 
 struct CmdOption {
     abbr        string
