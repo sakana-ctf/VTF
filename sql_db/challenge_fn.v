@@ -3,6 +3,7 @@ module sql_db
 import db.sqlite { DB }
 import vlog
 import err_log
+import time { now }
 
 const solved = '../image/complete.webp'
 const unsolved = '../image/incomplete.png'
@@ -47,8 +48,9 @@ pub fn build_challenge(db DB) []Type {
 }
 
 // 提交flag
-pub fn post_flag(db DB, ip string, tid int, flag string, pid int) bool {
-    err_log.logs('${vlog.set_log}ip:${ip} pid:${pid} 提交 tid:${tid} flag:${flag}')
+pub fn post_flag(db DB, ip string, tid int, flag string, pid int, bool_time bool) bool {
+    time_now := now()
+    err_log.logs('${vlog.set_log}ip:${ip} pid:${pid} time:${time_now} 提交 tid:${tid} flag:${flag}')
     challenge_flag := sql db {
         select from Task where tid == tid 
     } or { challenge_err() }
@@ -59,12 +61,22 @@ pub fn post_flag(db DB, ip string, tid int, flag string, pid int) bool {
     }
 
     if PostFlag{ parents_challenge: tid, flag: flag } in challenge_flag.first().flag {
-        new_score := challenge_flag.first().score - 300 / (challenge_flag.first().max_score - challenge_flag.first().score + 10)
-        sql db {
-            update PersonalFlag set complete = solved where parents_challenge == tid  && parents_id == pid
-            update Task set score = new_score where tid == tid
-        } or { err_log.logs('Flag: ${flag}错误') }
-        err_log.logs('${vlog.true_log}ip:${ip} pid:${pid} 提交正确 tid:${tid} flag:${flag}')
+        if bool_time {
+            // todo: 当时临时用的分值计算方式, 后续需要重新设计.
+            new_score := challenge_flag.first().score - 300 / (challenge_flag.first().max_score - challenge_flag.first().score + 10)
+            sql db {
+                update PersonalFlag set complete = solved where parents_challenge == tid  && parents_id == pid
+                update PersonalFlag set kill_time = time_now where parents_challenge == tid  && parents_id == pid
+                update Task set score = new_score where tid == tid
+            } or { err_log.logs('Flag: ${flag}错误') }
+            err_log.logs('${vlog.true_log}ip:${ip} pid:${pid} time:${time_now} 提交正确 tid:${tid} flag:${flag}')
+        } else {
+            sql db {
+                update PersonalFlag set complete = solved where parents_challenge == tid  && parents_id == pid
+                update PersonalFlag set kill_time = time_now where parents_challenge == tid  && parents_id == pid
+            } or { err_log.logs('Flag: ${flag}错误') }
+            err_log.logs('${vlog.true_log}ip:${ip} pid:${pid} time:${time_now} 补充提交正确 tid:${tid} flag:${flag}')
+        }
         return true
     } else {
         err_log.logs('Flag: 修改出错')

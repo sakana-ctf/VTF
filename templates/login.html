@@ -8,7 +8,7 @@
   <!-- 
     - 头部tag
   -->
-  <title>第二届VYCTF新生赛</title>
+  <title>${app.title_name}</title>
   <meta name="title" content="VTF Copyleft ©2024 VYCMa Open Source China">
   <meta name="description" content="CTF competition platform by vlang">
 
@@ -23,7 +23,6 @@
   <link rel="stylesheet" href="../css/style.css">
 
 </head>
-
 <body id="top">
 <header class="header" data-header>
   <div class="container">
@@ -93,10 +92,10 @@
 <!-- 
     - 导入js
   -->
+
+
+<script src="../js/tools.js"></script>
 <script src="../js/script.js"></script>
-<script src="../js/console.js"></script>
-<script src="../js/rank.js"></script>
-<script src="../js/mychart.js"></script>
 
 <!--
     - 可视化界面
@@ -113,8 +112,6 @@
   -->
 <script type="module" src="../js/node_modules/ionicons/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="../js/node_modules/ionicons/dist/ionicons/ionicons.js"></script>
-
-<
 <main>
   <div class="form">
     <h2>登录账号</h2>
@@ -201,6 +198,11 @@
     font-weight: 600;
     border-radius: 10px;
     cursor: pointer;
+  }
+
+  .form .inputBox a:active {
+    background-color: var(--text-set-white);
+    color: var(--text-carolina-blue);
   }
 
   .forget-font {

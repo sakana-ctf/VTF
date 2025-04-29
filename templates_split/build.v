@@ -8,7 +8,9 @@ fn main() {
 	}
 
 	for i in list_file('./html') {
-		write_html(i, set_html(i))
+		if i != 'index.html' {
+			write_html(i, set_html(i))
+		}
 	}
 
 	data := readfile('./css/console.css')

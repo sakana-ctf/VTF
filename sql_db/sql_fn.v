@@ -12,8 +12,8 @@ fn personal_err() []Personal {
 }
 
 // 黑名单personal_err
-fn set_black_list() {
-    
+fn set_black_list() bool {
+    return true
 }
 
 // whoami权限检测
@@ -22,7 +22,7 @@ pub fn personal_whoami(db DB, c_id string, c_pwd string) string {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
     } or { personal_err() }
     // there has a black list to set.
-    if id_check.len != 0 && true {
+    if id_check.len != 0 && set_black_list() {
         return id_check.first().whoami
     } else {
         return ''
@@ -36,7 +36,7 @@ pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd)
     } or { personal_err() }
     // there has a black list to set.
-    if id_check.len != 0 && true {
+    if id_check.len != 0 && set_black_list() {
         return StatusReturn{true, false, id_check}
     } else {
         return StatusReturn{false, false, id_check}
@@ -49,7 +49,7 @@ pub fn login_root_status(db DB, c_id string, c_pwd string) StatusReturn {
         select from Personal where id == url_encode_str(c_id) && passwd == err_log.sha256_str(c_pwd) && whoami != 'member'
     } or { personal_err() }
     // there has a black list to set.
-    if id_check.len != 0 && true {
+    if id_check.len != 0 && set_black_list() {
         return StatusReturn{true, false, id_check}
     } else {
         return StatusReturn{false, false, id_check}

@@ -1,208 +1,102 @@
-function url_encode_str(input) {
-    // 对输入字符串进行 URI 编码，确保所有字符都是安全的
-    let encoded = encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
-        function(match, p1) {
-            return String.fromCharCode('0x' + p1);
-        }
-    );
-    // 对编码后的字符串进行 Base64 编码
-    let base64 = window.btoa(encoded);
-    // 替换掉 Base64 编码中的 URL 不安全字符
-    base64 = base64.replace(/\+/g, '-'); // 替换 + 为 -
-    base64 = base64.replace(/\//g, '_'); // 替换 / 为 _
-    base64 = base64.replace(/=+$/, '');  // 去除末尾的 =
+/* 测试事件:
+ * 通用测试事件, 主要用于
+*/
 
-    return base64;
-}
-
-
-function url_decode_str(input) {
-    // 替换回Base64编码中的原始字符
-    let base64 = input.replace(/-/g, '+'); // 替换 - 为 +
-    base64 = base64.replace(/_/g, '/'); // 替换 _ 为 /
-    
-    // 由于在编码时去除了末尾的 =，这里需要根据Base64的填充规则补回
-    const mod4 = base64.length % 4;
-    if (mod4 > 0) {
-        base64 += '='.repeat(4 - mod4);
-    }
-    
-    const binaryStr = window.atob(base64);
-    
-    // 将二进制字符串转换为Uint8Array
-    const bytes = new Uint8Array(binaryStr.length);
-    for (let i = 0; i < binaryStr.length; i++) {
-        bytes[i] = binaryStr.charCodeAt(i);
-    }
-    
-    // 使用TextDecoder转换为UTF-8
-    const utf8Str = new TextDecoder('utf-8').decode(bytes);
-    
-    return utf8Str;
-}
-
-// post传递数据
-function post_data(data, route) {
-    console.log("发送信息ing...");
-    fetch(route, {
-        mode: 'cors',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: data
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        console.log("发送成功, 正在校验账号");
-    })
-    .catch(error => {
-        console.log('Error:', error);
+// 平滑移动.
+document.addEventListener('DOMContentLoaded', function () {
+    var links = document.querySelectorAll('#sidebar .nav a');
+    links.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            // 获取id，去掉#
+            event.preventDefault();
+            var targetId = this.getAttribute('href').substring(1);
+            var targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     });
+});
+
+// 设置图表.
+var canvas1 = document.getElementById('canvas1');
+var canvas2 = document.getElementById('canvas2');
+ranking_doughnut(canvas1);
+ranking_polararea(canvas2);
+
+// 代替的通用测试事件.
+function updateTitle() {
+    alert(1);
 }
 
-// 注册函数
-function signup() {
-    const currentTime = Date.now(); // 获取当前时间
-    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
-        showNotification("Error: 操作频繁");
-        return; // 阻止进一步操作
-    }
-    lastClickTime = currentTime; // 更新上次点击时间
-    var id = url_encode_str(document.getElementById('id').value);
-    var email = url_encode_str(document.getElementById('email').value);
-    var passwd = document.getElementById('passwd').value;
-    var passwdagain = document.getElementById('passwdagain').value;
-    
-    if (passwd === passwdagain) {             
-        const data = "id=" + id + "&email=" + email + "&passwd=" + url_encode_str(passwd);
-        //post_data(data, '/signupapi');
-        post_data(data, '/signupapi');
+function updatePlatform() {
+    alert(8);
+}
+
+// 设置名称
+function updateTitleName() {
+  var title_name = getInputValue('title_name');
+  var data = "title_name=" + title_name;
+  post_data(data, '/setapi/title');
+}
+
+// 设置index页
+function updateIndex() {
+  var textareaElement = document.getElementById('index').value;
+  var data = "index=" + url_encode_str(textareaElement);
+  post_data(data, '/setapi/index');
+}
+
+// 设置开始, 结束的时间事件
+function updateTime() {
+  var startTime = document.getElementById('startTime').value;
+  var endTime = document.getElementById('endTime').value;
+  var data = "starttime=" + url_encode_str(startTime) + "&endtime=" + url_encode_str(endTime);
+  post_data(data, '/setapi/time');
+}
+
+function getInputValue(selectName) {
+    var inputElement = document.getElementById(selectName);
+    if (inputElement.type === 'checkbox') {
+      return url_encode_str(inputElement.checked);
     } else {
-        showNotification("Error: 密码不一致");
-    }
-}
-
-// 更新密码函数
-function fixpasswd() {
-    const currentTime = Date.now(); // 获取当前时间
-    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
-        showNotification("Error: 操作频繁");
-        return; // 阻止进一步操作
-    }
-    lastClickTime = currentTime; // 更新上次点击时间
-    var oldpasswd = url_encode_str(document.getElementById('old-passwd').value);
-    var newpasswd = document.getElementById('new-passwd').value;
-    var passwdagain = document.getElementById('passwd-again').value;
-    if (newpasswd === passwdagain) {
-        const data = "oldpasswd=" + oldpasswd + "&newpasswd=" + url_encode_str(newpasswd);
-        post_data(data, '/memberapi');
-    } else {
-        showNotification("Error: 密码不一致");
-    }
-}
-
-// 登录函数
-function passwdlogin() {
-    const currentTime = Date.now(); // 获取当前时间
-    if (currentTime - lastClickTime < 5000) { // 如果距离上次点击时间小于10秒
-        showNotification("Error: 操作频繁");
-        return; // 阻止进一步操作
-    }
-    lastClickTime = currentTime; // 更新上次点击时间
-    var email = url_encode_str(document.getElementById('email').value);
-    var passwd = url_encode_str(document.getElementById('passwd').value);
-    const data = "email=" + email + "&passwd=" + passwd;
-    post_data(data, '/loginapi');
-}
-
-// 登出函数
-function logout() {
-    delCookie('id');
-    delCookie('passwd');
-    delCookie('whoami');
-    location.reload();
-}
- 
-// 提交flag
-function inputflag(tid){
-    flag = url_encode_str(document.getElementById(tid).value);
-    const data = "flag=" + flag + "&tid=" + url_encode_str(tid);
-    post_data(data, '/flagapi');
-
-}
-
-/*****************
- * cookie管理函数
-*****************/ 
-
-// 删除cookie
-function delCookie(name){
-   document.cookie = name+"=;expires="+(new Date(0)).toGMTString();
-}
-
-// 查询cookie
-function findCookie(name){
-    var re =new RegExp('(?:(?:^|.*;\\s*)' + name + '\\s*\=\\s*([^;]*).*$)|^.*$');
-    // /(?:(?:^|.*;\s*) name \s*\=\s*([^;]*).*$)|^.*$/
-    return document.cookie.replace(re, "$1")
-}
-
-/*****************
- * 节点管理函数
-*****************/ 
-
-// 对非权限用户去掉console节点
-function KillConsole() {
-    var the_console = document.getElementsByClassName('navbar-list')[0];
-    the_console.removeChild(the_console.firstElementChild);
-}
-
-// 对未登录用户修改为注册和登录节点
-function NoLog() {
-    const cookie_id = findCookie('id');
-    const cookie_whoami = findCookie('whoami');
-    if (cookie_id == "") {
-        var the_team = document.getElementById('navbar4');
-        var the_member = document.getElementById('navbar5');
-        the_team.innerText = "注册";
-        the_member.innerText = "登录";
-        the_team.href = "signup.html";
-        the_member.href = "login.html";
-    };
-
-
-    if (cookie_whoami == url_encode_str("member") || cookie_whoami == "") {
-        KillConsole();
-    };
-
-}
-
-// 检查Cookie是否已更改的函数
-function checkCookieChanges() {
-    var currentCookieId = findCookie('id');
-    var currentCookieWhoami = findCookie('whoami');
-    var mess = findCookie('mess');
-  
-    if (currentCookieId !== previousCookieId || currentCookieWhoami !== previousCookieWhoami) {
-        location.reload();
-  
-        previousCookieId = currentCookieId;
-        previousCookieWhoami = currentCookieWhoami;
-    }
-    
-    if (mess != "") {
-        showNotification(url_decode_str(mess));
-        delCookie("mess");
+      return url_encode_str(inputElement.value);
     }
   }
-  
-// 存储先前的Cookie值
-var previousCookieId = findCookie('id');
-var previousCookieWhoami = findCookie('whoami');
-// 设置定时器，每秒检查一次Cookie变化
-setInterval(checkCookieChanges, 500);
-var lastClickTime = 0;
-NoLog();
+
+  function getSelectedOptionText(selectName) {
+    var selectElement = document.getElementById(selectName);
+    var selectedValue = selectElement.value;
+    if (selectedValue == 0) {
+      return getInputValue(selectName + '_x')
+    }
+    for (var i = 1; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].value === selectedValue) {
+        return url_encode_str(selectElement.options[i].textContent);
+      }
+    }
+    return '';
+  }
+
+// 添加挑战
+  function addChallenge() {
+    // 获取表单元素
+    var typeText = getSelectedOptionText('type_text');
+    var flag = getInputValue('flag');
+    var name = getInputValue('name');
+    var diff = getSelectedOptionText('diff');
+    var intro = getInputValue('intro');
+    var maxScore = getInputValue('max_score');
+    var score = getInputValue('score');
+    var container = getInputValue('container');
+
+    var data = "type_text=" + typeText;
+    data += "&flag=" + flag;
+    data += "&name=" + name;
+    data += "&diff=" + diff;
+    data += "&intro=" + intro;
+    data += "&max_score=" + maxScore;
+    data += "&score=" + score;
+    data += "&container=" + container;
+    post_data(data, '/challengeapi/add');
+  }

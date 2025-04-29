@@ -1,15 +1,26 @@
-function GetRankData(callback) {
-    const XHR = new XMLHttpRequest();
+// 获取头部图标数据
+var canvas = document.getElementById('myChart');
+// 绘制排行榜图表
+ranking_line(canvas);
+// 排位页数设置
+Rankapi(1);
 
-    // 为了简化代码, 未对错误情况进行处理
-    XHR.addEventListener("load", function () {
-        if (XHR.status === 200) {
-            console.log("发送成功, 尝试拉取排行榜数据");
-            callback(XHR.responseText);
-        }
-    });
-    XHR.open('GET', '/rankapi');
-    XHR.send();
+// 获取数据
+function GetRankData(callback) {
+    fetch('/rankapi')
+        .then(response => {
+            if (response.status === 200) {
+                console.log("发送成功, 尝试拉取排行榜数据");
+                return response.text();
+            }
+            throw new Error("请求失败，状态码：" + response.status);
+        })
+        .then(data => {
+            callback(data);
+        })
+        .catch(error => {
+            console.error("请求排行榜数据出错:", error);
+        });
 }
 
 // 对数据翻页进行控制
@@ -38,11 +49,18 @@ function SetPage(number, nowtext) {
 function SetRankJson(data, nowtext) {
     nowtext = parseInt(nowtext);
     data = JSON.parse(data);
+
+    // 移除whoami != 'member'的数据
+    data = data.filter(item => item.whoami == 'member');
     //按照升序排列
     function down(x, y) {
-	    return y.score - x.score;
+        if (x.score === y.score) {
+            return new Date(x.time) - new Date(y.time);
+        }
+        return y.score - x.score;
     }
-    //data是上面数据名，需要先引入，然后sort函数中放up函数，就可以实现对接送进行排序
+
+    //sort函数中放up函数，就可以实现对接送进行排序
     data.sort(down);
 
     show_data = data.slice((nowtext - 1) * 10, nowtext * 10);
@@ -62,7 +80,6 @@ function SetRankJson(data, nowtext) {
     }
 
     for (i in show_data) {
-        console.log(i);
         j = parseInt(i) + (nowtext - 1) * 10;
         console.log(show_data[i].team_id);
         var rank = "td" + i + "_rank";
@@ -75,7 +92,7 @@ function SetRankJson(data, nowtext) {
             var challenge = "td" + i + "_" + k;
             if ( show_data[i].challenge[k] == true ) {
                 document.getElementById(challenge).innerHTML = '√';
-            } else if ( show_data[i].task[k] == false ) {
+            } else {
                 document.getElementById(challenge).innerHTML = '';
             }
         }

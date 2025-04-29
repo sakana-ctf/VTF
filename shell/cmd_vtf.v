@@ -73,7 +73,7 @@ pub fn start(version string) CmdSet {
 	}
 
 	// -n or --nohup
-	if long_options[2].set_options(args) {
+	if long_options[2].set_options(args) { 
 		cmd_set.nohup = true
 	}
 
@@ -84,7 +84,7 @@ pub fn start(version string) CmdSet {
 fn help(long_options []CmdOption, version string) {
     mut data := 'VTF ${version}, CTF competition platform based on the V programming language.'
     data += '\nBasic usages:'
-	data += '\n 运行程序:\tmain [Options]'
+	data += '\n 运行程序:\t\tmain [Options]'
     data += '\n 运行程序(设置线程数):\tmain [walkers] [Options]'
     data += '\nOptions:'
     println(data)
@@ -93,9 +93,6 @@ fn help(long_options []CmdOption, version string) {
         data = ' ${v.abbr}, ${v.full} ${v.vari}'
         data_len := data.len
         for _ in 0..(5 - (data_len / 8)) {
-            data += '\t'
-        }
-        if (data_len % 8) == 0 {
             data += '\t'
         }
         data += '${v.desc}'

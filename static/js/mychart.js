@@ -6,8 +6,9 @@ function ranking_line(canvas) {
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['10', '20', '30', '40', '50', '60'], // X轴标签
+            labels: [],//['10', '20', '30', '40', '50', '60'], // X轴标签
             datasets: [
+                /*
                 {
                     label: 'Sakana',
                     data: [10, 20, 30, 50, 100, 400],
@@ -43,6 +44,7 @@ function ranking_line(canvas) {
                     borderColor: 'rgb(54, 162, 235)',
                     borderWidth: 1
                 }
+                */
             ]
         },
         options: {

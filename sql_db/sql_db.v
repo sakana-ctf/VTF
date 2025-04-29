@@ -2,10 +2,11 @@ module sql_db
 
 import db.sqlite
 import vlog
+import time
 
 /************************************
- * emmmm, 这里应该重新限制public的权限
- * 但是现在还不是时候
+ * todo: 这里应该重新限制public的权限
+ * 但是没时间自己做.
 ************************************/
 
 /*************
@@ -22,7 +23,7 @@ pub struct Personal {
         email           string
         passwd          string
         whoami          string
-        challenge            []PersonalFlag      @[fkey: 'parents_id']
+        challenge       []PersonalFlag      @[fkey: 'parents_id']
 }
 
 // Personal-challenge对照表.
@@ -32,6 +33,7 @@ pub struct PersonalFlag {
         parents_id          int
         parents_challenge   int
         complete            string
+        kill_time           time.Time
 }
 
 
@@ -43,7 +45,7 @@ pub struct Task{
         tid        int              @[primary; sql:serial]
         type_text  string
         flag       []PostFlag       @[fkey: 'parents_challenge']
-        challenge       []PersonalFlag   @[fkey: 'parents_challenge']
+        challenge  []PersonalFlag   @[fkey: 'parents_challenge']
         name       string
         diff       string
         intro      string
@@ -81,7 +83,7 @@ struct StatusReturn {
         id_check            []Personal
 }
 
-struct Type{
+pub struct Type{
     pub:
         name        string
         type_text   []Task

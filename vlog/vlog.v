@@ -1,10 +1,12 @@
 module vlog
 
-pub const false_log = '\033[31m[False] \033[0m'
-pub const true_log = '\033[32m[True] \033[0m'
-pub const set_log = '\033[33m[Setting] \033[0m'
-pub const warn_log = '\033[33m[Warn] \033[0m'
-pub const threat_log = '\033[31m[Threat] \033[0m'
+import term
+
+pub const false_log = term.red('[False] ')
+pub const true_log = term.green('[True] ')
+pub const set_log = term.yellow('[Setting] ')
+pub const warn_log = term.yellow('[Warn] ')
+pub const threat_log = term.red('[Threat] ')
 
 
 

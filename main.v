@@ -5,9 +5,11 @@
 module main
 
 import db.sqlite { DB }
+import time { Time, now }
 import veb
 import json
 import shell { start, CmdSet }
+import console
 import sql_db {
     connect_db,
     
@@ -38,7 +40,7 @@ import encoding.base64 {
     url_decode_str 
 }
 
-const version := "v2.6.1-alpha"
+const version := "v2.6.1-beta"
 
 /*
 struct User {
@@ -49,29 +51,27 @@ mut:
 */
 
 struct Rank{
-    team_id string
-    score   int
-    challenge    []bool
+    team_id     string
+    score       int
+    whoami      string
+    last_time   Time
+    challenge   []bool
 }
 
 // 基础结构体
 pub struct Context {
     veb.Context
-// mut:
-	// In the context struct we store data that could be different
-	// for each request. Like a User struct or a session id
-	// user       User
-	// session_id string
-//mut:
-    //db    sqlite.DB
-    //counter shared Counter
 }
 
 pub struct App {
     veb.StaticHandler
     veb.Middleware[Context]
 mut:
-    db      DB
+    db         DB
+    starttime  Time
+    endtime    Time
+    index      string
+    title_name string
 }
 
 /* ==================登录验证函数-===================
@@ -111,6 +111,11 @@ fn cookie_passwd(ctx Context) string {
     return url_decode_str(c_pwd)
 }
 
+fn cooike_whoami(ctx Context) string {
+    c_pwd := ctx.get_cookie('whoami') or { '' }
+    return url_decode_str(c_pwd)
+}
+
 /*************
  *  功能函数
 *************/
@@ -136,9 +141,19 @@ fn main() {
 }
 
 fn new_app(db DB) &App {
-
-    mut app := &App{ 
+    mut app := &App{
         db : db,
+        starttime : Time{}
+        endtime   : Time{
+            year: 9999
+            month: 12
+            day: 31
+            hour: 23
+            minute: 59
+            second: 59
+        }
+        index      : console.readfile('./templates_split/html/index.html')
+        title_name : 'VTF'
     }
 
     app.static_mime_types['.cjs'] = 'txt/javascript'
@@ -345,9 +360,16 @@ fn (mut app App) challenge(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
-        c_pid := find_user(app.db, url_encode_str(c_id), c_pwd).pid
-        list_of_type := build_challenge(app.db)
-        return $veb.html()
+        user := find_user(app.db, url_encode_str(c_id), c_pwd)
+        c_pid := user.pid
+        if app.starttime < now()  || user.whoami == 'root' {
+            list_of_type := build_challenge(app.db)
+            return $veb.html()
+        } else {
+            list_of_type := []sql_db.Type{}
+            ctx.set_cookie(name:'mess', value: url_encode_str('Error: 挑战未开始'))
+            return $veb.html()
+        }
     } else {
         ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')
@@ -374,10 +396,16 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
     } else if login.return_bool {
         flag := url_decode_str(ctx.form['flag'])
         tid := url_decode_str(ctx.form['tid']).int()
+        bool_time := console.play_time(app.starttime, app.endtime)
 
-        if post_flag(app.db, ctx.ip(), tid, flag, login.id_check.first().pid) {
-            ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
-            return ctx.text('200: Seccess.')
+        if post_flag(app.db, ctx.ip(), tid, flag, login.id_check.first().pid, bool_time) {
+            if bool_time {
+                ctx.set_cookie(name:'mess', value: url_encode_str('提交成功'))
+                return ctx.text('200: Seccess.')
+            } else {
+                ctx.set_cookie(name:'mess', value: url_encode_str('提交成功但不在比赛时间'))
+                return ctx.text('202: Seccess, but not playing time.')
+            }
         }
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 提交失败'))
         return ctx.text('403: Wrong.')
@@ -399,7 +427,11 @@ fn (mut app App) team(mut ctx Context) veb.Result {
 
 @['/ranking.html']
 fn (mut app App) ranking(mut ctx Context) veb.Result {
-    challenge_name := find_challenge(app.db)
+    whoami := cooike_whoami(ctx)
+    mut challenge_name := []sql_db.Task{}
+    if console.play_time(app.starttime, app.endtime) || whoami == 'root'{
+        challenge_name = find_challenge(app.db)
+    }
     return $veb.html()
 }
 
@@ -409,7 +441,11 @@ fn (mut app App) rankapi(mut ctx Context) veb.Result {
     for i in get_personal(app.db) {
         mut delta := []bool{}
         mut score := 0
+        mut last_time := Time{}
         for j in i.challenge {
+            if last_time < j.kill_time {
+                last_time = j.kill_time
+            }
             if bool_solve(j) {
                 delta << true
                 score += challenge_score(app.db, j)
@@ -420,6 +456,38 @@ fn (mut app App) rankapi(mut ctx Context) veb.Result {
         data << Rank{
             team_id 	: url_decode_str(i.id)
             score   	: score
+            whoami  	: i.whoami
+            last_time   : last_time
+            challenge   : delta
+        }
+    }
+    
+    return ctx.text(json.encode(data))
+}
+
+@['/topapi']
+fn (mut app App) rankapi(mut ctx Context) veb.Result {
+    mut data := []Rank{}
+    for i in get_personal(app.db) {
+        mut delta := []bool{}
+        mut score := 0
+        mut last_time := Time{}
+        for j in i.challenge {
+            if last_time < j.kill_time {
+                last_time = j.kill_time
+            }
+            if bool_solve(j) {
+                delta << true
+                score += challenge_score(app.db, j)
+            } else {
+                delta << false
+            }
+        }
+        data << Rank{
+            team_id 	: url_decode_str(i.id)
+            score   	: score
+            whoami  	: i.whoami
+            last_time   : last_time
             challenge   : delta
         }
     }
@@ -429,13 +497,14 @@ fn (mut app App) rankapi(mut ctx Context) veb.Result {
 
 @['/notice.html']
 fn (mut app App) notice(mut ctx Context) veb.Result {
-    return ctx.redirect('/team.html')
+    return $veb.html()
 }
 
 /**************
  * 后台控制系统
 ***************/
 
+// 主控节点
 @['/console.html']
 fn (mut app App) console(mut ctx Context) veb.Result {
     c_id := cookie_id(ctx)
@@ -454,6 +523,7 @@ fn (mut app App) console(mut ctx Context) veb.Result {
     }
 }
 
+// 设置挑战
 @['/challengeapi/:set'; post]
 fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
     c_id := cookie_id(ctx)
@@ -467,7 +537,7 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
         match set {
             'add' {
                     type_text := url_decode_str(ctx.form['type_text'])
-                    // todo: 多个flag的问题
+                    // todo: 多个flag的问题还没解决, 暂时只支持一个flag, 不过我留了很多空间.
                     flag := url_decode_str(ctx.form['flag'])
                     name := url_decode_str(ctx.form['name'])
                     diff := url_decode_str(ctx.form['diff'])
@@ -476,6 +546,7 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
                     score := url_decode_str(ctx.form['score']).int()
                     container := url_decode_str(ctx.form['container']).bool()
                     msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, container)
+                    println('添加题目')
                     ctx.set_cookie(name:'mess', value: url_encode_str(msg))
                 return ctx.text('200: Seccess.')
             }
@@ -489,6 +560,59 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
     }
 }
 
+// 平台基础功能设置
+@['/setapi/:set'; post]
+fn (mut app App) setapi(mut ctx Context, set string) veb.Result {
+    c_id := cookie_id(ctx)
+    c_pwd := cookie_passwd(ctx)
+    login := login_root_status(app.db, c_id, c_pwd)
 
+    if c_id == '' {
+        ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
+        return ctx.redirect('/login.html')
+    } else if login.return_bool {
+        match set {
+            'title' {
+                app.title_name = url_decode_str(ctx.form['title_name'])
+                ctx.set_cookie(name:'mess', value: url_encode_str('时间修改成功'))
+            }
+            'index' {
+                app.index = url_decode_str(ctx.form['index'])
+                ctx.set_cookie(name:'mess', value: url_encode_str('主页修改成功'))
+            }
+            'time' {
+                starttime := url_decode_str(ctx.form['starttime'])
+                endtime := url_decode_str(ctx.form['endtime'])
+                if starttime != '' {
+                    app.starttime = Time{
+                        year: starttime[0..4].int()
+                        month: starttime[5..7].int()
+                        day: starttime[8..10].int()
+                        hour: starttime[11..13].int()
+                        minute: starttime[14..16].int()
+                    }
+                }
+
+                if endtime != '' {
+                    app.endtime = Time{
+                        year: endtime[0..4].int()
+                        month: endtime[5..7].int()
+                        day: endtime[8..10].int()
+                        hour: endtime[11..13].int()
+                        minute: endtime[14..16].int()
+                    }
+                }
+                ctx.set_cookie(name:'mess', value: url_encode_str('时间修改成功'))
+            }
+            else {
+                return ctx.text('403: Wrong.')
+            }
+        }
+        return ctx.text('200: Seccess.')
+    } else {
+        ctx.set_cookie(name:'id', value: '')
+        return ctx.text('403: Wrong.')
+    }
+}
 
 

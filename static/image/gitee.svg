@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 50 50"
+   version="1.1"
+   id="svg13"
+   sodipodi:docname="gitee.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs17" />
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="2.6222222"
+     inkscape:cx="128.70763"
+     inkscape:cy="65.402542"
+     inkscape:window-width="1260"
+     inkscape:window-height="818"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg13" />
+  <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+  <title
+     id="title2">logo</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <g
+     id="LOGO"
+     stroke="none"
+     stroke-width="1.79418"
+     fill="none"
+     fill-rule="evenodd"
+     transform="scale(0.55735849)">
+    <g
+       id="Artboard"
+       transform="translate(-532,-431)"
+       style="stroke-width:1.79418">
+      <g
+         id="logo"
+         transform="translate(532,431)"
+         style="stroke-width:1.79418">
+        <g
+           id="Group"
+           style="stroke-width:1.79418">
+          <circle
+             id="Combined-Shape"
+             fill="#c71d23"
+             cx="44.854435"
+             cy="44.854435"
+             r="44.854435"
+             style="stroke-width:2.40325" />
+          <path
+             d="M 67.558546,39.871429 H 42.085797 c -1.223097,5.8e-4 -2.214702,0.991926 -2.215602,2.215022 l -0.0015,5.537332 c -9.19e-4,1.223322 0.99052,2.215281 2.213843,2.215602 1.99e-4,0 3.99e-4,0 5.98e-4,-5.99e-4 l 15.507762,-1.29e-4 c 1.223323,-2.9e-5 2.21503,0.991662 2.21504,2.214985 0,6e-6 0,1.2e-5 -1.8e-5,1.8e-5 v 0.553694 0 0.553761 c 0,3.669968 -2.975097,6.645065 -6.645065,6.645065 H 32.116551 c -1.223148,-6.1e-5 -2.214714,-0.9916 -2.214809,-2.214747 l -5.79e-4,-21.042314 c -2.85e-4,-3.669968 2.97473,-6.645147 6.644698,-6.645248 6.1e-5,0 1.22e-4,0 1.83e-4,1.83e-4 h 31.00632 c 1.222786,-0.0014 2.214263,-0.992236 2.216395,-2.215022 l 0.0034,-5.537332 c 0.0021,-1.223322 -0.988952,-2.215636 -2.212274,-2.216395 -4.58e-4,0 -9.16e-4,0 -0.0014,0.0014 H 36.547968 c -9.174921,0 -16.612663,7.437743 -16.612663,16.612663 v 31.009205 c 0,1.223323 0.991699,2.215022 2.215022,2.215022 h 32.672171 c 8.257248,0 14.95107,-6.693822 14.95107,-14.95107 V 42.086451 c 0,-1.223323 -0.991699,-2.215022 -2.215022,-2.215022 z"
+             id="G"
+             fill="#ffffff"
+             style="stroke-width:2.40325" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <metadata
+     id="metadata354">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
