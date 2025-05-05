@@ -46,6 +46,8 @@
           <option value="2">团队</option>
         </select>
         <a onclick="updatePlatform()">更新</a>
+        <h5>时区设置:</h5>
+        <input type="number" id="time_zone" max="14" min="-12">
         <h5>开始时间:</h5>
         <input type="datetime-local" id="startTime">
         <h5>结束时间:</h5>
@@ -66,151 +68,153 @@
           <textarea id="index">${app.index}</textarea>
           <a onclick="updateIndex()">更新</a>
         </div>
+        <a id="close" onclick="post_data('', '/setapi/close')">关闭平台</a>
+      </div>
 
-        <h1 id="member">成员</h1>
-        <div class="content-bar">
-          <h5>查询:</h5>
-          <div class="search">
-            <input type="text" id="title-input" placeholder="关键词">
-            <select id="group" value="1">
-              <option value="1">所有成员</option>
-              <option value="2">root</option>
-              <option value="3">member</option>
-            </select>
-            <input type="text" id="title-input" placeholder="队伍名">
-            <input type="text" id="title-input" placeholder="邮箱号">
-            <a onclick="updateTitle()">查询</a>
-          </div>
+      <h1 id="member">成员</h1>
+      <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <input type="text" id="title-input" placeholder="关键词">
+          <select id="group" value="1">
+            <option value="1">所有成员</option>
+            <option value="2">root</option>
+            <option value="3">member</option>
+          </select>
+          <input type="text" id="title-input" placeholder="队伍名">
+          <input type="text" id="title-input" placeholder="邮箱号">
+          <a onclick="updateTitle()">查询</a>
+        </div>
 
 
-          <div class="layer">
-            <table>
+        <div class="layer">
+          <table>
+            <tr>
+              <th>排名</th>
+              <th>选手名称</th>
+              <th>选手得分</th>
+            </tr>
+            <tbody>
+              @for i in 0..10
               <tr>
-                <th>排名</th>
-                <th>选手名称</th>
-                <th>选手得分</th>
+                <td id="td${i}_rank"></td>
+                <td id="td${i}_team_id"></td>
+                <td id="td${i}_score"></td>
               </tr>
-              <tbody>
-                @for i in 0..10
-                <tr>
-                  <td id="td${i}_rank"></td>
-                  <td id="td${i}_team_id"></td>
-                  <td id="td${i}_score"></td>
-                </tr>
-                @end
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <h1 id="team">队伍</h1>
-
-        <div class="content-bar">
-          <h5>查询:</h5>
-          <div class="search">
-            <input type="text" id="title-input" placeholder="关键词">
-            <input type="text" id="title-input" placeholder="队员信息">
-            <input type="text" id="title-input" placeholder="队员邮箱">
-            <a onclick="updateTitle()">查询</a>
-          </div>
-
-
-        </div>
-
-        <h1 id="challenge">编辑题目</h1>
-        <div class="content-bar">
-          <h5>查询:</h5>
-          <div class="search">
-            <select id="group" value="1">
-              <option value="1">所有题目</option>
-              @for i in 0..list_of_type.len
-              <option value="${i+2}">${list_of_type[i].name}</option>
               @end
-            </select>
-            <input type="text" id="title-input" placeholder="赛道">
-            <input type="text" id="title-input" placeholder="队员信息">
-            <input type="text" id="title-input" placeholder="队员邮箱">
-            <a onclick="updateTitle()">查询</a>
-          </div>
-
-          <h5>题目列表:</h5>
-          <div class="layer">
-            <table>
-              <tr>
-                <th>题目名称</th>
-                <th>题目类型</th>
-                <th>选手得分</th>
-              </tr>
-              <tbody>
-                @for i in 0..10
-                <tr>
-                  <td id="td${i}_rank"></td>
-                  <td id="td${i}_team_id"></td>
-                  <td id="td${i}_score"></td>
-                </tr>
-                @end
-              </tbody>
-
-            </table>
-          </div>
-
-
-          <h5>添加题目:</h5>
-          <form id="challenge-form">
-            <div class="form-group">
-              <label for="type_text">题目类型:</label>
-              <select id="type_text" value="0">
-                <option value="0">其他</option>
-                <option value="1">Reverse</option>
-              </select>
-              <input type="text" id="type_text_x" required>
-            </div>
-            <div class="form-group">
-              <label for="flag">flag值:</label>
-              <input type="text" id="flag" required>
-            </div>
-            <div class="form-group">
-              <label for="name">挑战名:</label>
-              <input type="text" id="name" required>
-            </div>
-            <div class="form-group">
-              <label for="diff">难度:</label>
-              <select id="diff" value="0">
-                <option value="0">其他</option>
-              </select>
-              <input type="text" id="diff_x" required>
-            </div>
-            <div class="form-group">
-              <label for="intro">挑战介绍:</label>
-              <textarea id='intro' required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="max_score">最大分值:</label>
-              <input type="number" id="max_score">
-            </div>
-            <div class="form-group">
-              <label for="score">当前分值:</label>
-              <input type="number" id="score">
-            </div>
-            <div class="form-group">
-              <label for="attachment">附件容器:</label>
-              <input type="checkbox" id="container">
-            </div>
-            <a onclick="addChallenge()">添加</a>
-          </form>
-        </div>
-
-        <h1 id="data">数据</h1>
-        <div class="content-bar">
-
-        </div>
-
-        <h1 id="control">监控</h1>
-        <div class="content-bar">
-
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <h1 id="team">队伍</h1>
+
+      <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <input type="text" id="title-input" placeholder="关键词">
+          <input type="text" id="title-input" placeholder="队员信息">
+          <input type="text" id="title-input" placeholder="队员邮箱">
+          <a onclick="updateTitle()">查询</a>
+        </div>
+
+
+      </div>
+
+      <h1 id="challenge">编辑题目</h1>
+      <div class="content-bar">
+        <h5>查询:</h5>
+        <div class="search">
+          <select id="group" value="1">
+            <option value="1">所有题目</option>
+            @for i in 0..list_of_type.len
+            <option value="${i+2}">${list_of_type[i].name}</option>
+            @end
+          </select>
+          <input type="text" id="title-input" placeholder="赛道">
+          <input type="text" id="title-input" placeholder="队员信息">
+          <input type="text" id="title-input" placeholder="队员邮箱">
+          <a onclick="updateTitle()">查询</a>
+        </div>
+
+        <h5>题目列表:</h5>
+        <div class="layer">
+          <table>
+            <tr>
+              <th>题目名称</th>
+              <th>题目类型</th>
+              <th>选手得分</th>
+            </tr>
+            <tbody>
+              @for i in 0..10
+              <tr>
+                <td id="td${i}_rank"></td>
+                <td id="td${i}_team_id"></td>
+                <td id="td${i}_score"></td>
+              </tr>
+              @end
+            </tbody>
+
+          </table>
+        </div>
+
+
+        <h5>添加题目:</h5>
+        <form id="challenge-form">
+          <div class="form-group">
+            <label for="type_text">题目类型:</label>
+            <select id="type_text" value="0">
+              <option value="0">其他</option>
+              <option value="1">Reverse</option>
+            </select>
+            <input type="text" id="type_text_x" required>
+          </div>
+          <div class="form-group">
+            <label for="flag">flag值:</label>
+            <input type="text" id="flag" required>
+          </div>
+          <div class="form-group">
+            <label for="name">挑战名:</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="form-group">
+            <label for="diff">难度:</label>
+            <select id="diff" value="0">
+              <option value="0">其他</option>
+            </select>
+            <input type="text" id="diff_x" required>
+          </div>
+          <div class="form-group">
+            <label for="intro">挑战介绍:</label>
+            <textarea id='intro' required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="max_score">最大分值:</label>
+            <input type="number" id="max_score">
+          </div>
+          <div class="form-group">
+            <label for="score">当前分值:</label>
+            <input type="number" id="score">
+          </div>
+          <div class="form-group">
+            <label for="attachment">附件容器:</label>
+            <input type="checkbox" id="container">
+          </div>
+          <a onclick="addChallenge()">添加</a>
+        </form>
+      </div>
+
+      <h1 id="data">数据</h1>
+      <div class="content-bar">
+
+      </div>
+
+      <h1 id="control">监控</h1>
+      <div class="content-bar">
+
+      </div>
     </div>
+  </div>
 </main>
 
 <style>
@@ -484,6 +488,16 @@
     /* 标签字体大小 */
     color: #333;
     /* 标签字体颜色 */
+  }
+
+  /* ============================关闭================================ */
+  #close {
+    margin-top: 50px;
+    width: 100px;
+    /* 设置宽度为100像素 */
+    background-color: red;
+    color: white;
+    /* 设置文字颜色为红色 */
   }
 </style>
 

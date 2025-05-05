@@ -4,6 +4,8 @@ import encoding.base64 { url_encode_str, url_decode_str }
 import err_log
 import vlog
 import db.sqlite { DB }
+import time
+import console { readfile }
 
 // personal报错函数
 fn personal_err() []Personal {
@@ -14,6 +16,77 @@ fn personal_err() []Personal {
 // 黑名单personal_err
 fn set_black_list() bool {
     return true
+}
+
+// 查看Init初始化数据信息
+pub fn set_init(db DB) Init {
+    init := sql db { select from Init } or { []Init{} }
+    if init.len == 0 {
+        new_init := Init{
+            id         : 1
+            starttime : time.Time{
+                year: 1970
+                month: 1
+                day: 1
+                hour: 0
+                minute: 0
+                second: 0
+            }
+            endtime   : time.Time{
+                year: 9999
+                month: 12
+                day: 31
+                hour: 23
+                minute: 59
+                second: 59
+            }
+            index      : readfile('./static/html/index.html')
+            title_name : 'VTF'
+            time_zone  : 8
+        }
+        sql db {
+            insert new_init into Init
+        } or {}
+        return new_init
+    }
+    else {
+        return init.first()
+    }
+}
+
+// 修改Init初始化数据信息
+pub fn update_init(db DB, type_text string, time_text time.Time, string_text string, int_text int ) {
+    // todo: 我想使用type Any代替, 但是orm映射还需要改进, 这里是可以去提issues的.
+    match type_text {
+        'starttime' {
+            sql db {
+                update Init set starttime = time_text where id == 1
+            } or { return }
+        }
+        'endtime' {
+            sql db {
+                update Init set endtime = time_text where id == 1
+            } or { return }
+        }
+        'index' {
+            sql db {
+                update Init set index = string_text where id == 1
+            } or { return }
+        }
+        'title_name' {
+            sql db {
+                update Init set title_name = string_text where id == 1
+            } or { return }
+        }
+        'time_zone' {
+            sql db {
+                update Init set time_zone = int_text where id == 1
+            } or { return }
+        }
+        else {
+            return
+        }
+    }
 }
 
 // whoami权限检测
@@ -28,7 +101,6 @@ pub fn personal_whoami(db DB, c_id string, c_pwd string) string {
         return ''
     }
 }
-
 
 // 登录检测
 pub fn login_status(db DB, c_id string, c_pwd string) StatusReturn {

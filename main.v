@@ -12,6 +12,8 @@ import shell { start, CmdSet }
 import console
 import sql_db {
     connect_db,
+    set_init,
+    update_init,
     
     login_status,
     login_root_status,
@@ -40,7 +42,7 @@ import encoding.base64 {
     url_decode_str 
 }
 
-const version := "v2.6.1-beta"
+const version := "v2.6.1-stable"
 
 /*
 struct User {
@@ -52,10 +54,9 @@ mut:
 
 struct Rank{
     team_id     string
-    score       int
+    score       []int
     whoami      string
-    last_time   Time
-    challenge   []bool
+    kill_time   []i64
 }
 
 // 基础结构体
@@ -72,6 +73,7 @@ mut:
     endtime    Time
     index      string
     title_name string
+    time_zone  int
 }
 
 /* ==================登录验证函数-===================
@@ -141,19 +143,14 @@ fn main() {
 }
 
 fn new_app(db DB) &App {
-    mut app := &App{
-        db : db,
-        starttime : Time{}
-        endtime   : Time{
-            year: 9999
-            month: 12
-            day: 31
-            hour: 23
-            minute: 59
-            second: 59
-        }
-        index      : console.readfile('./templates_split/html/index.html')
-        title_name : 'VTF'
+    init := set_init(db)   
+    mut app := &App{ 
+        db          : db
+        starttime   : init.starttime
+        endtime     : init.endtime
+        index       : init.index
+        title_name  : init.title_name
+        time_zone   : init.time_zone
     }
 
     app.static_mime_types['.cjs'] = 'txt/javascript'
@@ -439,60 +436,25 @@ fn (mut app App) ranking(mut ctx Context) veb.Result {
 fn (mut app App) rankapi(mut ctx Context) veb.Result {
     mut data := []Rank{}
     for i in get_personal(app.db) {
-        mut delta := []bool{}
-        mut score := 0
-        mut last_time := Time{}
+        mut score := []int{}
+        mut kill_time := []i64{}
         for j in i.challenge {
-            if last_time < j.kill_time {
-                last_time = j.kill_time
-            }
+            kill_time << j.kill_time.unix()
             if bool_solve(j) {
-                delta << true
-                score += challenge_score(app.db, j)
+                score << challenge_score(app.db, j)
             } else {
-                delta << false
+                score << -1
             }
         }
         data << Rank{
             team_id 	: url_decode_str(i.id)
             score   	: score
             whoami  	: i.whoami
-            last_time   : last_time
-            challenge   : delta
+            kill_time   : kill_time
         }
     }
     
-    return ctx.text(json.encode(data))
-}
-
-@['/topapi']
-fn (mut app App) rankapi(mut ctx Context) veb.Result {
-    mut data := []Rank{}
-    for i in get_personal(app.db) {
-        mut delta := []bool{}
-        mut score := 0
-        mut last_time := Time{}
-        for j in i.challenge {
-            if last_time < j.kill_time {
-                last_time = j.kill_time
-            }
-            if bool_solve(j) {
-                delta << true
-                score += challenge_score(app.db, j)
-            } else {
-                delta << false
-            }
-        }
-        data << Rank{
-            team_id 	: url_decode_str(i.id)
-            score   	: score
-            whoami  	: i.whoami
-            last_time   : last_time
-            challenge   : delta
-        }
-    }
-    
-    return ctx.text(json.encode(data))
+    return ctx.text('${app.starttime.unix()}\n${app.endtime.unix()}\n${json.encode(data)}')
 }
 
 @['/notice.html']
@@ -573,36 +535,53 @@ fn (mut app App) setapi(mut ctx Context, set string) veb.Result {
     } else if login.return_bool {
         match set {
             'title' {
-                app.title_name = url_decode_str(ctx.form['title_name'])
-                ctx.set_cookie(name:'mess', value: url_encode_str('时间修改成功'))
+                title_name := url_decode_str(ctx.form['title_name'])
+                app.title_name = title_name
+                update_init(app.db, 'title_name', Time{}, title_name, 0)
+                ctx.set_cookie(name:'mess', value: url_encode_str('标题修改成功'))
             }
             'index' {
-                app.index = url_decode_str(ctx.form['index'])
+                index := url_decode_str(ctx.form['index'])
+                app.index = index
+                update_init(app.db, 'index', Time{}, index, 0)
                 ctx.set_cookie(name:'mess', value: url_encode_str('主页修改成功'))
             }
             'time' {
+                time_zone := url_decode_str(ctx.form['time_zone'])
                 starttime := url_decode_str(ctx.form['starttime'])
                 endtime := url_decode_str(ctx.form['endtime'])
                 if starttime != '' {
-                    app.starttime = Time{
+                    start_time := Time{
                         year: starttime[0..4].int()
                         month: starttime[5..7].int()
                         day: starttime[8..10].int()
                         hour: starttime[11..13].int()
                         minute: starttime[14..16].int()
-                    }
+                    }.add_seconds( - app.time_zone * 3600 )
+                    app.starttime = start_time
+                    update_init(app.db, 'starttime', start_time, '', 0)
                 }
 
                 if endtime != '' {
-                    app.endtime = Time{
+                    end_time := Time{
                         year: endtime[0..4].int()
                         month: endtime[5..7].int()
                         day: endtime[8..10].int()
                         hour: endtime[11..13].int()
                         minute: endtime[14..16].int()
-                    }
+                    }.add_seconds( - app.time_zone * 3600 )
+                    app.endtime = end_time
+                    update_init(app.db, 'endtime', end_time, '', 0)
+                }
+                if endtime != '' {
+                    app.time_zone = time_zone.int()
+                    update_init(app.db, 'time_zone', Time{}, '', time_zone.int())
                 }
                 ctx.set_cookie(name:'mess', value: url_encode_str('时间修改成功'))
+            }
+            'close' {
+                println('关闭平台')
+                exit(0)
             }
             else {
                 return ctx.text('403: Wrong.')

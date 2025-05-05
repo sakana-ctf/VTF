@@ -49,9 +49,10 @@ function updateIndex() {
 
 // 设置开始, 结束的时间事件
 function updateTime() {
-  var startTime = document.getElementById('startTime').value;
-  var endTime = document.getElementById('endTime').value;
-  var data = "starttime=" + url_encode_str(startTime) + "&endtime=" + url_encode_str(endTime);
+  const time_zone = getInputValue('time_zone');
+  const startTime = document.getElementById('startTime').value;
+  const endTime = document.getElementById('endTime').value;
+  const data = "time_zone=" + time_zone + "&starttime=" + url_encode_str(startTime) + "&endtime=" + url_encode_str(endTime);
   post_data(data, '/setapi/time');
 }
 
@@ -81,14 +82,14 @@ function getInputValue(selectName) {
 // 添加挑战
   function addChallenge() {
     // 获取表单元素
-    var typeText = getSelectedOptionText('type_text');
-    var flag = getInputValue('flag');
-    var name = getInputValue('name');
-    var diff = getSelectedOptionText('diff');
-    var intro = getInputValue('intro');
-    var maxScore = getInputValue('max_score');
-    var score = getInputValue('score');
-    var container = getInputValue('container');
+    const typeText = getSelectedOptionText('type_text');
+    const flag = getInputValue('flag');
+    const name = getInputValue('name');
+    const diff = getSelectedOptionText('diff');
+    const intro = getInputValue('intro');
+    const maxScore = getInputValue('max_score');
+    const score = getInputValue('score');
+    const container = getInputValue('container');
 
     var data = "type_text=" + typeText;
     data += "&flag=" + flag;

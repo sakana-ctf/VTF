@@ -24,7 +24,7 @@ We provide both source code and precompiled binaries for use.
 
 ```
 ./main -h
-VTF v2.6.1-alpha, CTF competition platform based on the V programming language.
+VTF v2.6.1-stable, CTF competition platform based on the V programming language.
 Basic usages:
  运行程序:      main [Options]
  运行程序(设置线程数):  main [walkers] [Options]
@@ -54,6 +54,7 @@ vtf
 ├── static
 │   ├── css
 │   ├── image
+│   ├── html
 │   └── js
 ├── main
 └── data
@@ -141,25 +142,22 @@ This compiles `templates_split` to `templates`, then the main program, and final
 
 # Support Matrix
 
-| Feature        | Current Status                                                                 | Verified By                  |
-|:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
-| Version         | v2.6.0 (Basic root permission allocation and console implemented)                  | sudopacman           |
-| Wiki Version     | Currently at v2.1.0, pending update                                                  | sudopacman           |
-| Stress Test        | 100-user registration test passed on 1-core 1G Debian server                                   | sudopacman, Kengwang |
-| Bug Fix        | Resource reference error fixed                                                               | secret               |
-| Format Fix        | Temporary solution for unformatted challenge display                                          | adwa                 |
-| Firefox Compatibility | Minimum adaptation achieved                                  | sudopacman, VintageGameBoy                   |
-| Manual Fix         | Debian script error corrected                                                | H4nn4h               |
-| Thread Settings        | Not supported by current Veb framework                                                  |                      |
-| Login Security        | `login_status` function implemented, other routes improved                                | sudopacman           |
-| Blacklist         | Contestant access restriction moved to console settings                                             |                      |
-| Challenge Submission        | Flag submission supported                                                     | sudopacman           |
-| Multi-Flag Settings     | Implemented                                                          | sudopacman           |
-| Database         | SQLite3 only                                                              | sudopacman           |
-| Error Display        | To be rewritten, currently using `showinfo(${mess})` in JS                                          | sudopacman           |
-| Leaderboard         | Basic graphical table implemented, data fetching pending                                                          | sudopacman           |
-| Blood Rankings  | Database restructuring needed                                                     |                      |                   |
-| Localization         | Add languages in `/templates_split/language`, script issues pending                                                          |                      |	
+| Requirement     | Current Status                                                                    | Verifier             |
+|:-------------:|:----------------------------------------------------------------------------:|:------------------:|
+| Version Number  | v2.6.1 (Top 5 Leaderboard, Custom Platform Embedded Database, Long-term Maintenance Updates, Added Platform Shutdown Feature) | sudopacman         |
+| Wiki Version    | Currently following v2.1.0, pending update                                                  | sudopacman         |
+| Data Testing    | Conducted 100-user registration test on a 1-core 1G Debian server, bugs fixed, functional | sudopacman, Kengwang |
+| Test Feedback   | Resource indentation error existed, now fixed                                              | secret             |
+| Test Feedback   | Update bugs resolved                                                        | adwa, sudopacman               |
+| Firefox Compatibility | Already adapted                                                   | sudopacman, VintageGameBoy                   |
+| User Manual     | Corrected Debian script errors                                                       | H4nn4h             |
+| Thread Settings | Currently not supported by the Veb framework                                              |                      |
+| Blacklist       | Access prohibited for contestants, will be moved to console settings                         |                      |
+| Custom Platform | Console supports modifying index page, platform name, start/end time, and timezone | sudopacman         |
+| Challenges      | API supports multiple flag submissions, current backend does not support multiple flag submissions                  | sudopacman         |
+| Database        | Currently only supports sqlite3 database                                                 | sudopacman         |
+| Leaderboard     | Implemented basic graphical table, visualizing the top 5 solving situations                                       | sudopacman         |
+| Multilingual Display Issue | Languages added in `/templates_split/language`, script issues pending resolution                                          |                      |
 
 # Contribution
 

@@ -24,7 +24,7 @@ VTF是由[vlang](https://vlang.io)搭建的ctf比赛平台, 相比其它平台, 
 
 ```
 ./main -h
-VTF v2.6.1-alpha, CTF competition platform based on the V programming language.
+VTF v2.6.1-stable, CTF competition platform based on the V programming language.
 Basic usages:
  运行程序:      main [Options]
  运行程序(设置线程数):  main [walkers] [Options]
@@ -55,6 +55,7 @@ vtf
 ├── static
 │   ├── css
 │   ├── image
+│   ├── html
 │   └── js
 ├── main
 └── data
@@ -145,22 +146,19 @@ v templates_split/build.v
 
 | 需求          | 当前情况                                                                         | 检验人                  |
 |:-----------:|:----------------------------------------------------------------------------:|:--------------------:|
-| 版本号         | v2.6.0(实现基本的root权限分配和控制台)                                  | sudopacman           |
+| 版本号         | v2.6.1(前五名排行榜, 平台自定义嵌入数据库, 能够长期维持更新, 添加关闭平台功能)                                  | sudopacman           |
 | wiki版本号     | 当前跟随到v2.1.0, 待更新                                                                  | sudopacman           |
 | 数据测试        | 在1核1G的debian服务器进行100位用户注册测试, 已修复bug, 可正常使用                                   | sudopacman, Kengwang |
 | 测试反馈        | 存在资源印用错误, 现已修复                                                               | secret               |
-| 测试反馈        | 存在题目未格式化问题, 现暂用替代方案                                                          | adwa                 |
-| firefox兼容问题 | 已最低限度适配                                                  |   sudopacman, VintageGameBoy                   |
-| 说明书         | 已修正debian脚本错误                                                                | H4nn4h               |
+| 测试反馈        | 已解决更新BUG                                                          | adwa, sudopacman                 |
+| firefox兼容问题 | 已适配                                                  |   sudopacman, VintageGameBoy                   |
+| 说明书         | 修正debian脚本错误                                                                | H4nn4h               |
 | 线程设置        | 当前veb框架暂不支持                                                                  |                      |
-| 登录安全        | 实现登录函数`login_status`, 其他路由已完善                                                | sudopacman           |
 | 黑名单         | 禁止选手访问, 将移动在控制台设置                                                             |                      |
-| 题目          | 支持提交flag                                                                     | sudopacman           |
-| 多flag设置     | 已实现                                                                          | sudopacman           |
+| 自定义平台     | 控制台支持修改index页, 修改平台名称, 修改开始、结束时间, 修改时区 | sudopacman |
+| 题目          | API支持提交多flag, 当前后台暂未支持多flag提交                                                                     | sudopacman           |
 | 数据库         | 当前仅支持sqlite3数据库                                                              | sudopacman           |
-| 错误显示        | 等待重写, 目前js上统一使用`showinfo(${mess})`显示错误                                          | sudopacman           |
-| 排行榜         | 实现基本的图形表格, 待实现数据拉取功能                                                                          | sudopacman           |
-| 一血, 二血, 三血  | 将重新调整数据库                                                                     |                      |                   |
+| 排行榜         | 实现基本的图形表格, 可视化前5名解题情况                                                                           | sudopacman           |
 | 中英文显示问题     | 在`/templates_split/language`中添加语言, 脚本问题待解决                                                                          |                      |
 
 # 参与贡献

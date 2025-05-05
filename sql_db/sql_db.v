@@ -76,6 +76,18 @@ struct BlackId {
     name        string
 }
 
+@[table: 'init']
+pub struct Init {
+// todo: 这里只是为了能够正常使用update添加的一项, 也许有一天可以去掉id.
+    pub:
+        id         int
+        starttime  time.Time
+        endtime    time.Time
+        index      string
+        title_name string
+        time_zone  int
+}
+
 struct StatusReturn {
     pub:
         return_bool         bool
@@ -89,14 +101,13 @@ pub struct Type{
         type_text   []Task
 }
 
-
-
 fn create_db(db sqlite.DB) {
     sql db {
         create table Personal
         create table Task
         create table PostFlag
         create table PersonalFlag
+        create table Init
     } or {
         println('${vlog.warn_log}: 数据库创建失败, 可能已存在数据库: data.db')
     }

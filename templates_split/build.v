@@ -13,8 +13,12 @@ fn main() {
 		}
 	}
 
-	data := readfile('./css/console.css')
-	url := '../static/css/console.css'
+	mut data := readfile('./css/console.css')
+	mut url := '../static/css/console.css'
+	os.write_file(url, data) or { return }
+	println('\033[32m[True] \033[0m文件储存于: ${url}')
+	data = readfile('./html/index.html')
+	url = '../static/html/index.html'
 	os.write_file(url, data) or { return }
 	println('\033[32m[True] \033[0m文件储存于: ${url}')
 }
