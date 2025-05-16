@@ -9,6 +9,12 @@ templates_split/set_language.exe
 make
 make.exe
 make.v
-data.db
+data/*.db
+templates/*.html
 nohup.out
 start
+static/file/*
+
+!static/file/README.md
+
+

@@ -11,3 +11,13 @@ pub fn readfile(path string) string {
 	file.close()
 	return data
 }
+
+pub fn writefile(path string, buf []u8) {
+        mut file := os.open_append(path) or {
+                return
+        }
+        file.write(buf) or { 0 }
+		file.close()
+}
+
+

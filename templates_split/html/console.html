@@ -55,10 +55,13 @@
         <a onclick="updateTime()">更新</a>
 
         <div class="set-card">
+          <!--
           <h5>平台设置:</h5>
-          <div class="drop-zone" id="drop-zone">
+          <div class="drop-zone">
             拖动图片到这里修改显示图标
+            <div class="file-list"></div>
           </div>
+          -->
 
           <h5>平台标题:</h5>
           <input type="text" id="title_name" placeholder="平台标题">
@@ -196,9 +199,17 @@
             <label for="score">当前分值:</label>
             <input type="number" id="score">
           </div>
+          <label for="attachment">附件容器:</label>
+          <div class="drop-zone">
+            拖动文件到这里上传附件
+            <div class="file-list"></div>
+          </div>
+
           <div class="form-group">
-            <label for="attachment">附件容器:</label>
+            <label for="attachment">容器启动:</label>
             <input type="checkbox" id="container">
+            <label for="attachment">虚拟机:</label>
+            <input type="checkbox" id="vm">
           </div>
           <a onclick="addChallenge()">添加</a>
         </form>
@@ -329,6 +340,45 @@
   .form-group label {
     color: var(--text-set-white);
     white-space: nowrap;
+  }
+
+  /* 设置 file-item 为方块，并使其内容水平排列 */
+  .file-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* 允许子元素换行 */
+    gap: 10px;
+    /* 子元素之间的间距 */
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 200px;
+    /* 最大宽度，可以根据需要调整 */
+    flex-grow: 1;
+    /* 允许元素根据可用空间增长 */
+    flex-shrink: 1;
+    /* 允许元素根据可用空间缩小 */
+    flex-basis: calc(33.333% - 20px);
+    /* 基础宽度，考虑到间距 */
+  }
+
+  /* 设置 file-name 的样式 */
+  .file-name {
+    font-weight: bold;
+    /* 字体加粗 */
+  }
+
+  /* 设置 ion-icon 的样式（如果需要的话） */
+  .delete-btn {
+    cursor: pointer;
+    /* 鼠标悬停时显示手形图标，表示可点击 */
   }
 
   /* ============================表单================================ */

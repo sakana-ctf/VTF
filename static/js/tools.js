@@ -64,6 +64,14 @@ function url_encode_str(input) {
     return base64;
 }
 
+function url_str(base64) {
+    base64 = base64.replace(/\+/g, '-'); // 替换 + 为 -
+    base64 = base64.replace(/\//g, '_'); // 替换 / 为 _
+    base64 = base64.replace(/=+$/, '');  // 去除末尾的 =
+  
+    return base64;
+}
+
 // 对vlang传输数据进行url解码
 function url_decode_str(input) {
     // 替换回Base64编码中的原始字符
@@ -87,6 +95,7 @@ function url_decode_str(input) {
     const utf8Str = new TextDecoder('utf-8').decode(bytes);
     return utf8Str;
 }
+
 
 /*****************
 * cookie管理函数

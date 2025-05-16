@@ -39,7 +39,8 @@ import sql_db {
 
 import encoding.base64 { 
     url_encode_str, 
-    url_decode_str 
+    url_decode_str,
+    url_decode 
 }
 
 const version := "v2.6.1-stable"
@@ -131,7 +132,6 @@ fn main() {
     println('暂不支持设置线程数: ${cmd_set.workers}')
 
     mut app := new_app(db)
-
 
     veb.run_at[App, Context](
         mut app,
@@ -507,10 +507,23 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
                     max_score := url_decode_str(ctx.form['max_score']).int()
                     score := url_decode_str(ctx.form['score']).int()
                     container := url_decode_str(ctx.form['container']).bool()
-                    msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, container)
-                    println('添加题目')
+                    file := ctx.form['file'].split(',')
+                    msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, container, []u8{})
+                    if file.len != 0 { 
+                        for i:= 0; i < file.len; i=i+2 {
+                            console.writefile('./static/file/${name}/${url_decode_str(file[i])}', url_decode(file[i+1]))
+                        }
+                    }
                     ctx.set_cookie(name:'mess', value: url_encode_str(msg))
                 return ctx.text('200: Seccess.')
+            }
+            'delete' {
+                    /*
+                    tid := url_decode_str(ctx.form['tid']).int()
+                    delete_challenge(app.db, tid)
+                    println('删除题目')
+                    */
+                    return ctx.text('200: Seccess.')
             }
             else {
                 return ctx.text('403: Wrong.')
@@ -520,6 +533,11 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
         ctx.set_cookie(name:'id', value: '')
         return ctx.text('403: Wrong.')
     }
+}
+
+// 设置挑战
+@['/static/file/:filename']
+fn (mut app App) getfile(mut ctx Context, filename string) veb.Result {
 }
 
 // 平台基础功能设置
