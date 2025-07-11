@@ -8,17 +8,24 @@ fn main() {
 	}
 
 	for i in list_file('./html') {
-		if i != 'index.html' {
+		if i[..8] == 'default_' {
+			/* README: 
+			 * 想要添加自定义页
+			 * 我们还需要修改app的设置.
+			 */
+			write_html(i[8..], set_default())
+			url := '../static/html/${i[8..]}'
+			os.write_file(url, set_html(i)) or { return }
+			println('\033[32m[True] \033[0m文件储存于: ${url}')
+		}
+		else {
 			write_html(i, set_html(i))
 		}
 	}
-
+	
+	// 适配控制台css功能
 	mut data := readfile('./css/console.css')
 	mut url := '../static/css/console.css'
-	os.write_file(url, data) or { return }
-	println('\033[32m[True] \033[0m文件储存于: ${url}')
-	data = readfile('./html/index.html')
-	url = '../static/html/index.html'
 	os.write_file(url, data) or { return }
 	println('\033[32m[True] \033[0m文件储存于: ${url}')
 }
@@ -40,6 +47,15 @@ fn set_html(main_html string) string {
 	main := readfile(url)
 	js := readfile('js.html')
 	return '<!DOCTYPE html>\n<html lang="zh">\n${head}\n<body id="top">\n${header}\n${js}\n${main}\n</body>\n</html>'
+}
+
+fn set_default() string {
+	head := readfile('head.html')
+	header := readfile('header.html')
+	main := readfile('default.html')
+	js := readfile('js.html')
+	return '<!DOCTYPE html>\n<html lang="zh">\n${head}\n<body id="top">\n${header}\n${js}\n${main}\n</body>\n</html>'
+
 }
 
 fn list_file(path string) []string {

@@ -51,6 +51,12 @@ document.querySelectorAll('.drop-zone').forEach(function(zone) {
       fileName.textContent = file.name;
       fileItem.appendChild(fileName);
 
+      // 创建远程环境选择框
+      var remoteEnvCheckbox = document.createElement('input');
+      remoteEnvCheckbox.type = 'checkbox';
+      remoteEnvCheckbox.className = 'remote-env-checkbox';
+      fileItem.appendChild(remoteEnvCheckbox);
+
       // 创建删除按钮元素
       var deleteBtn = document.createElement('ion-icon');
       deleteBtn.setAttribute('name', 'close-circle-outline');
@@ -66,6 +72,7 @@ document.querySelectorAll('.drop-zone').forEach(function(zone) {
         // 删除文件信息元素
         fileItem.remove();
       });
+
       fileItem.appendChild(deleteBtn);
       fileList.appendChild(fileItem);
       // 读取文件内容并转换为 Base64 编码
@@ -74,7 +81,8 @@ document.querySelectorAll('.drop-zone').forEach(function(zone) {
         const base64Data = event.target.result.split(',')[1]; // 提取 Base64 编码部分
         filesChallenges.push([
           url_encode_str(file.name),
-          url_str(base64Data)
+          url_str(base64Data),
+          remoteEnvCheckbox.checked
         ]);
       };
       reader.readAsDataURL(file);
@@ -147,7 +155,7 @@ function addChallenge() {
   const intro = getInputValue('intro');
   const maxScore = getInputValue('max_score');
   const score = getInputValue('score');
-  const container = getInputValue('container');
+  const vm = getInputValue('vm');
   var data = "type_text=" + typeText;
   data += "&flag=" + flag;
   data += "&name=" + name;
@@ -156,7 +164,7 @@ function addChallenge() {
   data += "&max_score=" + maxScore;
   data += "&score=" + score;
   //data += "&file=" + file;
-  data += "&container=" + container;
-  data += "&file=" + filesChallenges;
+  data += "&vm=" + vm;
+  data += "&file=" + filesChallenges;n  
   post_data(data, '/challengeapi/add');
 }

@@ -1,0 +1,13 @@
+<mainscript>
+  ${app.index}
+</mainscript>
+
+<script>
+  function decodeHtmlEntities(str) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = str;
+    return txt.value;
+  }
+  var mainNode = document.querySelector('mainscript');
+  mainNode.innerHTML = decodeHtmlEntities(mainNode.innerHTML);
+</script>

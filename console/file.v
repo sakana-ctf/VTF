@@ -12,8 +12,9 @@ pub fn readfile(path string) string {
 	return data
 }
 
-pub fn writefile(path string, buf []u8) {
-        mut file := os.open_append(path) or {
+pub fn writefile(path string, filename string, buf []u8) {
+        os.mkdir(path) or {}
+		mut file := os.open_append('${path}/${filename}') or {
                 return
         }
         file.write(buf) or { 0 }

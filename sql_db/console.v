@@ -3,7 +3,7 @@ module sql_db
 import err_log
 import db.sqlite { DB }
 
-pub fn add_challenge(db sqlite.DB, type_text string, flag []string, name string, diff string, intro string, max_score int, score int, container bool, file []u8) string {
+pub fn add_challenge(db sqlite.DB, type_text string, flag []string, name string, diff string, intro string, max_score int, score int, vm bool, taskfiletype []TaskFileType) string {
 	mut new_personal_flag := []PersonalFlag{}
 	parents_id := sql db {
 		select from Personal
@@ -34,7 +34,8 @@ pub fn add_challenge(db sqlite.DB, type_text string, flag []string, name string,
         intro      :    intro
         max_score  :    max_score
         score      :    score
-        container  :    container
+        vm		   :    vm
+		file	   :	taskfiletype
 	}
 	sql db {
 		insert new_task into Task

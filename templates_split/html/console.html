@@ -64,7 +64,7 @@
           -->
 
           <h5>平台标题:</h5>
-          <input type="text" id="title_name" placeholder="平台标题">
+          <input type="text" id="title_name" placeholder="平台标题" value="${app.title_name}">
           <a onclick="updateTitleName()">更新</a>
 
           <h5>主页模板:</h5>
@@ -204,10 +204,7 @@
             拖动文件到这里上传附件
             <div class="file-list"></div>
           </div>
-
           <div class="form-group">
-            <label for="attachment">容器启动:</label>
-            <input type="checkbox" id="container">
             <label for="attachment">虚拟机:</label>
             <input type="checkbox" id="vm">
           </div>

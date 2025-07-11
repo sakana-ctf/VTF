@@ -14,7 +14,8 @@ templates/*.html
 nohup.out
 start
 static/file/*
+static/container/*
 
 !static/file/README.md
-
+!static/container/README.md
 

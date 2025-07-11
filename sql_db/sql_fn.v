@@ -4,8 +4,10 @@ import encoding.base64 { url_encode_str, url_decode_str }
 import err_log
 import vlog
 import db.sqlite { DB }
-import time
+import time {Time}
 import console { readfile }
+
+type Any = string | int | time.Time
 
 // personal报错函数
 fn personal_err() []Personal {
@@ -24,7 +26,7 @@ pub fn set_init(db DB) Init {
     if init.len == 0 {
         new_init := Init{
             id         : 1
-            starttime : time.Time{
+            starttime : Time{
                 year: 1970
                 month: 1
                 day: 1
@@ -32,7 +34,7 @@ pub fn set_init(db DB) Init {
                 minute: 0
                 second: 0
             }
-            endtime   : time.Time{
+            endtime   : Time{
                 year: 9999
                 month: 12
                 day: 31
@@ -55,39 +57,49 @@ pub fn set_init(db DB) Init {
 }
 
 // 修改Init初始化数据信息
-pub fn update_init(db DB, type_text string, time_text time.Time, string_text string, int_text int ) {
-    // todo: 我想使用type Any代替, 但是orm映射还需要改进, 这里是可以去提issues的.
+pub fn update_init(db DB, type_text string, text Any ) {
     match type_text {
         'starttime' {
-            sql db {
-                update Init set starttime = time_text where id == 1
-            } or { return }
+            $if text is Time {
+                sql db {
+                    update Init set starttime = text where id == 1
+                } or { return }
+            }
         }
         'endtime' {
-            sql db {
-                update Init set endtime = time_text where id == 1
-            } or { return }
+            $if text is Time {
+                sql db {
+                    update Init set endtime = text where id == 1
+                } or { return }
+            }
         }
         'index' {
-            sql db {
-                update Init set index = string_text where id == 1
-            } or { return }
+            $if text is string {
+                sql db {
+                    update Init set index = text where id == 1
+                } or { return }
+            }
         }
         'title_name' {
-            sql db {
-                update Init set title_name = string_text where id == 1
-            } or { return }
+            $if text is string {
+                sql db {
+                    update Init set title_name = text where id == 1
+                } or { return }
+            }
         }
         'time_zone' {
-            sql db {
-                update Init set time_zone = int_text where id == 1
-            } or { return }
+            $if text is string {
+                sql db {
+                    update Init set time_zone = text where id == 1
+                } or { return }
+            }
         }
         else {
             return
         }
     }
 }
+
 
 // whoami权限检测
 pub fn personal_whoami(db DB, c_id string, c_pwd string) string {

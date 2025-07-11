@@ -43,7 +43,7 @@ import encoding.base64 {
     url_decode 
 }
 
-const version := "v2.6.1-stable"
+const version := "v2.6.2-stable"
 
 /*
 struct User {
@@ -195,7 +195,6 @@ fn new_app() &App {
 fn (mut app App) index(mut ctx Context) veb.Result {
     return $veb.html()
 }
-
 
 @['/index.html']
 fn (mut app App) find_index(mut ctx Context) veb.Result {
@@ -381,7 +380,7 @@ fn (mut app App) flagapi(mut ctx Context) veb.Result {
     *   应该生成一段id信息进行区分,
     *   但是现在实现功能要紧,
     *   之后需要重新修改底层.
-    ************************************************************************************/
+    ************************    ************************************************************/
     the_cookie_id := cookie_id(ctx)
     c_id := cookie_id(ctx)
     c_pwd := cookie_passwd(ctx)
@@ -506,14 +505,17 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
                     intro := url_decode_str(ctx.form['intro'])
                     max_score := url_decode_str(ctx.form['max_score']).int()
                     score := url_decode_str(ctx.form['score']).int()
-                    container := url_decode_str(ctx.form['container']).bool()
+                    vm := url_decode_str(ctx.form['vm']).bool()
                     file := ctx.form['file'].split(',')
-                    msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, container, []u8{})
-                    if file.len != 0 { 
-                        for i:= 0; i < file.len; i=i+2 {
-                            console.writefile('./static/file/${name}/${url_decode_str(file[i])}', url_decode(file[i+1]))
+                    mut taskfiletype := []sql_db.TaskFileType{}
+                    for i:= 0; i < file.len && file.len != 1 ; i=i+3 {
+                        console.writefile('./static/file/${name}', url_decode_str(file[i]), url_decode(file[i+1]))
+                        taskfiletype << sql_db.TaskFileType{
+                            file        :   './static/file/${name}/${url_decode_str(file[i])}'
+                            container   :   file[i+2].bool()
                         }
                     }
+                    msg := add_challenge(app.db, type_text, [flag], name, diff, intro, max_score, score, vm, taskfiletype)
                     ctx.set_cookie(name:'mess', value: url_encode_str(msg))
                 return ctx.text('200: Seccess.')
             }
@@ -536,9 +538,11 @@ fn (mut app App) addchallengeapi(mut ctx Context, set string) veb.Result {
 }
 
 // 设置挑战
-@['/static/file/:filename']
-fn (mut app App) getfile(mut ctx Context, filename string) veb.Result {
+@['/file/:file...']
+fn (mut app App) getfile(mut ctx Context, file string) veb.Result {
+    return ctx.file('./static/file/${file}')
 }
+
 
 // 平台基础功能设置
 @['/setapi/:set'; post]
@@ -555,13 +559,13 @@ fn (mut app App) setapi(mut ctx Context, set string) veb.Result {
             'title' {
                 title_name := url_decode_str(ctx.form['title_name'])
                 app.title_name = title_name
-                update_init(app.db, 'title_name', Time{}, title_name, 0)
+                update_init(app.db, 'title_name', title_name)
                 ctx.set_cookie(name:'mess', value: url_encode_str('标题修改成功'))
             }
             'index' {
                 index := url_decode_str(ctx.form['index'])
                 app.index = index
-                update_init(app.db, 'index', Time{}, index, 0)
+                update_init(app.db, 'index', index)
                 ctx.set_cookie(name:'mess', value: url_encode_str('主页修改成功'))
             }
             'time' {
@@ -577,7 +581,7 @@ fn (mut app App) setapi(mut ctx Context, set string) veb.Result {
                         minute: starttime[14..16].int()
                     }.add_seconds( - app.time_zone * 3600 )
                     app.starttime = start_time
-                    update_init(app.db, 'starttime', start_time, '', 0)
+                    update_init(app.db, 'starttime', start_time)
                 }
 
                 if endtime != '' {
@@ -589,11 +593,11 @@ fn (mut app App) setapi(mut ctx Context, set string) veb.Result {
                         minute: endtime[14..16].int()
                     }.add_seconds( - app.time_zone * 3600 )
                     app.endtime = end_time
-                    update_init(app.db, 'endtime', end_time, '', 0)
+                    update_init(app.db, 'endtime', end_time)
                 }
                 if endtime != '' {
                     app.time_zone = time_zone.int()
-                    update_init(app.db, 'time_zone', Time{}, '', time_zone.int())
+                    update_init(app.db, 'time_zone', time_zone.int())
                 }
                 ctx.set_cookie(name:'mess', value: url_encode_str('时间修改成功'))
             }

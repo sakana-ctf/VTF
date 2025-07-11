@@ -39,6 +39,15 @@ pub struct PersonalFlag {
 
 // 题目信息
 
+// 我认为以后是可以实现统一虚拟机和nc的关闭方式的.
+@[table: 'taskfiletype']
+pub struct TaskFileType {
+        parents_challenge    int
+    pub:
+        file        string
+        container   bool
+}
+
 @[table: 'challenge']
 pub struct Task{
     pub:
@@ -51,8 +60,11 @@ pub struct Task{
         intro      string
         max_score  int
         score      int
-        container  bool
+        vm         bool
+        file       []TaskFileType   @[fkey: 'parents_challenge']
 }
+
+
 
 @[table: 'post_flag']
 pub struct PostFlag {
@@ -108,6 +120,7 @@ fn create_db(db sqlite.DB) {
         create table PostFlag
         create table PersonalFlag
         create table Init
+        create table TaskFileType
     } or {
         println('${vlog.warn_log}: 数据库创建失败, 可能已存在数据库: data.db')
     }
