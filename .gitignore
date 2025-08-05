@@ -6,6 +6,7 @@ templates_split/build
 templates_split/build.exe
 templates_split/set_language
 templates_split/set_language.exe
+templates_split/nginx.conf
 make
 make.exe
 make.v

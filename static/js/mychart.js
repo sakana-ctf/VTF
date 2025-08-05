@@ -1,23 +1,28 @@
 function ranking_line(canvas, datasets) {
     canvas.height = 70;
+    // 包含检测步骤
     var ctx = canvas.getContext('2d');
+    var myChart = Chart.getChart(canvas);
+
+    if (!myChart) {
     // 配置图表数据
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: datasets,
-        },
-        options: {
-            scales: {
-                x: {
-                    display: false,
-                    type: 'linear',
-                    position: 'bottom'
-                },
-                y: {}
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: datasets,
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: false,
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    y: {}
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 /*
