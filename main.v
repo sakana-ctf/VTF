@@ -433,16 +433,19 @@ fn (mut app App) ranking(mut ctx Context) veb.Result {
 
 @['/rankapi']
 fn (mut app App) rankapi(mut ctx Context) veb.Result {
+    whoami := cooike_whoami(ctx)
     mut data := []Rank{}
     for i in get_personal(app.db) {
         mut score := []int{}
         mut kill_time := []i64{}
-        for j in i.challenge {
-            kill_time << j.kill_time.unix()
-            if bool_solve(j) {
-                score << challenge_score(app.db, j)
-            } else {
-                score << -1
+        if console.play_time(app.starttime, app.endtime) || whoami == 'root'{
+            for j in i.challenge {
+                kill_time << j.kill_time.unix()
+                if bool_solve(j) {
+                    score << challenge_score(app.db, j)
+                } else {
+                    score << -1
+                }
             }
         }
         data << Rank{
@@ -476,8 +479,8 @@ fn (mut app App) console(mut ctx Context) veb.Result {
         ctx.set_cookie(name:'mess', value: url_encode_str('Error: 请登录后查看'))
         return ctx.redirect('/login.html')
     } else if login.return_bool {
-            list_of_type := build_challenge(app.db)
-            return $veb.html() 
+        list_of_type := build_challenge(app.db)
+        return $veb.html()
     } else {
         ctx.set_cookie(name:'id', value: '')
         return ctx.redirect('/error.html')

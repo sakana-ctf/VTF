@@ -1,5 +1,11 @@
-// 排位页数设置
-Rankapi(1);
+init();
+
+
+function init() {
+    // 排位页数设置
+    Rankapi(1);
+}
+
 
 /*******************************
  * 工具类函数
@@ -159,7 +165,7 @@ function SetRankJson(data, nowtext) {
 
     show_data = data.slice((nowtext - 1) * 10, nowtext * 10);
     SetPage(Math.ceil(data.length / 10), nowtext);
-    
+
     for (i=0; i<10; i++) {
         var rank = "td" + i + "_rank";
         document.getElementById(rank).innerHTML = '';
@@ -192,7 +198,6 @@ function SetRankJson(data, nowtext) {
         }
         document.getElementById(score).innerHTML = all_score;
     }
-    
 }
 
 window.addEventListener('beforeunload', function() {
